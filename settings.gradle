@@ -1,0 +1,5 @@
+rootProject.name = 'CouponEnginePoc'
+
+include 'util', 'domain-cmn',
+        'cpnen-docs', 'cpnen-domain', 'cpnen-webapp',
+        'commp-docs', 'commp-domain', 'commp-webapp'

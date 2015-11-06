@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd"
+                 version="2.1">
+
+    <named-query name="totalCategoryCount">
+        <query>
+            SELECT count(*) FROM Category
+        </query>
+    </named-query>
+
+    <named-query name="getParentCategoryID">
+        <query>
+            SELECT c.parent.id FROM Category c where c.id = :id
+        </query>
+    </named-query>
+
+    <named-query name="getCountOfApplicableCategories">
+        <query>
+            SELECT count(*) FROM CouponCategoryMap ccm where ccm.coupon.id= :id AND ccm.category.id IN :ids
+            AND ccm.applicable = :applicable
+        </query>
+    </named-query>
+
+    <named-query name="getCouponCodes">
+        <query>
+            FROM CouponCode WHERE code in :codes
+        </query>
+    </named-query>
+    <named-query name="getCouponCode">
+        <query>
+            FROM CouponCode WHERE code = :code
+        </query>
+    </named-query>
+
+    <named-query name="findListRulesOrderByPriority">
+        <query>
+            SELECT cdr.id FROM CouponDiscountingRule cdr INNER JOIN cdr.coupon c WHERE c.id= :id
+            ORDER BY cdr.priority ASC
+        </query>
+    </named-query>
+
+    <named-query name="getDiscount">
+        <query>
+            SELECT cdri.value FROM CouponDiscountingRuleInterval cdri INNER JOIN cdri.couponDiscRule cdr
+            WHERE cdr.id = :id AND ((cdri.type = :prodType AND :prodCount BETWEEN cdri.intervalStart AND
+            cdri.intervalEnd) OR (cdri.type = :transType and :transVal BETWEEN cdri.intervalStart AND
+            cdri.intervalEnd))
+        </query>
+    </named-query>
+
+    <named-query name="getIntervalCount">
+        <query>
+            SELECT count(*) FROM CouponDiscountingRuleInterval cdri INNER JOIN cdri.couponDiscRule cdr
+            WHERE cdr.id = :id
+        </query>
+    </named-query>
+
+    <named-query name="checkRejectedCode">
+        <query>
+            SELECT cdrc.id FROM CouponDiscountRequestCode cdrc INNER JOIN cdrc.couponDiscountRequest
+            cdr WHERE cdr.id = :id AND cdrc.status = :status
+        </query>
+    </named-query>
+
+    <named-query name="getCodesForReqId">
+        <query>
+            SELECT cc.code FROM CouponDiscountRequestCode cdrc INNER JOIN cdrc.couponCode cc
+            WHERE cdrc.couponDiscountRequest.id = :id
+        </query>
+    </named-query>
+
+    <named-query name="getProductVos">
+        <query>
+            SELECT NEW com.portea.cpnen.vo.ProductVo (cdrp.product.id,cdrp.productCount,cdrp.productUnitPrice)
+            FROM CouponDiscountRequestProduct cdrp WHERE cdrp.couponDiscountRequest.id = :id
+        </query>
+    </named-query>
+
+    <named-query name="getCountOfApplicableProducts">
+        <query>
+            SELECT count(*) FROM CouponProductMap cpm where cpm.coupon.id = :id and cpm.product.id in :ids
+            AND cpm.applicable = :applicable
+        </query>
+    </named-query>
+
+    <named-query name="getProductsForIds">
+        <query>
+            SELECT p From Product p WHERE id in :ids
+        </query>
+    </named-query>
+
+    <named-query name="totalProdCount">
+        <query>
+            SELECT count(*) FROM Product
+        </query>
+    </named-query>
+
+    <named-query name="getParentProdID">
+        <query>
+            SELECT p.parent.id FROM Product p where p.id = :id
+        </query>
+    </named-query>
+
+    <named-query name="getUserPassword">
+        <query>
+            SELECT u.password FROM User u where u.name = :name
+        </query>
+    </named-query>
+
+    <named-query name="getUserId">
+        <query>
+            SELECT u.id FROM User u where u.name = :name
+        </query>
+    </named-query>
+
+    <named-query name="getCoupons">
+        <query>
+            FROM Coupon c
+        </query>
+    </named-query>
+
+    <named-query name="getAllCoupons">
+        <query>
+            FROM Coupon c
+        </query>
+    </named-query>
+
+    <named-query name="getCouponCount">
+        <query>
+            SELECT count(id) FROM Coupon c
+        </query>
+    </named-query>
+
+</entity-mappings>

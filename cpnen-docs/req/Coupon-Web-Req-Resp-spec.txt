@@ -1,0 +1,171 @@
+                    List of JSON formats for the coupon engine
+
+
+================================ create coupon   ================================
+request :
+    description : create a new coupon
+    Method : POST
+    URL : /web/rws/coupon
+    Format : JSON
+    input example  :
+    {
+        "name": "birthdaycoupon",
+        "type": "customer",
+        "applicableFrom": "date",
+        "applicableTill": "date",
+        "transactionMaxVal": 1000,
+        "transactionMinVal": 200,
+        "description": "coupon valid for 7 days after birthday of client",
+        "inclusive": true,
+        "channelName": "facebook",
+        "applicationType": "1-time",
+        "applicableUseCount": 5000
+    }
+
+
+response:
+    success : success status 200 OK
+
+    20
+
+    failure : failure status #
+
+================================ view coupon  ================================
+request :
+    description : create a new coupon
+    Method : #
+    URL : #
+    Format : JSON
+    input example  :
+    [
+    {"id": 20 }
+    ]
+
+
+response:
+    success : success status 200 OK
+    {
+        "id": 20,
+        "name": "birthdaycoupon",
+        "type": "customer",
+        "applicable_from": "date",
+        "applicable_till": "date",
+        "transaction_max_value": 1000,
+        "transaction_min_value": 200,
+        "description": "coupon valid for 7 days after birthday of client",
+        "inclusive": true,
+        "channel_name": "facebook",
+        "applicationType": "1-time",
+        "applicableUseCount": 5000
+    }
+
+    failure : failure status #
+================================ list coupon  ================================
+request :
+    description : create a new coupon
+    Method : #
+    URL : #
+    Format : JSON
+    input example  :
+
+
+response:
+    success : success status 200 OK
+    {
+        "id": 20,
+        "name": "birthdaycoupon",
+        "type": "customer",
+        "applicable_from": "date",
+        "applicable_till": "date",
+        "transaction_max_value": 1000,
+        "transaction_min_value": 200,
+        "description": "coupon valid for 7 days after birthday of client",
+        "inclusive": true,
+        "channel_name": "facebook",
+        "applicationType": "1-time",
+        "applicableUseCount": 5000
+        "status": "draft"
+    }
+
+    failure : failure status #
+
+================================ list Products ================================
+request:
+    description: get list of products.
+    Method : GET
+    URL: #
+
+
+response:
+    success : success status 200 OK.
+
+    [
+        {
+            "id" : 1,
+            "type": "Service",
+            "name": "P1"
+        },
+        {
+            "id" : 2,
+            "type": "Package",
+            "name": "P2"
+        }
+    ]
+
+    failure : failure status #
+================================ list Brands ================================
+request:
+    description: get list of Brands.
+    Method : GET
+    URL: #
+
+response:
+    success : 200 OK
+
+     [
+        {
+            "id" :1,
+            "type": "Exclusive",
+            "name": "B1"
+        },
+        {
+            "id" :2,
+            "type": "Default",
+            "name": "B2"
+        }
+    ]
+
+================================ list Coupon codes ================================
+request:
+    description: get list of Coupon codes for a given coupon.
+    Method: Get
+    URL: /web/rws/coupon/{id}/codes?offset=0&limit=10
+
+response:
+    success: 200 OK
+
+    [
+        {
+            "id": 1,
+            "couponId": 1,
+            "code": "ABCD",
+            "createdOn": 1446464625,
+            "createdBy": 1,
+            "deactivatedOn": 1446464625,
+            "deactivatedBy": 1,
+            "channelName": "The Hindu"
+        },
+        {
+            "id": 2,
+            "couponId": 1,
+            "code": "EFGH",
+            "createdOn": 1446464625,
+            "createdBy": 1,
+            "deactivatedOn": 1446464625,
+            "deactivatedBy": 1,
+            "channelName": "The Hindu"
+        }
+    ]
+
+    failure : failure status #
+

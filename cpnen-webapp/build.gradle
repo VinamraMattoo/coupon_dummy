@@ -1,0 +1,80 @@
+def cargoVersion = '1.4.15'
+def restEasyVersion = '3.0.9.Final'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-cargo-plugin:2.1.1'
+    }
+}
+
+apply plugin : 'java'
+apply plugin : 'war'
+apply plugin : 'jetty'
+apply plugin: 'com.bmuschko.cargo'
+apply plugin: 'com.bmuschko.cargo-base'
+
+repositories {
+    jcenter()
+}
+
+cargo {
+
+    containerId = 'wildfly8x'
+
+    remote {
+        hostname = 'localhost'
+        username = 'admin'
+        password = 'admin'
+    }
+}
+
+jettyRun {
+    reload = "automatic"
+    scanIntervalSeconds = 5
+}
+
+[jettyRun]*.httpPort = 8888
+[jettyRun]*.jettyEnvXml = file('src/test/resources/jetty-env.xml')
+[jettyRun]*.webXml = file('src/test/resources/jetty-web.xml')
+
+dependencies {
+    compile project (':util')
+    compile project (':cpnen-domain')
+
+    providedCompile 'javax:javaee-api:7.0'
+
+    providedCompile "org.jboss.resteasy:resteasy-jaxrs:${restEasyVersion}"
+    providedCompile "org.jboss.resteasy:resteasy-jaxb-provider:${restEasyVersion}"
+    providedCompile "org.jboss.resteasy:resteasy-client:${restEasyVersion}"
+    providedCompile "org.jboss.resteasy:resteasy-jackson-provider:${restEasyVersion}"
+
+    cargo "org.codehaus.cargo:cargo-ant:${cargoVersion}"
+    cargo "org.codehaus.cargo:cargo-core-uberjar:${cargoVersion}"
+    cargo "org.codehaus.cargo:cargo-core-container-wildfly:${cargoVersion}"
+    cargo 'org.wildfly:wildfly-controller-client:8.2.0.Final'
+
+    runtime 'commons-logging:commons-logging:1+'
+
+}
+
+/**
+ * A custom task to deploy to local server
+ */
+task deployToLocalServer(
+        type: com.bmuschko.gradle.cargo.tasks.remote.CargoRedeployRemote,
+        dependsOn: ['war'])
+/**
+ * Will redeploy the application and then run the tests
+ */
+task runMyTests(type: org.gradle.api.tasks.testing.Test,
+        dependsOn: ['cleanTest', 'deployToLocalServer'])
+
+/**
+ * Will repeat tests without redeploying the web application
+ */
+task repeatTests(type: org.gradle.api.tasks.testing.Test,
+        dependsOn: ['cleanTest'])

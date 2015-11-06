@@ -1,0 +1,21 @@
+POST /rapi/cdr
+
+PATCH /rapi/cdr/{id}
+
+GET /rapi/cdr/{id}
+
+DELETE /rapi/cdr/{id}
+
+GET /rapi/cdr/{id}/discamt
+
+GET /rapi/cdr/{id}/codes
+
+PUT /rapi/cdr/{id}/code/{code}
+
+DELETE /rapi/cdr/{d}/code/{code}
+
+GET /rapi/cdr/{id}/products
+
+PUT /rapi/cdr/{id}/product/{id}
+
+DELETE /rapi/cdr/{d}/product/{id}

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <help_text>fontsize=11</help_text>
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>410</x>
+      <y>20</y>
+      <w>160</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>cmn_target_config_audit
+--
+_id_
+/target_config_id/
+old_value
+new_value
+created_on
+active</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>220</x>
+      <y>20</y>
+      <w>140</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>cmn_config_param
+--
+_id_
+/config_target_type_id/
+name
+value_data_type</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>150</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>cmn_config_target_type
+--
+_id_
+name
+description</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>20</x>
+      <y>140</y>
+      <w>140</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>cmn_target_config
+--
+_id_
+/config_target_type_id/
+target_id
+/config_param_id/
+active</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>220</x>
+      <y>140</y>
+      <w>160</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>cmn_target_config_value
+--
+_id_
+/target_config_id/
+value</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

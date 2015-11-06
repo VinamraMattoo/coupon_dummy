@@ -1,0 +1,42 @@
+package com.portea.cpnen.rapi.exception;
+
+import java.text.MessageFormat;
+
+public class InapplicableCouponException extends CouponApplicationException {
+
+    private static final long serialVersionUID = -4387927316003189046L;
+
+    private String couponCode;
+    private String productId;
+
+    public InapplicableCouponException(String couponCode, String productId) {
+        super();
+        this.couponCode = couponCode;
+        this.productId = productId;
+    }
+
+    public InapplicableCouponException(String couponCode, String productId, String message) {
+        super(message);
+        this.couponCode = couponCode;
+        this.productId = productId;
+    }
+
+    public InapplicableCouponException(String couponCode, String productId, String message, Throwable cause) {
+        super(message, cause);
+        this.couponCode = couponCode;
+        this.productId = productId;
+    }
+
+    @Override
+    public ExceptionalCondition.Error getError() {
+        return ExceptionalCondition.Error.COUPON_INAPPLICABLE;
+    }
+
+    @Override
+    public String getExplanatoryMessage() {
+        return MessageFormat.format(
+                "Coupon code {0} is not applicable on the product {1}::{0}|{1}",
+                couponCode, productId
+        );
+    }
+}

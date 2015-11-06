@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job-scheduling-data xmlns="http://www.quartz-scheduler.org/xml/JobSchedulingData"
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                     xsi:schemaLocation="http://www.quartz-scheduler.org/xml/JobSchedulingData
+                     http://www.quartz-scheduler.org/xml/job_scheduling_data_2_0.xsd"
+                     version="2.0">
+
+    <pre-processing-commands>
+        <delete-jobs-in-group>*</delete-jobs-in-group>  <!-- clear all jobs in scheduler -->
+        <delete-triggers-in-group>*</delete-triggers-in-group> <!-- clear all triggers in scheduler -->
+    </pre-processing-commands>
+
+    <processing-directives>
+        <overwrite-existing-data>true</overwrite-existing-data>
+        <ignore-duplicates>false</ignore-duplicates>
+    </processing-directives>
+
+    <schedule>
+        <job>
+            <name>commp-sms-loader</name>
+            <group>commp-sms-jobs</group>
+            <description>Quartz job to retrieve new batch of SMS from database Queue to be put in assembly for processing</description>
+            <job-class>com.portea.commp.smsen.job.SmsLoaderJob</job-class>
+            <durability>true</durability>
+            <recover>false</recover>
+        </job>
+
+        <job>
+            <name>commp-sms-scheduler</name>
+            <group>commp-sms-jobs</group>
+            <description>Quartz job to retrieve new batch of SMS from the assembly to be put in processing queues</description>
+            <job-class>com.portea.commp.smsen.job.SmsSchedulerJob</job-class>
+            <durability>true</durability>
+            <recover>false</recover>
+        </job>
+
+        <trigger>
+            <simple>
+                <name>commp-sms-loader-trigger</name>
+                <group>commp-sms-triggers</group>
+                <description>A trigger to trigger 'commp-sms-loader' job every 15 seconds</description>
+                <job-name>commp-sms-loader</job-name>
+                <job-group>commp-sms-jobs</job-group>
+                <repeat-count>-1</repeat-count> <!-- repeat indefinitely  -->
+                <repeat-interval>10000</repeat-interval> <!--  every 10 seconds -->
+            </simple>
+        </trigger>
+
+       <trigger>
+            <simple>
+                <name>commp-sms-scheduler-trigger</name>
+                <group>commp-sms-triggers</group>
+                <description>A trigger to trigger 'commp-sms-scheduler' job every 5 seconds</description>
+                <job-name>commp-sms-scheduler</job-name>
+                <job-group>commp-sms-jobs</job-group>
+                <repeat-count>-1</repeat-count> <!-- repeat indefinitely  -->
+                <repeat-interval>5000</repeat-interval> <!--  every 5 seconds -->
+            </simple>
+        </trigger>
+    </schedule>
+</job-scheduling-data>

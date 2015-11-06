@@ -1,0 +1,13 @@
+------------------------------------------------------------------------------------------
+Debugging Tips
+------------------------------------------------------------------------------------------
+
+1. Debugging with Wildfly server
+
+   Start the standalone server with the following command
+
+   standalone.sh --debug --server-config=standalone.xml
+
+   When the JBoss starts in the debug mode, it listens on the port 8787 by default.
+
+   Create a debug configuration in your IDE where above port is used.

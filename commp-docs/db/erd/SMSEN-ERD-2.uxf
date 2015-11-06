@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <help_text>fontsize=12</help_text>
+  <zoom_level>9</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>189</x>
+      <y>0</y>
+      <w>153</w>
+      <h>108</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+primary_processing_status
+bg=pink
+--
+_id_
+name
+--
+CREATED
+UNDER_PROCESS
+COMPLETED
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>630</x>
+      <y>234</y>
+      <w>171</w>
+      <h>351</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+sms_record
+--
+_id_
+receiver_type
+user_id
+/sms_group_id/
+/template_id/
+mobile_number
+country_code
+message
+correlation_id
+send_before
+last_updated_on
+retry_count
+/brand_id/
+primary_processing_status
+secondary_processing_status
+status_reason
+status_remarks
+message_hash
+schedule_id
+schedule_type
+scheduled_time
+scheduled_time_zone
+/gateway_id/
+gateway_status_code
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>693</x>
+      <y>639</y>
+      <w>108</w>
+      <h>81</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+sms_gateway
+--
+_id_
+name
+status
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>414</x>
+      <y>891</y>
+      <w>171</w>
+      <h>99</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+sms_group_gateway_mapping
+--
+_id_
+//Combination of sms type id, gateway id &amp; priority is unique
+/sms_group_id/
+/gateway_id/
+priority</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>405</x>
+      <y>549</y>
+      <w>171</w>
+      <h>144</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+sms_group_audit
+--
+_id_
+/sms_group_id/
+priority
+clng_pd_content_match_val
+clng_pd_content_match_type
+clng_pd_type_match_val
+clng_pd_type_match_type 
+created_on</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>693</x>
+      <y>765</y>
+      <w>108</w>
+      <h>126</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+sms_gateway_log	
+--
+_id_
+mobile_number
+message
+/gateway_id/
+correlation_id
+created_on
+// TODO - Structure may need to be revised as we need to capture request and responses to Gateways for better trace and debugging</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>189</x>
+      <y>270</y>
+      <w>126</w>
+      <h>234</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+sms_queue
+--
+_id_
+receiverType
+/userId/
+/template_id/
+/sms_group_id/
+mobileNumber
+country_code
+message
+createdOn
+send_before
+scheduledId
+scheduledType
+scheduledTime
+scheduled_time_zone
+/brandId/
+// Scheduled time zone can ether be an Enum or a number (positive or negative) in terms of minutes
+// Country code can be Enum</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>396</x>
+      <y>234</y>
+      <w>171</w>
+      <h>297</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+sms_assembly
+--
+_id_
+receiver_type
+/user_id/
+/template_id/
+/sms_group_id/
+mobile_number
+country_code
+message
+correlation_id
+created_on
+send_before
+retry_count
+/brand_id/
+primary_processing_status
+secondary_processing_status
+message_hash
+schedule_id
+schedule_type
+scheduled_time
+scheduled_time_zone</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>207</x>
+      <y>720</y>
+      <w>171</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+sms_audit
+--
+_id_
+/record_id/
+correlation_id
+created_on
+primary_processing_status
+secondary_processing_status
+status_reason
+status_remarks
+gateway_status_code
+/gateway_id/
+
+
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>630</x>
+      <y>945</y>
+      <w>162</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+smsen_notification
+--
+_id_
+TODO - Fleshout this entity
+// TODO
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>423</x>
+      <y>765</y>
+      <w>153</w>
+      <h>81</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+sms_gateway_status_audit
+--
+_id_
+status
+created_on</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>189</x>
+      <y>135</y>
+      <w>153</w>
+      <h>108</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+gateway_status
+bg=pink
+--
+_id_
+name
+--
+//available &amp; reachable
+ACTIVE
+//not available
+INACTIVE
+//available &amp; not reachable
+UNREACHABLE
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>270</y>
+      <w>162</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+brands
+bg=green
+--
+_id_
+canSendSms
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>459</y>
+      <w>162</w>
+      <h>108</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+sms_template
+bg=green
+--
+_id_
+templateId
+templateName
+is_active
+sms_group_id</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>369</y>
+      <w>162</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+auth_users
+bg=green
+--
+_id_
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>9</x>
+      <y>90</y>
+      <w>117</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>lt=-
+Read Only Tables
+bg=green</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>9</x>
+      <y>45</y>
+      <w>117</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>lt=-
+Lookup Entities
+bg=pink</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>396</x>
+      <y>0</y>
+      <w>297</w>
+      <h>189</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+secondary_processing_status
+bg=pink
+--
+_id_
+name
+--
+QUEUED(UNDER_PROCESS)
+LOADED(UNDER_PROCESS)
+QUEUED_IN_RETRY(UNDER_PROCESS)
+SENT_TO_GATEWAY(UNDER_PROCESS)
+RECEIVED_CORRELATION_ID(UNDER_PROCESS)
+INTERMEDIATE_STATUS_UPDATE(UNDER_PROCESS)
+NEVER_SENT(COMPLETED)
+SUCCESSFUL(COMPLETED)
+FAILED(COMPLETED)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>585</y>
+      <w>162</w>
+      <h>81</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+patient_details
+bg=green
+--
+_id_
+/loginId/
+sendSmsAlert
+
+// This entity is made part of the diagram as there is a need check whether the user configurtion prohibits sending SMS
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>0</y>
+      <w>135</w>
+      <h>126</h>
+    </coordinates>
+    <panel_attributes>Lengeds</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>882</y>
+      <w>171</w>
+      <h>153</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+sms_type_audit
+--
+_id_
+/sms_type_id/
+expires_in
+clng_pd_content_match_val
+clng_pd_content_match_type
+clng_pd_type_match_val
+clng_pd_type_match_type
+created_on</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>207</x>
+      <y>531</y>
+      <w>171</w>
+      <h>171</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+sms_group
+--
+_id_
+/type_id/
+name
+description
+priority
+is_bulk
+clng_pd_content_match_val
+clng_pd_content_match_type
+clng_pd_type_match_val
+clng_pd_type_match_type </panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>702</y>
+      <w>171</w>
+      <h>153</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;entity&gt;&gt;
+sms_type
+--
+_id_
+name
+description
+expires_in
+clng_pd_content_match_val
+clng_pd_content_match_type
+clng_pd_type_match_val
+clng_pd_type_match_type
+// expires_in if null means expired immediately</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
