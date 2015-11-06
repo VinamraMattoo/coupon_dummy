@@ -1,0 +1,40 @@
+{
+    "total": 500,
+    "rows":[
+    {
+        "id": 1,
+        "type": "Service",
+        "name": "b1"
+    },
+    {
+        "id": 2,
+        "type": "Service",
+        "name": "p2"
+    },
+    {
+        "id": 3,
+        "type": "Package",
+        "name": "p3"
+    },
+    {
+        "id": 4,
+        "type": "Service",
+        "name": "p4"
+    },
+    {
+        "id": 5,
+        "type": "package",
+        "name": "p5"
+    },
+    {
+        "id": 6,
+        "type": "package",
+        "name": "p6"
+    },
+    {
+        "id": 7,
+        "type": "Service",
+        "name": "p7"
+    }
+]
+}

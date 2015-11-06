@@ -1,0 +1,99 @@
+<form class="form-horizontal" role="form">
+
+    <div id="edit_coupon">
+        <br> <br> <br> <br> <br> <br>
+
+        <h1 class="text-center">
+            <strong> EDIT COUPON </strong>
+        </h1>
+        <br/>
+
+        <div class="row">
+            <div class="col-md-4 col-md-offset-1">
+
+                <div class="form-group">
+                    <label for="edit_name">Coupon Name</label> <input
+                        class="form-control" type="text" id="edit_name"/>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="edit_type">Coupon Type</label> <select
+                        class="form-control" id="edit_type">
+                    <option selected disabled>Select type</option>
+                    <option>Customer</option>
+                    <option>Employee</option>
+                </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit_applicableFrom">Applicable From</label> <input
+                        class="form-control date" type="date" type="time" id="edit_applicableFrom"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit_applicableTill">Applicable Till</label> <input
+                        class="form-control date" type="date" id="edit_applicableTill"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit_transactionMaxVal">Transaction Max
+                        Value</label> <input class="form-control" type="number"
+                                             id="edit_transactionMaxVal"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit_transactionMinVal">Transaction Min
+                        Value</label> <input class="form-control" type="number"
+                                             id="edit_transactionMinVal"/>
+                </div>
+            </div>
+            <div class="col-md-4 col-md-offset-2">
+                <div class="form-group">
+                    <label for="edit_description">Description</label>
+                    <textarea class="form-control" rows="5" id="edit_description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit_inclusive">Inclusive?</label>
+                    <input type="checkbox" name="inclusive" id="edit_inclusive">
+
+                </div>
+
+                <div class="form-group">
+                    <label for="edit_channelName">Channel name</label> <select
+                        class="form-control" id="edit_channelName">
+                    <option selected disabled>Select Channel</option>
+                    <option>Facebook</option>
+                    <option>Andriod app</option>
+                    <option>Mail</option>
+                </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit_applicationType">Application type</label> <select
+                        class="form-control" id="edit_applicationType">
+                    <option selected disabled>Select App Type</option>
+                    <option>FIRST_TIME</option>
+                    <option>ONE_TIME</option>
+                    <option>ONE_TIME_PER_USER</option>
+                    <option>ONE_TIME_PER_USER_FIFO</option>
+                    <option>MANY_TIMES</option>
+
+                </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit_applicableUseCount">Application Use Count</label> <input
+                        class="form-control" type="number" id="edit_applicableUseCount"
+                        value="transValMax"/>
+                </div>
+            </div>
+        </div>
+
+        <button id="edit_submit_creation" onclick="edit_coupon_submit()" type="button"
+                class="btn btn-success pull-right">Save Changes
+        </button>
+
+    </div>
+</form>

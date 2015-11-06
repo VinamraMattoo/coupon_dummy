@@ -1,0 +1,75 @@
+{
+    "total": 30,
+    "rows": [
+        {
+            "id": 1,
+            "couponId": 1,
+            "code": "ABCD",
+            "createdOn": 1446464625,
+            "createdBy": 1,
+            "deactivatedOn": 1446464625,
+            "deactivatedBy": 1,
+            "channelName": "The Hindu"
+        },
+        {
+            "id": 1,
+            "couponId": 1,
+            "code": "ABCD",
+            "createdOn": 1446464625,
+            "createdBy": 1,
+            "deactivatedOn": 1446464625,
+            "deactivatedBy": 1,
+            "channelName": "The Hindu"
+        },
+        {
+            "id": 1,
+            "couponId": 1,
+            "code": "ABCD",
+            "createdOn": 1446464625,
+            "createdBy": 1,
+            "deactivatedOn": 1446464625,
+            "deactivatedBy": 1,
+            "channelName": "The Hindu"
+        },
+        {
+            "id": 1,
+            "couponId": 1,
+            "code": "ABCD",
+            "createdOn": 1446464625,
+            "createdBy": 1,
+            "deactivatedOn": 1446464625,
+            "deactivatedBy": 1,
+            "channelName": "The Hindu"
+        },
+        {
+            "id": 1,
+            "couponId": 1,
+            "code": "ABCD",
+            "createdOn": 1446464625,
+            "createdBy": 1,
+            "deactivatedOn": 1446464625,
+            "deactivatedBy": 1,
+            "channelName": "The Hindu"
+        },
+        {
+            "id": 1,
+            "couponId": 1,
+            "code": "ABCD",
+            "createdOn": 1446464625,
+            "createdBy": 1,
+            "deactivatedOn": 1446464625,
+            "deactivatedBy": 1,
+            "channelName": "The Hindu"
+        },
+        {
+            "id": 2,
+            "couponId": 1,
+            "code": "EFGH",
+            "createdOn": 1446464625,
+            "createdBy": 1,
+            "deactivatedOn": 1446464625,
+            "deactivatedBy": 1,
+            "channelName": "The Hindu"
+        }
+    ]
+}
