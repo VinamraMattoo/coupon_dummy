@@ -11,6 +11,11 @@
             });
             console.log(checkedMapping);
         });
+$("#mappingTable").on('check-all.bs.table',function(rows){
+    alert(JSON.stringify(rows));
+})
+
+
 
         $('#mappingTable').on('uncheck.bs.table', function (e, row) {
             $.each(checkedMapping, function (index, value) {

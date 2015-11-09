@@ -1,6 +1,6 @@
 <div>
     <br><br>
-    <br><br>
+
     <h2>Coupon details
         <button onclick="showEdit()" style="display:none;" id="editCpn"  type="button" class="btn btn-info pull-right">Edit</button>
         <button onclick="showDelete()" style="display:none;" id="deleteCpn"  type="button" class="btn btn-danger pull-right">Delete</button>

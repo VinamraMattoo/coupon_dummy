@@ -19,7 +19,7 @@
 </script>
 
 <div class="container">
-    <br> <br> <br> <br>
+    <br> <br>
 
     <h1 class="text-center" style="width: 750px;">Create Coupon</h1>
     <br>
@@ -95,15 +95,17 @@
                     <div class="form-group">
                         <label for="inclusive">Inclusive?</label> <input
                             type="checkbox" name="inclusive" id="inclusive">
-                        <label for="nthtime">nth time?</label> <input
-                            type="checkbox" name="nthtime" id="nthtime">
+
+
+                        <label for="nthTimeReccuring">nth time recurring?</label> <input
+                            type="checkbox" name="nthtime" id="nthTimeReccuring">
 
                     </div>
 
                     <div class="form-group">
-                        <label for="nthTimeReccuring">Recurring interval</label>
+                        <label for="nthTime">nth time </label>
                         <input class="form-control" type="number"
-                               id="nthTimeReccuring"/>
+                               id="nthTime"/>
                     </div>
 
                     <div class="form-group">

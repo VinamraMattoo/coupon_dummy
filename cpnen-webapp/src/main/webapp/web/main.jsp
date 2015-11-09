@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link
-            href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css"
-            rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css">
     <link rel="stylesheet"
           href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.0/bootstrap-table.css">
 
@@ -24,24 +23,24 @@
 
     <script src="./js/moment.js"></script>
     <script src="./js/bootstrap-datetimepicker.min.js"></script>
-<%--<link
-            href="./plugin/bootstrap.css"
-            rel="stylesheet">
-    <link rel="stylesheet"
-          href="./plugin/bootstrap-table.css">
+    <%--<link
+                href="./plugin/bootstrap.css"
+                rel="stylesheet">
+        <link rel="stylesheet"
+              href="./plugin/bootstrap-table.css">
 
-    <link rel="stylesheet"
-          href="./plugin/bootstrap-theme.css">
+        <link rel="stylesheet"
+              href="./plugin/bootstrap-theme.css">
 
-    <link rel="stylesheet" href="./css/side-nav.css">
-    <script src="./plugin/jquery-1.10.js"></script>
-    <script
-            src="./plugin/bootstrap.js"></script>
+        <link rel="stylesheet" href="./css/side-nav.css">
+        <script src="./plugin/jquery-1.10.js"></script>
+        <script
+                src="./plugin/bootstrap.js"></script>
 
-    <script
-            src="./plugin/bootstrap-table.js"></script>
-    <script
-            src="./plugin/locale-bootstrap-table-en-us.js"></script>--%>
+        <script
+                src="./plugin/bootstrap-table.js"></script>
+        <script
+                src="./plugin/locale-bootstrap-table-en-us.js"></script>--%>
     <style>
         body {
             overflow-x: hidden;
@@ -51,7 +50,8 @@
 <body>
 <nav class="navbar navbar-fixed-top" role="navigation"
      style="background-color: #3fc1be">
-    <div class="navbar-header">    <link rel="stylesheet" href="./css/bootstrap-datetimepicker.min.css">
+    <div class="navbar-header">
+        <link rel="stylesheet" href="./css/bootstrap-datetimepicker.min.css">
         <button type="button" class="navbar-toggle" data-toggle="collapse"
                 data-target=".navbar-ex1-collapse">
             <span class="sr-only">Toggle navigation</span> <span
@@ -116,83 +116,39 @@
 </nav>
 
 <br><br><br><br>
-<%--
-<table  style="padding-left:250px"
-        id="dummyTable"
-       data-toggle="table"
-       data-url="./code.txt"
-       data-pagination="true"
-       data-side-pagination="server"
-       data-page-list="[1, 5, 10, 100, ALL]"
-       data-height="400">
-    <thead>
-    <tr>
-        <th data-field="id">id</th>
-        <th data-field="couponId">c_id</th>
-        <th data-field="code">code</th>
-        <th data-field="createdOn">created on</th>
-        <th data-field="createdBy">created by</th>
-        <th data-field="deactivatedOn">deactivated on</th>
-        <th data-field="deactivatedBy">deactivated by</th>
-        <th data-field="channelName">channel name</th>
-        <th data-field="operate" data-formatter="codeOptionsFormatter" data-events="codeOptionsEvents">Item Operate</th>
-    </tr>
-    </thead>
-</table>
-<button style="padding-left: 300px" id="testbtn" class="btn btn-success btn-lg">click me</button>
-<script>
-    $(document).ready(function(){
-    $("#testbtn").click(function(){
-        $("#dummyTable").bootstrapTable('removeAll');
-    });
-    });
-</script>
 
---%>
-
-<%--
-<div  style="padding-left:300px;padding-top: 150px">
-<button id="dummyCouponCodeCreate" class="btn btn-danger">couponCode create</button>
-</div>
-<script>
-    $("#dummyCouponCodeCreate").click(function(){
-    $("#dummyCouponCodeCreate").hide();
-    $("#createCode").load("./couponCodeCreate.jsp");
-    });
-</script>
---%>
-
-  <div id="page-wrapper" style="padding-left: 200px">
+<div id="page-wrapper" style="padding-left: 200px">
     <div class="row">
         <div class="col-md-8 col-md-offset-1">
+            <br><br>
 
-      <div id="createCoupon" hidden></div>
+            <div id="statusBar"></div>
+            <div id="createCoupon" hidden></div>
 
             <div id="showCoupons" hidden></div>
             <div id="listCouponCodes" hidden></div>
 
-    <div id="viewCreatedCoupon" hidden>
-        <br><br><br><br>
-    </div>
+            <div id="viewCreatedCoupon" hidden>
+                <br><br>
+            </div>
 
-    <div id="editCoupon" hidden>
+            <div id="editCoupon" hidden>
 
-    </div>
+            </div>
 
-    <div id="statusInfo">
-        <br>
-        <br>
-        <br><br>
+            <div id="statusInfo">
 
-        <h2>
-            <div id="infoPageId">
+                <br><br>
+
                 <h2>
-                    Hi. Welcome to coupon management website.
+                    <div id="infoPageId">
+                        <h2>
+                            Hi. Welcome to coupon management website.
+                        </h2>
+                    </div>
                 </h2>
             </div>
-        </h2>
-    </div>
-    <div id="createCode" hidden ></div>
+            <div id="createCode" hidden></div>
         </div>
     </div>
 
@@ -200,37 +156,38 @@
 </div>
 
 
-
 <script src="js/divManipulation.js"></script>
 <script src="./js/extract_create_json.js"></script>
 <script src="./js/extract_edit_json.js"></script>
 <script src="./js/external_div.js"></script>
 <script src="./js/listCouponTable.js"></script>
+<script src="./js/validateCreate.js"></script>
 
 <script>
-    $(document).ready(function(){
-        $.get("create.jsp", function(data) {
+    $(document).ready(function () {
+        $.get("create.jsp", function (data) {
             $("#createCoupon").append(data);
-            $.get("mapping.jsp", function(data) {
+            $.get("mapping.jsp", function (data) {
                 $("#couponMapping").append(data);
             });
         });
-        $.get("listCoupon.jsp", function(data) {
+        $.get("listCoupon.jsp", function (data) {
             $("#showCoupons").append(data);
         });
-        $.get("listCouponCode.jsp", function(data) {
+        $.get("listCouponCode.jsp", function (data) {
             $("#listCouponCodes").append(data);
         });
 
 
-            });
+    });
     function hideOthers(id) {
-        var arr = ["createCoupon", "showCoupons", "listCouponCodes", "viewCreatedCoupon", "statusInfo", "editCoupon","createCode"];
+        var arr = ["createCoupon", "showCoupons", "listCouponCodes", "viewCreatedCoupon", "statusInfo", "editCoupon", "createCode"];
         for (var i = 0; i < arr.length; i++) {
             if (i == id) {
                 $("#" + arr[i]).show();
                 continue;
             }
+            $("#statusBar").empty();
             $("#" + arr[i]).hide();
         }
     }
@@ -245,7 +202,7 @@
         }
     }
     function showOthers(id) {
-        var arr = [ "couponAttributes", "couponMapping", "couponRules" ];
+        var arr = ["couponAttributes", "couponMapping", "couponRules"];
         for (var i = 0; i < arr.length; i++) {
             if (i == id) {
                 $("#" + arr[i]).show();
@@ -256,7 +213,7 @@
     }
 
     function showOthers(id) {
-        var arr = [ "couponAttributes", "couponMapping", "couponRules" ];
+        var arr = ["couponAttributes", "couponMapping", "couponRules"];
         for (var i = 0; i < arr.length; i++) {
             if (i == id) {
                 $("#" + arr[i]).show();

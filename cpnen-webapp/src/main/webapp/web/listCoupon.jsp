@@ -7,7 +7,7 @@
         src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/locale/bootstrap-table-en-US.js"></script>
 
 
-<br><br><br><br>
+<br><br>
 <h1 align="center"><code>Coupon listings</code></h1>
 
 <div class="col-md-9" style="width: 950px;">

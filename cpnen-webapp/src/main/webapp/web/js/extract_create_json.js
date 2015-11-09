@@ -1,44 +1,42 @@
 function create_coupon_submit() {
 
+    var JsonData;
     var data = $("#createCoupon").map(function () {
 
 
-        var JsonData = {
-            "coupon": {
+        JsonData = {
 
-                name: $("#name").val(),
+            name: $("#name").val(),
 
-                description: $("#description").val(),
+            description: $("#description").val(),
 
-                inclusive: $("#inclusive").is(':checked'),
+            inclusive: $("#inclusive").is(':checked'),
 
-                applicationType: $("#applicationType").val(),
+            applicationType: $("#applicationType").val(),
 
-                actorType: $("actorType").val(),
+            actorType: $("actorType").val(),
 
-                contextType: $("contextType").val(),
+            contextType: $("contextType").val(),
 
-                applicableFrom: $("#applicableFrom").val(),
+            applicableFrom: $("#applicableFrom").val(),
 
-                applicableTill: $("#applicableTill").val(),
+            applicableTill: $("#applicableTill").val(),
 
-                applicableUseCount: $("#applicableUseCount").val(),
+            applicableUseCount: $("#applicableUseCount").val(),
 
-                transactionValMin: $("#transactionValMin").val(),
+            transactionValMin: $("#transactionValMin").val(),
 
-                transactionValMax: $("#transactionValMax").val(),
+            transactionValMax: $("#transactionValMax").val(),
 
-                discountAmountMin: $("#discountAmountMin").val(),
+            discountAmountMin: $("#discountAmountMin").val(),
 
-                discountAmountMax: $("#discountAmountMax").val(),
+            discountAmountMax: $("#discountAmountMax").val(),
 
-                "global": $("#global").is(':checked'),
+            "global": $("#global").is(':checked'),
 
-                "nthTime": $("#nthTime").is(':checked'),
+            "nthTime": $("#nthTime").val(),
 
-                "nthTimeReccuring": $("#nthTimeReccuring").val()
-
-            },
+            "nthTimeReccuring": $("#nthTimeReccuring").is(':checked'),
 
             "productMapping": getMappings(),
 
@@ -62,6 +60,15 @@ function create_coupon_submit() {
 
     alert(JSON.stringify(data[0]));
 
+
+    if ($("#publish").is(':checked')) {
+        var status = validateOnPublish(JsonData);
+        alert("comin" + status);
+        if (status == "true") {
+            return;
+        }
+        $("#statusBar").empty();
+    }
     $.ajax({
 
         type: "POST",
@@ -286,47 +293,47 @@ function populateEdit(response) {
                             break;
 
                         case "nthTime" :
-                            $("#edit_nthTime").prop('checked', arr[key]);
+                            $("#edit_nthTime").val(arr[key]);
                             break;
 
 
                         case "nthTimeReccuring" :
-                            $("#edit_nthTimeReccuring").val(arr[key]);
+                            $("#edit_nthTimeReccuring").prop('checked', arr[key]);
                             break;
                     }
                 }
                 break;
 
             case "rule" :
-                for (var key in arr) {
-                    switch (key) {
+                for (var value in arr) {
+                    switch (value) {
                         case "ruleType" :
-                            $("#edit_ruleType").val(arr[key]);
+                            $("#edit_ruleType").val(arr[value]);
                             break;
 
                         case "discountPercentage" :
-                            $("#edit_discountPercentage").val(arr[key]);
+                            $("#edit_discountPercentage").val(arr[value]);
                             break;
 
                         case "discountFlatAmount" :
-                            $("#edit_discountFlatAmount").val(arr[key]);
+                            $("#edit_discountFlatAmount").val(arr[value]);
                             break;
 
                         case "description" :
-                            $("#edit_ruleDesc").val(arr[key]);
+                            $("#edit_ruleDesc").val(arr[value]);
                             break;
                     }
 
                 }
                 break;
             case "productMapping" :
-                for (var key in arr) {
-                    if(key=="productId") var prodId=arr[key];
+                for (var val in arr) {
+                    if (val == "productId") var prodId = arr[val];
                 }
                 break;
             case "brandMapping" :
-                for (var key in arr) {
-                    if(key=="brandId") var brandId=arr[key];
+                for (var va in arr) {
+                    if (va == "brandId") var brandId = arr[va];
                 }
 
                 break;
