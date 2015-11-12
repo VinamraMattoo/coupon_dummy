@@ -69,3 +69,44 @@ function populateValues(couponId) {
     });
 
 }
+
+
+function populateView(response, id) {
+    couponId = id;
+    var tags = "";
+    for (var key in response) {
+
+        tags += "<tr><td>" + key + " </td><td>" + response[key] + "</td></tr>";
+        if (key == "publishedOn") {
+            checkStatusVal(response[key]);
+        }
+        if (key == "deactivatedOn") {
+            checkForDeactivation(response[key]);
+        }
+
+
+        /*   for (var key2 in key) {
+         tags += "<tr><td>" + key2 + " </td><td>" + key[key2] + "</td></tr>";
+         if (key2 == "publishedOn") {
+         checkStatusVal([key2]);
+         }
+         }*/
+
+
+    }
+
+    $('#viewCurrentCoupon').append(tags);
+
+
+}
+//should write code from here
+function onDeactivationClick() {
+    confirm("Do you really want to deactivate?");
+}
+
+function onDeleteClick() {
+    confirm("Do you really want to delete?");
+}
+function onGenerateCodeClick() {
+    confirm("showing couponcodes");
+}

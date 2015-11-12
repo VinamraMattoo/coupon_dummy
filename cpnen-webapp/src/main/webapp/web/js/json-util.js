@@ -1,3 +1,11 @@
+//this js file controls the  creation of json from create coupon page and edit coupon page
+
+/*====create coupon json function========
+ * the function takes data  from the  various input fields and creates a key value pair json structure
+ * for the checkbox is :checked is used to get a boolean value
+ *for date creation getMillSec function is called and value is converted to milliseconds and passed into the  json
+ */
+var couponId;
 function createCouponSubmit() {
 
     var data = $("#createCoupon").map(function () {
@@ -57,6 +65,7 @@ function createCouponSubmit() {
         };
         return JsonData;
     }).get();
+//check if status is published
 
     if (checkForPublish(data) == "true") {
         return;
@@ -65,10 +74,16 @@ function createCouponSubmit() {
         createCouponAjax(data);
     }
 }
+//function to convert the  given date data into milliseconds
 
 function getMillSec(date) {
     return moment(date).valueOf();
 }
+
+/* ============ edit coupon json function ==============
+ * function creates the  json data for the  edit coupon forms
+ * similar functioality as create coupon json function
+ */
 
 function edit_coupon_submit() {
 

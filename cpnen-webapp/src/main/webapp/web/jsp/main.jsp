@@ -141,7 +141,6 @@
 
 
 
-<script src="../js/extract_create_json.js"></script>
 
 <script src="../js/listCouponTable.js"></script>
 
