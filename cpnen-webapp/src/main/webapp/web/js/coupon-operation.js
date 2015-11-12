@@ -1,3 +1,11 @@
+//  all ajax calls are handled in this  js  file
+
+
+/* ========= create coupon ajax function ===========
+ *  ajax call to server with the  create  json data and hits  the  particular  url
+ */
+
+
 function createCouponAjax(inputJson) {
     $.ajax({
 
@@ -14,6 +22,9 @@ function createCouponAjax(inputJson) {
         }
     });
 }
+/* ========= edit coupon ajax function ===========
+ *  ajax call to server with the  edit json data and hits  the  particular  url
+ */
 
 function editCouponAjax(editJson) {
     $.ajax({
@@ -31,6 +42,10 @@ function editCouponAjax(editJson) {
     });
 
 }
+/* ========= get coupon details ajax function ===========
+ *  ajax call to server with the  get coupon details json data and hits  the  particular  url
+ *  for showing veiw coupon page
+ */
 
 function getCouponDetails(couponId, flag) {
 
@@ -52,25 +67,6 @@ function getCouponDetails(couponId, flag) {
 }
 
 
-function populateValues(couponId) {
-
-    $.ajax({
-
-        type: "GET",
-        url: "/cpnen/web/rws/coupon/" + couponId,
-
-        success: function (data) {
-
-            populateView(data, cpnId);
-        },
-        failure: function (errMsg) {
-            alert(errMsg);
-        }
-    });
-
-}
-
-
 function populateView(response, id) {
     couponId = id;
     var tags = "";
@@ -83,23 +79,13 @@ function populateView(response, id) {
         if (key == "deactivatedOn") {
             checkForDeactivation(response[key]);
         }
-
-
-        /*   for (var key2 in key) {
-         tags += "<tr><td>" + key2 + " </td><td>" + key[key2] + "</td></tr>";
-         if (key2 == "publishedOn") {
-         checkStatusVal([key2]);
-         }
-         }*/
-
-
     }
 
     $('#viewCurrentCoupon').append(tags);
 
 
 }
-//should write code from here
+//======================================  INCOMPLETE CODES  =======================================
 function onDeactivationClick() {
     confirm("Do you really want to deactivate?");
 }

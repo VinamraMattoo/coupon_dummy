@@ -139,9 +139,6 @@
 
 </div>
 
-
-
-
 <script src="../js/listCouponTable.js"></script>
 
 <script src="../js/json-util.js"></script>
@@ -156,52 +153,5 @@
 
 <script src="../js/datatip.js"></script>
 
-
-<script>
-
-    function hideOthers(id) {
-        var arr = ["createCoupon", "showCoupons", "listCouponCodes", "viewCreatedCoupon", "statusInfo", "editCoupon", "createCode"];
-        for (var i = 0; i < arr.length; i++) {
-            if (i == id) {
-                $("#" + arr[i]).show();
-                continue;
-            }
-            $("#statusBar").empty();
-            $("#" + arr[i]).hide();
-        }
-    }
-    function editOthers(id) {
-        var arr = ["edit_couponAttributes", "edit_couponMapping", "edit_couponRules"];
-        for (var i = 0; i < arr.length; i++) {
-            if (i == id) {
-                $("#" + arr[i]).show();
-                continue;
-            }
-            $("#" + arr[i]).hide();
-        }
-    }
-    function showOthers(id) {
-        var arr = ["couponAttributes", "couponMapping", "couponRules"];
-        for (var i = 0; i < arr.length; i++) {
-            if (i == id) {
-                $("#" + arr[i]).show();
-                continue;
-            }
-            $("#" + arr[i]).hide();
-        }
-    }
-
-
-    function checkDicountType() {
-        var choice = $("#ruleType").val();
-        if (choice == "FLAT") {
-            $("#percent").prop("disabled", true);
-            $("#flatAmount").prop("disabled", false);
-        } else {
-            $("#flatAmount").prop("disabled", true);
-            $("#percent").prop("disabled", false);
-        }
-    }
-</script>
 </body>
 </html>

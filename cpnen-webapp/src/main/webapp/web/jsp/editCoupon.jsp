@@ -1,23 +1,3 @@
-<script>
-    $(document).ready(function () {
-        $('#edit_applicableFrom').datetimepicker({
-            format: 'YYYY-MM-DDHH:mm:ss'
-        });
-
-        $('#edit_applicableTill').datetimepicker({
-            useCurrent: false,
-            format: 'YYYY-MM-DDHH:mm:ss'
-        });
-        $("#edit_applicableFrom").on("dp.change", function (e) {
-            $('#edit_applicableTill').data("DateTimePicker").minDate(e.date);
-        });
-        $("#edit_applicableTill").on("dp.change", function (e) {
-            $('#edit_applicableFrom').data("DateTimePicker").maxDate(e.date);
-        });
-
-    });
-</script>
-
 <div class="container">
     <br> <br>
 
@@ -171,7 +151,7 @@
 
                 <div class="form-group">
                     <label for="edit_ruleType">RULE TYPE</label> <select
-                        onchange="checkDicountType()" class="form-control"
+                        onchange="checkDicountType('edit')" class="form-control"
                         id="edit_ruleType">
 
                     <option>PERCENT</option>

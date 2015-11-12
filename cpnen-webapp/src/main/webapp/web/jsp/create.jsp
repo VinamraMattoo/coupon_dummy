@@ -1,23 +1,3 @@
-<script>
-    $(document).ready(function () {
-        $('#applicableFrom').datetimepicker({
-            format: 'YYYY-MM-DDTHH:mm:ss'
-        });
-
-        $('#applicableTill').datetimepicker({
-            useCurrent: false,
-            format: 'YYYY-MM-DDTHH:mm:ss'
-        });
-        $("#applicableFrom").on("dp.change", function (e) {
-            $('#applicableTill').data("DateTimePicker").minDate(e.date);
-        });
-        $("#applicableTill").on("dp.change", function (e) {
-            $('#applicableFrom').data("DateTimePicker").maxDate(e.date);
-        });
-
-    });
-</script>
-
 <div class="container">
     <br> <br>
 
@@ -172,7 +152,7 @@
 
                 <div class="form-group">
                     <label for="ruleType">RULE TYPE</label> <select
-                        onchange="checkDicountType()" class="form-control"
+                        onchange="checkDicountType('create')" class="form-control"
                         id="ruleType">
 
                     <option>PERCENTAGE</option>

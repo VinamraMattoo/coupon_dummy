@@ -1,6 +1,6 @@
 //this js file controls the  creation of json from create coupon page and edit coupon page
 
-/*====create coupon json function========
+/*=======create coupon json function=======
  * the function takes data  from the  various input fields and creates a key value pair json structure
  * for the checkbox is :checked is used to get a boolean value
  *for date creation getMillSec function is called and value is converted to milliseconds and passed into the  json
@@ -89,56 +89,62 @@ function edit_coupon_submit() {
 
     var data = $("#edit_coupon").map(function () {
         var JsonData = {
-            "coupon": {
 
-                name: $("#edit_name").val(),
 
-                applicableFrom: getMillSec($("#edit_applicableFrom").val()),
+            "name": $("#edit_name").val(),
 
-                applicableTill: getMillSec($("#edit_applicableTill").val()),
+            "description": $("#edit_description").val(),
 
-                transactionMaxVal: $("#edit_transactionMaxVal").val(),
+            "inclusive": $("#edit_inclusive").is(':checked'),
 
-                transactionMinVal: $("#edit_transactionMinVal").val(),
+            "applicationType": $("#edit_applicationType").val(),
 
-                maxDiscount: $("#edit_maxDiscount").val(),
+            "actorType": $("#edit_actorType").val(),
 
-                applicationType: $("#edit_applicationType").val(),
+            "contextType": $("#edit_contextType").val(),
 
-                applicationContext: $("#edit_applicationContext").val(),
+            "applicableFrom": getMillSec($("#edit_applicableFrom").val()),
 
-                description: $("#edit_description").val(),
+            "applicableTill": getMillSec($("#edit_applicableTill").val()),
 
-                inclusive: $("#edit_inclusive").is(':checked'),
+            "applicableUseCount": $("#edit_applicableUseCount").val(),
 
-                applicableUseCount: $("#edit_applicableUseCount").val(),
+            "transactionValMin": $("#edit_transactionValMin").val(),
 
-                couponType: $("#edit_type").val(),
+            "transactionValMax": $("#edit_transactionValMax").val(),
 
-                channelName: $("#edit_channelName").val()
-            },
+            "discountAmountMin": $("#edit_discountAmountMin").val(),
+
+            "discountAmountMax": $("#edit_discountAmountMax").val(),
+
             "global": $("#edit_global").is(':checked'),
 
-            "publish": $("#edit_publish").is(':checked'),
+            "nthTime": $("#edit_nthTime").val(),
 
-            //look into this
-            "mappings": getMappings(),
+            "published": $("#edit_publish").is(':checked'),
 
-            "rules": {
+            "nthTimeRecurring": $("#edit_nthTimeReccuring").is(':checked'),
 
-                ruleType: $("#edit_ruleType").val(),
+            //"productMapping": getMappings(),
 
-                percent: $("#edit_percent").val(),
+            // "brandMapping": getBrands(),
 
-                flatAmount: $("#edit_flatAmount").val(),
+            "discountRule": {
 
-                ruleDesc: $("#edit_ruleDesc").val()
-            },
-            //look into this also
-            "brands": getBrands()
+                "description": $("#edit_ruleDesc").val(),
+
+                "ruleType": $("#edit_ruleType").val(),
+
+                "discountFlatAmount": $("#edit_flatAmount").val(),
+
+                "discountPercentage": $("#edit_percent").val()
+
+            }
+
         };
         return JsonData;
     }).get();
+    alert(JSON.stringify(data[0]));
 
     if (checkForPublish(data) == "true") {
         return;

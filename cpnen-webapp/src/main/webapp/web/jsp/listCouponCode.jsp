@@ -1,4 +1,3 @@
-
 <link rel="stylesheet"
       href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.0/bootstrap-table.css">
 
@@ -44,31 +43,5 @@
   $('#serverTable').bootstrapTable('refresh',{url: './rws/coupon/'+  +'/codes'});
   });
 --%>
-<script>
-  function codeOptionsFormatter(value, row, index) {
-    return [
-
-      '  <a class="edit ml10" href="javascript:void(0)" title="deactivate">',
-      '<span title="deactivate"  class="glyphicon glyphicon-remove"></span>',
-      '</a>'
-    ].join('');
-  }
-
-  window.codeOptionsEvents = {
-    'click .like': function (value, row, index) {
-      alert('You click like icon, row: ' + JSON.stringify(index));
-      console.log(value, row, index);
-    },
-    'click .edit': function (value, row, index) {
-      alert('You click edit icon, row: ' + JSON.stringify(row));
-      console.log(value, row, index);
-    },
-    'click .remove': function (value, row, index) {
-      alert('You click remove icon, row: ' + JSON.stringify(row));
-      console.log(value, row, index);
-    }
-  };
-</script>
-
 
 </div>

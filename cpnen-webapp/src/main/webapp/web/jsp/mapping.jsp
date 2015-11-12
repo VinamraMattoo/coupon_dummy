@@ -1,79 +1,3 @@
-<script>
-    var checkedMapping = [];
-    var checkedBrands = [];
-    $(document).ready(function () {
-        $('#mappingTable').on('check.bs.table', function (e, row) {
-            var val = row.type;
-            checkedMapping.push({
-                productId: row.id,
-                name: row.name,
-                type: val.toUpperCase()
-            });
-            console.log(checkedMapping);
-        });
-        $("#mappingTable").on('check-all.bs.table', function (rows) {
-            document.write(JSON.stringify(rows));
-        });
-
-
-        $('#mappingTable').on('uncheck.bs.table', function (e, row) {
-            $.each(checkedMapping, function (index, value) {
-
-                if (value.id === row.id) {
-                    checkedMapping.splice(index, 1);
-                }
-            });
-            console.log(checkedMapping);
-        });
-
-
-        $("#brandTable").on('check.bs.table', function (e, row) {
-
-            checkedBrands.push({
-                brandId: row.id
-            });
-            console.log(checkedBrands);
-        });
-
-        $("#brandTable").on('uncheck.bs.table', function (e, row) {
-            $.each(checkedBrands, function (index, value) {
-                if (value.id === row.id) {
-                    checkedBrands.splice(index, 1);
-                }
-            });
-            console.log(checkedBrands);
-        });
-    });
-
-    function getBrands() {
-
-        var str = [];
-        if ($("#global").is(':checked') === false) {
-            $.each(checkedBrands, function (index, value) {
-
-                str.push(value);
-
-            });
-        }
-        return str;
-
-    }
-
-    function getMappings() {
-
-        var str1 = [];
-
-        if ($("#global").is(':checked') === false) {
-            $.each(checkedMapping, function (index, value) {
-
-                str1.push(value);
-
-            });
-        }
-        return str1;
-
-    }
-</script>
 <h1 align="center">Select the Mapping</h1>
 
 <div class="col-md-offset-1 col-md-5">
@@ -84,10 +8,10 @@
     <table disabled
            id="mappingTable"
            data-toggle="table"
-           data-url="temp.txt"
            data-search="true"
+           data-url="/cpnen/web/rws/products"
+           data-pagination="true"
            data-striped="true"
-                     data-page-list="[1, 5, 10, 100, ALL]"
            data-height="400">
         <thead>
         <tr>
@@ -99,7 +23,7 @@
         </thead>
     </table>
 </div>
-<script>
+<%--<script>
   var mapId,mapType,mapName;
   //get id function
   function getMappingId(value) {
@@ -121,9 +45,7 @@ function checkfun(value) {
 
     console.log(mapId+"+"+mapName+"+"+mapType);
 }
-</script>
-
-
+</script>--%>
 <%--//vertical row--%>
 <hr width="2" size="400">
 
@@ -133,9 +55,8 @@ function checkfun(value) {
     <table disabled
            id="brandTable"
            data-toggle="table"
-           data-url="temp1.txt"
-           data-side-pagination="server"
-           data-page-list="[1, 5, 10, 100, ALL]"
+           data-search="true"
+           data-url="/cpnen/web/rws/brands"
            data-height="400">
         <thead>
         <tr>

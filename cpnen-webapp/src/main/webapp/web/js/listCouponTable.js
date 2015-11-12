@@ -1,19 +1,16 @@
-
-
 //defining variables
 var c_id, status, description, createdBy, publishedOn, publishedBy, lastUpdatedOn, lastUpdatedBy, deactivatedOn, deactivatedBy;
 
 
 //coupon formatter js
-function idFormatter(value)
-{
+function idFormatter(value) {
     c_id = value;
     return value;
 }
 
 
 //from js  convert the epoch time to readable time format function
-function fromFormatter(value){
+function fromFormatter(value) {
     var utcSeconds = value;
     var d = new Date(utcSeconds); // The utcSeconds there is the key, which sets the date to the epoch
     d = d.toDateString();           // make the date  readable
@@ -21,15 +18,13 @@ function fromFormatter(value){
 
 }
 //till js  and conversion off epoch
-function tillFormatter(value){
+function tillFormatter(value) {
     var utcSeconds = value;
     var d = new Date(utcSeconds); // The utcSeconds there is the key, which sets the date to the epoch
     d = d.toDateString();          // make the date  readable
     return d;
 
 }
-
-
 
 
 //description js ==   storing the  description coming from the  json and saving it into the  description variable
@@ -100,39 +95,34 @@ function deactivatedByFormatter(value) {
 
 function brandFormatter(value) {
 
-    if(value.length == 1){
+    if (value.length == 1) {
         return value[0].name;
     }
 
     var brandNames = "";
-    for(var index = 0 ; index < value.length ; index++){
+    for (var index = 0; index < value.length; index++) {
         var eachBrandObj = value[index];
-        for(var key in eachBrandObj){
-            if(key == "name"){
-                brandNames += eachBrandObj[key] +"    ";
+        for (var key in eachBrandObj) {
+            if (key == "name") {
+                brandNames += eachBrandObj[key] + "    ";
             }
         }
     }
 
-    return '<a title="'+ brandNames +'"style="style:none;">'+value.length+'</a>';
+    return '<a title="' + brandNames + '"style="style:none;">' + value.length + '</a>';
 }
-
-
-
 
 
 //name js   display name of coupon with description as datatip
 function nameFormatter(value, row, index) {
-    return '<div ><a title="'+description+'" onclick="showCoupon('+c_id+')" href="#"><strong>' + value + '</strong></a></div>';
+    return '<div ><a title="' + description + '" onclick="showCoupon(' + c_id + ')" href="#"><strong>' + value + '</strong></a></div>';
 }
-
-
 
 
 //code js  display number of coupon codes and on click calling the  function openListing
 function codesFormatter(value, row, index) {
     if (value !== 0) {
-        return '<div title="click to view coupon codes listing"><a onclick="openListing('+c_id+')" href="#"><strong>' + value + '</strong></a></div>';
+        return '<div title="click to view coupon codes listing"><a onclick="openListing(' + c_id + ')" href="#"><strong>' + value + '</strong></a></div>';
     }
     else {
         return value;
@@ -147,12 +137,11 @@ function codesFormatter(value, row, index) {
  hideother()  function hides other divs and shows  the coupon codes listing div only
  */
 
-function openListing(id){
+function openListing(id) {
     $('#codeListTable').bootstrapTable('removeAll');
-    $('#codeListTable').bootstrapTable('refresh',{url: './rws/coupon/'+id+'/codes'});
+    $('#codeListTable').bootstrapTable('refresh', {url: './rws/coupon/' + id + '/codes'});
     hideOthers(2);
 }
-
 
 
 //status js
@@ -168,17 +157,14 @@ function openListing(id){
 
 
 function statusFormat() {
-    if(publishedOn == null)
-    {
+    if (publishedOn == null) {
         status = "draft";
     }
-    else if(deactivatedBy == null)
-    {
+    else if (deactivatedBy == null) {
         status = "published";
     }
-    else
-    {
-        status="deactivated";
+    else {
+        status = "deactivated";
     }
 
     if (status == "published") {
@@ -239,15 +225,16 @@ function operateFormatter(value, row, index) {
 
 window.operateEvents = {
     'click .like': function (e, value, row, index) {
-        alert('You click like icon, row: ' + JSON.stringify(index));
+        editCoupon(c_id);
         console.log(value, row, index);
     },
     'click .edit': function (e, value, row, index) {
-        alert('You click edit icon, row: ' + JSON.stringify(row));
+        alert("edit" + c_id);
+        //delete from here
         console.log(value, row, index);
     },
     'click .remove': function (e, value, row, index) {
-        alert('You click remove icon, row: ' + JSON.stringify(row));
+        alert("publish" + c_id);
         console.log(value, row, index);
     }
 };
