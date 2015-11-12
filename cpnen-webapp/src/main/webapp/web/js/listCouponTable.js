@@ -1,4 +1,9 @@
+
+
+//defining variables
 var c_id, status, description, createdBy, publishedOn, publishedBy, lastUpdatedOn, lastUpdatedBy, deactivatedOn, deactivatedBy;
+
+
 //coupon formatter js
 function idFormatter(value)
 {
@@ -7,19 +12,19 @@ function idFormatter(value)
 }
 
 
-//fromjs
+//from js  convert the epoch time to readable time format function
 function fromFormatter(value){
     var utcSeconds = value;
-    var d = new Date(utcSeconds); // The 0 there is the key, which sets the date to the epoch
-    d = d.toDateString();
+    var d = new Date(utcSeconds); // The utcSeconds there is the key, which sets the date to the epoch
+    d = d.toDateString();           // make the date  readable
     return d;
 
 }
-//till js
+//till js  and conversion off epoch
 function tillFormatter(value){
     var utcSeconds = value;
-    var d = new Date(utcSeconds); // The 0 there is the key, which sets the date to the epoch
-    d = d.toDateString();
+    var d = new Date(utcSeconds); // The utcSeconds there is the key, which sets the date to the epoch
+    d = d.toDateString();          // make the date  readable
     return d;
 
 }
@@ -27,63 +32,72 @@ function tillFormatter(value){
 
 
 
-//description js
+//description js ==   storing the  description coming from the  json and saving it into the  description variable
 function descriptionFormatter(value, row, index) {
     description = value;
     return [value];
 }
 
-//createdBy js
+//createdBy js storing the  createdby coming from the  json and saving it into the  createdby variable
 function createdByFormatter(value) {
     createdBy = value;
     return value;
 }
 
-//createdOn js
+//createdOn js the tooltip takes data from createdy variable and  is shown on mouse hover
 function createdFormatter(value) {
     var utcSeconds = value;
-    var d = new Date(utcSeconds); // The 0 there is the key, which sets the date to the epoch
+    var d = new Date(utcSeconds); // The utcSeconds there is the key, which sets the date to the epoch
     d = d.toDateString();
     return '<a title=" created by : ' + createdBy + '" style="color:purple">' + d + '</a>';
 
 }
 
-//publishedOn js
+//publishedOn js  saving the  data  in publishedon variable
 function publishedOnFormatter(value) {
     publishedOn = value;
     return value;
 }
 
-//publishedBy js
+//publishedBy js    saving the data  in the  published by variable
 function publishedByFormatter(value) {
     publishedBy = value;
     return value;
 }
 
-//updatedOn js
+//updatedOn js saving the data  in createdon variable
 function updatedOnFormatter(value) {
     lastUpdatedOn = value;
     return value;
 }
 
-//updatedBy js
+//updatedBy js  saving he data  in updatedon variable
 function updatedByFormatter(value) {
     lastUpdatedBy = value;
     return value;
 }
 
-//deactivatedOn js
+//deactivatedOn js saving the data in deactivatedon variable
 function deactivatedOnFormatter(value) {
     deactivatedOn = value;
     return value;
 
 }
-//deactivatedBy js
+//deactivatedBy js saving the data in deractivatedby variable
 function deactivatedByFormatter(value) {
     deactivatedBy = value;
     return value;
 }
 // brandFormatter js
+/*
+ ===========brand display function=========
+
+ checks if the length is 1 then display the name else go in a loop and check each element in the array
+ eachBrandObj variable is user to get the  array element as whole i.e. value[0], value[1] ...etc
+ brandNames variable then using another for loop searches  for the  key "name" and takes the value
+ by using eachBrandObj[key] and saves + appends it to the brandNames Variable
+ */
+
 function brandFormatter(value) {
 
     if(value.length == 1){
@@ -103,12 +117,19 @@ function brandFormatter(value) {
     return '<a title="'+ brandNames +'"style="style:none;">'+value.length+'</a>';
 }
 
-//name js
+
+
+
+
+//name js   display name of coupon with description as datatip
 function nameFormatter(value, row, index) {
     return '<div ><a title="'+description+'" onclick="showCoupon('+c_id+')" href="#"><strong>' + value + '</strong></a></div>';
 }
 
-//code js
+
+
+
+//code js  display number of coupon codes and on click calling the  function openListing
 function codesFormatter(value, row, index) {
     if (value !== 0) {
         return '<div title="click to view coupon codes listing"><a onclick="openListing('+c_id+')" href="#"><strong>' + value + '</strong></a></div>';
@@ -117,7 +138,15 @@ function codesFormatter(value, row, index) {
         return value;
     }
 }
-//open coupon listing
+//open coupon listing   function called on clicking the  codes number
+/*
+ =====bootstrap table refresh function====
+ .bootstrapTable  removeAll  clears the table
+ the  refresh calls the  url as given and reloads the data which it gets  from the  json after hitting that  url
+ cause we are using rest API the id of the  coupon comes into the  url itself and  not as a query parameter
+ hideother()  function hides other divs and shows  the coupon codes listing div only
+ */
+
 function openListing(id){
     $('#codeListTable').bootstrapTable('removeAll');
     $('#codeListTable').bootstrapTable('refresh',{url: './rws/coupon/'+id+'/codes'});
@@ -127,6 +156,17 @@ function openListing(id){
 
 
 //status js
+/*
+ *function to format the status field of the table
+ *checks if  data has a publishedon value if false status = draft
+ *if true checks if there is a deactivatedby value if false then status is published
+ *else the status is deactivated
+ *
+ * based on if status is draft , published  or deactivated the icon particular to
+ * that is shown under the status  row
+ * */
+
+
 function statusFormat() {
     if(publishedOn == null)
     {
@@ -156,6 +196,14 @@ function statusFormat() {
 
 
 //options js
+
+/*  ===== the  options formatter function =====
+ *
+ *  according  to the  current row status the set of options change
+ *  eg if status  is deactivated there wont be any clickable options
+ *
+ */
+
 function operateFormatter(value, row, index) {
     if (status == "draft") {
         return [
@@ -185,6 +233,9 @@ function operateFormatter(value, row, index) {
     }
 
 }
+
+// events function that defines  how the  buttons shown in the table will act upon clicking
+
 
 window.operateEvents = {
     'click .like': function (e, value, row, index) {

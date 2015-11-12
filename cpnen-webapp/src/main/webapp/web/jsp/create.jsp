@@ -204,7 +204,7 @@
 
         </div>
     </div>
-    <%--    onchange="publishChanged()" add this to handle publish--%>
+
     <div>
         <input type="checkbox" style="margin-left: 300px;"
                id="publish"><label for="publish"> Publish</label>

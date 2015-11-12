@@ -32,7 +32,27 @@ function editCouponAjax(editJson) {
 
 }
 
-function getCouponDetails(couponId) {
+function getCouponDetails(couponId, flag) {
+
+    $.ajax({
+
+        type: "GET",
+        url: "/cpnen/web/rws/coupon/" + couponId,
+
+        success: function (data) {
+            if (flag == "edit")
+                populateEdit(data);
+            else
+                populateView(data, couponId);
+        },
+        failure: function (errMsg) {
+            showStatusMessage(errMsg, "errMsg");
+        }
+    });
+}
+
+
+function populateValues(couponId) {
 
     $.ajax({
 
@@ -41,10 +61,11 @@ function getCouponDetails(couponId) {
 
         success: function (data) {
 
-            populateEdit(data);
+            populateView(data, cpnId);
         },
         failure: function (errMsg) {
-            showStatusMessage(errMsg, "errMsg");
+            alert(errMsg);
         }
     });
+
 }

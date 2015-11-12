@@ -140,9 +140,8 @@
 </div>
 
 
-<script src="../js/divManipulation.js"></script>
+
 <script src="../js/extract_create_json.js"></script>
-<script src="../js/extract_edit_json.js"></script>
 
 <script src="../js/listCouponTable.js"></script>
 
@@ -152,25 +151,15 @@
 
 <script src="../js/coupon-operation.js"></script>
 
-<%--<script src="../js/>--%>
+<script src="../js/edit-util.js"></script>
+
+<script src="../js/infra.js"></script>
+
+<script src="../js/datatip.js"></script>
+
 
 <script>
-    $(document).ready(function () {
-        $.get("create.jsp", function (data) {
-            $("#createCoupon").append(data);
-            $.get("mapping.jsp", function (data) {
-                $("#couponMapping").append(data);
-            });
-        });
-        $.get("listCoupon.jsp", function (data) {
-            $("#showCoupons").append(data);
-        });
-        $.get("listCouponCode.jsp", function (data) {
-            $("#listCouponCodes").append(data);
-        });
 
-
-    });
     function hideOthers(id) {
         var arr = ["createCoupon", "showCoupons", "listCouponCodes", "viewCreatedCoupon", "statusInfo", "editCoupon", "createCode"];
         for (var i = 0; i < arr.length; i++) {
@@ -183,7 +172,7 @@
         }
     }
     function editOthers(id) {
-        var arr = ["editCouponAttributes", "editCouponMapping", "editCouponRules"];
+        var arr = ["edit_couponAttributes", "edit_couponMapping", "edit_couponRules"];
         for (var i = 0; i < arr.length; i++) {
             if (i == id) {
                 $("#" + arr[i]).show();
