@@ -1,3 +1,11 @@
+// validation of compulsory elements are done in this  js  file
+
+
+/* ========= check For Publish function ===========
+ *  checks whether publish is selected
+ */
+
+
 function checkForPublish(data) {
     if ($("#publish").is(':checked')) {
         var status = validateOnPublish(JSON.parse(data[0]));
@@ -12,7 +20,7 @@ function checkForPublish(data) {
     else
         return false;
 }
-
+/*function to switch through the JSON input to check whether any value is null*/
 function validateOnPublish(inputJson) {
 
     var flag = "false";

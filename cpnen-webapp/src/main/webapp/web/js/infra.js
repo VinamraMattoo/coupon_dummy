@@ -1,4 +1,12 @@
-//To show the coupon values just created
+//  all utility functions are handled in this  js  file
+
+
+/* ========= show coupon function ===========
+ * To show the coupon values just created for the coupon-id
+ */
+
+
+
 function showCoupon(Id) {
     hideOthers(3);
     $.get("./view_coupon.jsp", function (data) {
@@ -9,12 +17,16 @@ function showCoupon(Id) {
     return false;
 }
 
+/*function which is called when edit buttn is clicked
+*calls a generic editCoupon() function
+*/
 function onEditClick() {
     var id = couponId;
     editCoupon(id);
 }
 
-
+/*gets the editCoupon.jsp into the div
+and the mapping.jsp into the div*/
 function editCoupon(cid) {
     couponId=cid;
     hideOthers(5);
@@ -29,6 +41,7 @@ function editCoupon(cid) {
 
 
 }
+/*date time picker for calender input */
 function dateTimeInput() {
     $('#applicableFrom').datetimepicker({
         format: 'YYYY-MM-DDTHH:mm:ss'
@@ -47,14 +60,15 @@ function dateTimeInput() {
 
 }
 
+/*edit date time picker for calender input*/
 function editDateTimePicker() {
     $('#edit_applicableFrom').datetimepicker({
-        format: 'YYYY-MM-DDHH:mm:ss'
+        format: 'YYYY-MM-DDTHH:mm:ss'
     });
 
     $('#edit_applicableTill').datetimepicker({
         useCurrent: false,
-        format: 'YYYY-MM-DDHH:mm:ss'
+        format: 'YYYY-MM-DDTHH:mm:ss'
     });
     $("#edit_applicableFrom").on("dp.change", function (e) {
         $('#edit_applicableTill').data("DateTimePicker").minDate(e.date);
@@ -65,7 +79,7 @@ function editDateTimePicker() {
 
 }
 
-
+/*function gets create.jsp ,mapping.jsp,listCoupon.jsp and listCouponCodes.jsp into the divs */
 $(document).ready(function () {
     $.get("./create.jsp", function (data) {
 
@@ -86,7 +100,7 @@ $(document).ready(function () {
 
 });
 
-
+/*function shows messages in the main div and error messages*/
 function showStatusMessage(Id, eventType) {
 
     hideOthers(4);
@@ -104,7 +118,7 @@ function showStatusMessage(Id, eventType) {
     return false;
 }
 
-
+/*function to check value of the status field  */
 function checkStatusVal(status) {
 
     if (status == null) {
@@ -119,7 +133,7 @@ function checkStatusVal(status) {
 
     return;
 }
-
+/*function to check value of the deactivation field  */
 function checkForDeactivation(status) {
 
     if (status != null) {
@@ -135,6 +149,7 @@ function checkForDeactivation(status) {
 
 }
 
+/*eventHandler function is called when a check or uncheck event occurs*/
 var checkedMapping = [];
 var checkedBrands = [];
 function eventHandler() {
@@ -180,7 +195,7 @@ function eventHandler() {
         console.log(checkedBrands);
     });
 }
-
+/*returns the brands checked*/
 function getBrands() {
 
     var brands = [];
@@ -194,7 +209,7 @@ function getBrands() {
     return brands;
 
 }
-
+/*returns the mappings checked*/
 function getMappings() {
 
     var mappings = [];
@@ -209,17 +224,19 @@ function getMappings() {
     return mappings;
 
 }
+/*function hides all the other divs which are there  in the array*/
 function hideOthers(id) {
-    var arr = ["createCoupon", "showCoupons", "listCouponCodes", "viewCreatedCoupon", "statusInfo", "editCoupon", "createCode"];
-    for (var i = 0; i < arr.length; i++) {
+    var divArray = ["createCoupon", "showCoupons", "listCouponCodes", "viewCreatedCoupon", "statusInfo", "editCoupon", "createCode"];
+    for (var i = 0; i < divArray.length; i++) {
         if (i == id) {
-            $("#" + arr[i]).show();
+            $("#" + divArray[i]).show();
             continue;
         }
         $("#statusBar").empty();
-        $("#" + arr[i]).hide();
+        $("#" + divArray[i]).hide();
     }
 }
+/*function toggles div while editing coupon*/
 function editOthers(id) {
     var arr = ["edit_couponAttributes", "edit_couponMapping", "edit_couponRules"];
     for (var i = 0; i < arr.length; i++) {
@@ -230,6 +247,7 @@ function editOthers(id) {
         $("#" + arr[i]).hide();
     }
 }
+/*function toggles div while creating coupon*/
 function showOthers(id) {
     var arr = ["couponAttributes", "couponMapping", "couponRules"];
     for (var i = 0; i < arr.length; i++) {
@@ -241,7 +259,7 @@ function showOthers(id) {
     }
 }
 
-
+/*checks the type of discount selected while creating*/
 function checkDicountType(flag) {
     if (flag == 'create') {
         var createChoice = $("#ruleType").val();
@@ -264,7 +282,7 @@ function checkDicountType(flag) {
         }
     }
 }
-
+/*data formatter of listCouponCode.jsp to add a delete option*/
 function codeOptionsFormatter(value, row, index) {
     return [
 
@@ -277,7 +295,7 @@ function codeOptionsFormatter(value, row, index) {
 window.codeOptionsEvents = {
     'click .remove': function (value, row, index) {
         alert(c_id);
-        //call edit here
+        //call delete here
         console.log(value, row, index);
     }
 };
