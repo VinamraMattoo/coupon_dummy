@@ -3,18 +3,17 @@
     var checkedBrands = [];
     $(document).ready(function () {
         $('#mappingTable').on('check.bs.table', function (e, row) {
-
+            var val = row.type;
             checkedMapping.push({
-                id: row.id,
+                productId: row.id,
                 name: row.name,
-                type: row.type
+                type: val.toUpperCase()
             });
             console.log(checkedMapping);
         });
-$("#mappingTable").on('check-all.bs.table',function(rows){
-    alert(JSON.stringify(rows));
-})
-
+        $("#mappingTable").on('check-all.bs.table', function (rows) {
+            document.write(JSON.stringify(rows));
+        });
 
 
         $('#mappingTable').on('uncheck.bs.table', function (e, row) {
@@ -31,9 +30,7 @@ $("#mappingTable").on('check-all.bs.table',function(rows){
         $("#brandTable").on('check.bs.table', function (e, row) {
 
             checkedBrands.push({
-                id: row.id,
-                name: row.name,
-                type: row.type
+                brandId: row.id
             });
             console.log(checkedBrands);
         });
@@ -80,7 +77,7 @@ $("#mappingTable").on('check-all.bs.table',function(rows){
 <h1 align="center">Select the Mapping</h1>
 
 <div class="col-md-offset-1 col-md-5">
-    <div style="border:solid;width:70px"><input type="checkbox" ><span> Global</span></div>
+    <div style="border:solid;width:70px"><input type="checkbox"><span> Global</span></div>
 
     <br>
     <hr>
@@ -88,21 +85,44 @@ $("#mappingTable").on('check-all.bs.table',function(rows){
            id="mappingTable"
            data-toggle="table"
            data-url="temp.txt"
-           data-pagination="true"
+           data-search="true"
            data-striped="true"
-           data-side-pagination="server"
-           data-page-list="[1, 5, 10, 100, ALL]"
+                     data-page-list="[1, 5, 10, 100, ALL]"
            data-height="400">
         <thead>
         <tr>
-            <th data-field="state" data-checkbox="true"></th>
-            <th class="hidden" data-field="id">Id</th>
-            <th data-field="type">Type</th>
-            <th data-field="name">Name</th>
+            <th data-field="state" data-formatter="checkfun" data-checkbox="true"></th>
+            <th class="hidden" data-formatter="getMappingId" data-field="id">Id</th>
+            <th data-formatter="getMappingType"  data-field="type">Type</th>
+            <th data-formatter="getMappingName" data-field="name">Name</th>
         </tr>
         </thead>
     </table>
 </div>
+<script>
+  var mapId,mapType,mapName;
+  //get id function
+  function getMappingId(value) {
+      mapId=value;
+      return value;
+  }
+  //get type  function
+  function getMappingType(value) {
+      mapType = value;
+      return value;
+  }
+  //get name function
+  function getMappingName(value) {
+      mapName = value;
+      return value;
+  }
+ //checkbox funtion
+function checkfun(value) {
+
+    console.log(mapId+"+"+mapName+"+"+mapType);
+}
+</script>
+
 
 <%--//vertical row--%>
 <hr width="2" size="400">

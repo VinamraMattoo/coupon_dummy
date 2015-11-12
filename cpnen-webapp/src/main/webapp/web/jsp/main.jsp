@@ -9,8 +9,10 @@
 
     <link rel="stylesheet"
           href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap-theme.css">
-    <link href="./css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" href="./css/side-nav.css">
+
+    <link href="../css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="../css/side-nav.css">
+
     <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
     <script
             src="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.js"></script>
@@ -21,26 +23,8 @@
             src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/locale/bootstrap-table-en-US.js"></script>
 
 
-    <script src="./js/moment.js"></script>
-    <script src="./js/bootstrap-datetimepicker.min.js"></script>
-    <%--<link
-                href="./plugin/bootstrap.css"
-                rel="stylesheet">
-        <link rel="stylesheet"
-              href="./plugin/bootstrap-table.css">
-
-        <link rel="stylesheet"
-              href="./plugin/bootstrap-theme.css">
-
-        <link rel="stylesheet" href="./css/side-nav.css">
-        <script src="./plugin/jquery-1.10.js"></script>
-        <script
-                src="./plugin/bootstrap.js"></script>
-
-        <script
-                src="./plugin/bootstrap-table.js"></script>
-        <script
-                src="./plugin/locale-bootstrap-table-en-us.js"></script>--%>
+    <script src="../js/moment.js"></script>
+    <script src="../js/bootstrap-datetimepicker.min.js"></script>
     <style>
         body {
             overflow-x: hidden;
@@ -51,7 +35,7 @@
 <nav class="navbar navbar-fixed-top" role="navigation"
      style="background-color: #3fc1be">
     <div class="navbar-header">
-        <link rel="stylesheet" href="./css/bootstrap-datetimepicker.min.css">
+        <link rel="stylesheet" href="../css/bootstrap-datetimepicker.min.css">
         <button type="button" class="navbar-toggle" data-toggle="collapse"
                 data-target=".navbar-ex1-collapse">
             <span class="sr-only">Toggle navigation</span> <span
@@ -59,7 +43,7 @@
                 class="icon-bar"></span>
         </button>
 
-        <img src="./images/portea.png" width="200"
+        <img src="../images/portea.png" width="200" onclick="hideOthers(4)"
              style="padding-top: 10px; margin-left: 10px;">
 
     </div>
@@ -69,9 +53,9 @@
         <form name="logoutForm" method="POST" action="logout">
             <button type="submit" class="navbar navbar-left btn btn-danger"
                     title="log out from current account"
-                    style="text-align: center; margin-top: 10px; right: 100px; left: -50px;">
-                Logout&nbsp;&nbsp;<span class="glyphicon glyphicon-adjust"></span>
-            </button>
+        style="text-align: center; margin-top: 10px; right: 100px; left: -50px;">
+        Logout&nbsp;&nbsp;<span class="glyphicon glyphicon-adjust"></span>
+        </button>
         </form>
 
     </div>
@@ -156,12 +140,19 @@
 </div>
 
 
-<script src="js/divManipulation.js"></script>
-<script src="./js/extract_create_json.js"></script>
-<script src="./js/extract_edit_json.js"></script>
-<script src="./js/external_div.js"></script>
-<script src="./js/listCouponTable.js"></script>
-<script src="./js/validateCreate.js"></script>
+<script src="../js/divManipulation.js"></script>
+<script src="../js/extract_create_json.js"></script>
+<script src="../js/extract_edit_json.js"></script>
+
+<script src="../js/listCouponTable.js"></script>
+
+<script src="../js/json-util.js"></script>
+
+<script src="../js/coupon-validation.js"></script>
+
+<script src="../js/coupon-operation.js"></script>
+
+<%--<script src="../js/>--%>
 
 <script>
     $(document).ready(function () {
@@ -212,16 +203,7 @@
         }
     }
 
-    function showOthers(id) {
-        var arr = ["couponAttributes", "couponMapping", "couponRules"];
-        for (var i = 0; i < arr.length; i++) {
-            if (i == id) {
-                $("#" + arr[i]).show();
-                continue;
-            }
-            $("#" + arr[i]).hide();
-        }
-    }
+
     function checkDicountType() {
         var choice = $("#ruleType").val();
         if (choice == "FLAT") {

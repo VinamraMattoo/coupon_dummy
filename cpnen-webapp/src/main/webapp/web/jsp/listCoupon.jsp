@@ -14,7 +14,7 @@
 
     <table id="serverTable"
            data-toggle="table"
-           data-url="./rws/coupon/list"
+           data-url="../rws/coupon/list"
            data-pagination="true"
            data-side-pagination="server"
            data-page-list="[1, 5, 10, 100, ALL]"

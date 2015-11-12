@@ -1,12 +1,27 @@
-function validateOnPublish(arr) {
+function checkForPublish(data) {
+    if ($("#publish").is(':checked')) {
+        var status = validateOnPublish(JSON.parse(data[0]));
+        if (status == "true") {
+            return true;
+        }
+        else {
+            $("#statusBar").empty();
+            return false;
+        }
+    }
+    else
+        return false;
+}
+
+function validateOnPublish(inputJson) {
 
     var flag = "false";
-    for (var key in arr) {
+    for (var key in inputJson) {
         switch (key) {
 
             case "name" :
             {
-                if (arr[key] === null) {
+                if (inputJson[key] === null) {
 
                     $("#statusBar").empty().append("<h3>Invalid name</h3>");
                     flag = "true";
@@ -17,7 +32,7 @@ function validateOnPublish(arr) {
 
             case "applicationType" :
 
-                if (arr[key] === null) {
+                if (inputJson[key] === null) {
 
                     $("#statusBar").empty().append("<h3>Please specify an application type</h3>");
                     flag = "true";
@@ -26,7 +41,7 @@ function validateOnPublish(arr) {
                 break;
 
             case "actorType" :
-                if (arr[key] === null) {
+                if (inputJson[key] === null) {
                     $("#statusBar").empty().append("<h3>Please specify an Actor type</h3>");
                     flag = "true";
                     return flag;
@@ -34,7 +49,7 @@ function validateOnPublish(arr) {
                 break;
 
             case "contextType" :
-                if (arr[key] === null) {
+                if (inputJson[key] === null) {
                     $("#statusBar").empty().append("<h3>Please specify a Context type</h3>");
                     flag = "true";
                     return flag;
@@ -42,7 +57,7 @@ function validateOnPublish(arr) {
                 break;
 
             case "applicableFrom" :
-                if (arr[key] === "") {
+                if (inputJson[key] === "") {
                     $("#statusBar").empty().append("<h3>Please specify a valid application start date</h3>");
                     flag = "true";
                     return flag;
@@ -50,7 +65,7 @@ function validateOnPublish(arr) {
                 break;
 
             case "applicableTill" :
-                if (arr[key] === "") {
+                if (inputJson[key] === "") {
                     $("#statusBar").empty().append("<h3>Please specify a valid application end date</h3>");
                     flag = "true";
                     return flag;
@@ -59,7 +74,7 @@ function validateOnPublish(arr) {
 
 
             case "transactionValMin" :
-                if (arr[key] === "") {
+                if (inputJson[key] === "") {
                     $("#statusBar").empty().append("<h3>Please specify a min transaction value</h3>");
                     flag = "true";
                     return flag;
@@ -67,7 +82,7 @@ function validateOnPublish(arr) {
                 break;
 
             case "transactionValMax" :
-                if (arr[key] === "") {
+                if (inputJson[key] === "") {
                     $("#statusBar").empty().append("<h3>Please specify a max transaction value</h3>");
                     flag = "true";
                     return flag;
@@ -76,7 +91,7 @@ function validateOnPublish(arr) {
 
 
             case "discountAmountMin" :
-                if (arr[key] === "") {
+                if (inputJson[key] === "") {
                     $("#statusBar").empty().append("<h3>Please specify a min discount amount</h3>");
                     flag = "true";
                     return flag;
@@ -85,7 +100,7 @@ function validateOnPublish(arr) {
 
 
             case "discountAmountMax" :
-                if (arr[key] === "") {
+                if (inputJson[key] === "") {
                     $("#statusBar").empty().append("<h3>Please specify a max discount amount</h3>");
                     flag = "true";
                     return flag;

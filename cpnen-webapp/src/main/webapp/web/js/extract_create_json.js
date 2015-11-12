@@ -1,93 +1,5 @@
-function create_coupon_submit() {
-
-    var JsonData;
-    var data = $("#createCoupon").map(function () {
-
-
-        JsonData = {
-
-            name: $("#name").val(),
-
-            description: $("#description").val(),
-
-            inclusive: $("#inclusive").is(':checked'),
-
-            applicationType: $("#applicationType").val(),
-
-            actorType: $("actorType").val(),
-
-            contextType: $("contextType").val(),
-
-            applicableFrom: $("#applicableFrom").val(),
-
-            applicableTill: $("#applicableTill").val(),
-
-            applicableUseCount: $("#applicableUseCount").val(),
-
-            transactionValMin: $("#transactionValMin").val(),
-
-            transactionValMax: $("#transactionValMax").val(),
-
-            discountAmountMin: $("#discountAmountMin").val(),
-
-            discountAmountMax: $("#discountAmountMax").val(),
-
-            "global": $("#global").is(':checked'),
-
-            "nthTime": $("#nthTime").val(),
-
-            "nthTimeReccuring": $("#nthTimeReccuring").is(':checked'),
-
-            "productMapping": getMappings(),
-
-            "brandMapping": getBrands(),
-
-            "rule": {
-
-                description: $("#ruleDesc").val(),
-
-                ruleType: $("#ruleType").val(),
-
-                discountFlatAmount: $("#flatAmount").val(),
-
-                discountPercentage: $("#percent").val()
-
-            }
-
-        };
-        return JsonData;
-    }).get();
-
-    alert(JSON.stringify(data[0]));
-
-
-    if ($("#publish").is(':checked')) {
-        var status = validateOnPublish(JsonData);
-        alert("comin" + status);
-        if (status == "true") {
-            return;
-        }
-        $("#statusBar").empty();
-    }
-    $.ajax({
-
-        type: "POST",
-        url: "/cpnen/web/rws/coupon",
-        data: JSON.stringify(data[0]),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (data) {
-            showView(data, "create");
-        },
-        failure: function (errMsg) {
-            showView(errMsg, "create");
-        }
-    });
-}
-
-
 var couponId;
-function showView(Id, eventType) {
+function showStatusMessage(Id, eventType) {
 
     hideOthers(4);
     if (eventType == "create") {
@@ -125,7 +37,7 @@ function populateValues(cpnId) {
 
         success: function (data) {
 
-            populateView(data);
+            populateView(data, cpnId);
         },
         failure: function (errMsg) {
             alert(errMsg);
@@ -135,10 +47,8 @@ function populateValues(cpnId) {
 }
 
 
-var currentCoupon;
-function populateView(response) {
-
-    currentCoupon = response;
+function populateView(response, id) {
+    couponId = id;
     var tags = "";
     for (var key in response) {
 
@@ -149,6 +59,7 @@ function populateView(response) {
         if (key == "deactivatedOn") {
             checkDeactivation(response[key]);
         }
+
 
         /*   for (var key2 in key) {
          tags += "<tr><td>" + key2 + " </td><td>" + key[key2] + "</td></tr>";
@@ -170,7 +81,6 @@ function checkStatus(status) {
     if (status == null) {
         $("#editCpn").show();
         $("#deleteCpn").show();
-
     }
     else {
         $("#deactivateCpn").show();
@@ -197,7 +107,7 @@ function checkDeactivation(status) {
 }
 
 
-function showEdit() {
+function onEditClick() {
     var id = couponId;
     editCoupon(id);
 }
@@ -206,27 +116,12 @@ function showEdit() {
 function editCoupon(cid) {
     $.get("./editCoupon.jsp", function (data) {
         $("#editCoupon").empty().append(data);
-        showCurrentVal(cid);
+        getCouponDetails(cid);
     });
 
 }
 
-function showCurrentVal(couponId) {
 
-    $.ajax({
-
-        type: "GET",
-        url: "/cpnen/web/rws/coupon/" + couponId,
-
-        success: function (data) {
-
-            populateEdit(data);
-        },
-        failure: function (errMsg) {
-            alert(errMsg);
-        }
-    });
-}
 function populateEdit(response) {
     for (var arr in response) {
         switch (arr) {
@@ -258,12 +153,11 @@ function populateEdit(response) {
                             break;
 
                         case "applicableFrom" :
-                            $("#edit_applicableFrom").val(arr[key]);
+                            $("#edit_applicableFrom").val(getDateInFormat(arr[key]));
                             break;
                         case "applicableTill" :
-                            $("#edit_applicableTill").val(arr[key]);
+                            $("#edit_applicableTill").val(getDateInFormat(arr[key]));
                             break;
-
 
                         case "transactionValMin" :
                             $("#edit_transactionValMin").val(arr[key]);
@@ -304,7 +198,7 @@ function populateEdit(response) {
                 }
                 break;
 
-            case "rule" :
+            case "discountRule" :
                 for (var value in arr) {
                     switch (value) {
                         case "ruleType" :
@@ -340,14 +234,18 @@ function populateEdit(response) {
         }
     }
 }
+function getDateInFormat(date) {
+    return moment(date).format();
+}
+
 //untreated code starts
-function showDeactivation() {
+function onDeactivationClick() {
     confirm("Do you really want to deactivate?");
 }
 
-function showDelete() {
+function onDeleteClick() {
     confirm("Do you really want to delete?");
 }
-function showCouponCode() {
-    warning("showing couponcodes");
+function onGenerateCodeClick() {
+    confirm("showing couponcodes");
 }
