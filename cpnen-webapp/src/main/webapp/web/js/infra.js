@@ -29,13 +29,7 @@ function onEditClick() {
 function editCoupon(cid) {
     couponId = cid;
     hideOthers(5);
-    $.get("./editCoupon.jsp", function (data) {
-        $("#editCoupon").empty().append(data);
-        editDateTimePicker();
-        $.get("./mapping.jsp", function (data) {
-            $("#edit_couponMapping").append(data);
-        });
-    });
+
     getCouponDetails(cid, "edit");
 
 
@@ -82,11 +76,18 @@ function editDateTimePicker() {
 $(document).ready(function () {
     $.get("./create.jsp", function (data) {
 
-        $("#createCoupon").append(data);
+        $("#createCoupon").empty().append(data);
         dateTimeInput();
         $.get("./mapping.jsp", function (data) {
             $("#couponMapping").append(data);
             eventHandler();
+        });
+    });
+    $.get("./editCoupon.jsp", function (data) {
+        $("#editCoupon").empty().append(data);
+        editDateTimePicker();
+        $.get("./mapping.jsp", function (data) {
+            $("#edit_couponMapping").append(data);
         });
     });
     $.get("./listCoupon.jsp", function (data) {
@@ -225,7 +226,7 @@ function getMappings() {
 }
 /*function hides all the other divs which are there  in the array*/
 function hideOthers(id) {
-    var divArray = ["createCoupon", "showCoupons", "listCouponCodes", "viewCreatedCoupon", "statusInfo", "editCoupon", "createCode"];
+    var divArray = ["createCoupon", "showCoupons", "listCouponCodes", "viewCreatedCoupon", "statusInfo", "editCoupon", "createCode", "createCouponCode"];
     for (var i = 0; i < divArray.length; i++) {
         if (i == id) {
             $("#" + divArray[i]).show();
@@ -259,14 +260,16 @@ function showOthers(id) {
 }
 
 /*checks the type of discount selected while creating*/
-function checkDicountType(flag) {
+function checkDiscountType(flag) {
     if (flag == 'create') {
         var createChoice = $("#ruleType").val();
         if (createChoice == "FLAT") {
             $("#percent").prop("disabled", true);
+            $("#percent").empty();
             $("#flatAmount").prop("disabled", false);
         } else {
             $("#flatAmount").prop("disabled", true);
+            $("#flatAmount").empty();
             $("#percent").prop("disabled", false);
         }
     }
@@ -281,6 +284,47 @@ function checkDicountType(flag) {
         }
     }
 }
+
+/*function to load the code creation page into the div */
+function onCreateCodeClick() {
+
+    hideOthers(7);
+    $.get("./couponCodeCreate.jsp", function (data) {
+        $("#createCouponCode").empty().append(data);
+        codeRegistrations();
+    });
+}
+/*function dynamically generates registration forms
+ * max_fields defines the max no of registrations that can be dynamically generated
+ * */
+function codeRegistrations() {
+
+    var max_fields = 100; //maximum input boxes allowed
+    var wrapper = $(".input_fields_wrap"); //Fields wrapper
+    var add_button = $(".add_field_button"); //Add button ID
+
+    var x = 1; //initlal text box count
+    $(add_button).click(function (e) { //on add input button click
+        e.preventDefault();
+        if (x < max_fields) { //max input box allowed
+            x++; //text box increment
+            $(wrapper).append('<div class="removeMe" >Reserved for: <input class="form-control" type="text"  /><br> validity from: <input class="form-control" type="date"  /><br> till : <input class="form-control" type="date" /> <br> Select Event type:   <select class="btn btn-primary dropdown-toggle"> <option value=""> --select an option--</option> <option value="bday">Birthday</option> <option value="anniversary">anniversary</option> <option value="new year">new year</option> <option value="diwali">diwali</option> <option value="holi">holi</option> </select> <br><br><br><a href="#" class="remove_field btn btn-danger"><span title="remove  this user" class="glyphicon glyphicon-remove-sign" > Delete user</span></a><br><br></div>'); //add input box
+        }
+    });
+
+    $(wrapper).on("click", ".remove_field", function (e) { //user click on remove text
+        e.preventDefault();
+        $(this).parent('.removeMe').remove();
+        x--;
+    });
+
+    $("#registerDiv").hide();
+    $("#registerBtn").click(function () {
+        $("#registerDiv").toggle(1000);
+    });
+
+}
+
 /*data formatter of listCouponCode.jsp to add a delete option*/
 function codeOptionsFormatter(value, row, index) {
     return [

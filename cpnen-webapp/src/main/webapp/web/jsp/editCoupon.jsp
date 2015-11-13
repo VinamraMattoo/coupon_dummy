@@ -151,7 +151,7 @@
 
                 <div class="form-group">
                     <label for="edit_ruleType">RULE TYPE</label> <select
-                        onchange="checkDicountType('edit')" class="form-control"
+                        onchange="checkDiscountType('edit')" class="form-control"
                         id="edit_ruleType">
 
                     <option>PERCENT</option>

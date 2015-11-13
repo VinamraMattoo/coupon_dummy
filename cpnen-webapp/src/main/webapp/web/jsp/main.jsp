@@ -120,6 +120,10 @@
 
             </div>
 
+            <div id="createCouponCode" hidden>
+
+            </div>
+
             <div id="statusInfo">
 
                 <br><br>

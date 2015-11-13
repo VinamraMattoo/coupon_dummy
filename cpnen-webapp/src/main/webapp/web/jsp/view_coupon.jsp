@@ -10,17 +10,14 @@
                 class="btn btn-danger pull-right">Delete
         </button>
 
-        <button onclick="onGenerateCodeClick()" style="display:none;" id="generateCode" type="button"
-                class="btn btn-info pull-right">Show Coupon Codes
+        <button onclick="onCreateCodeClick()" style="display:none;" id="generateCode" type="button"
+                class="btn btn-info pull-right">Create Coupon Codes
         </button>
 
         <button onclick="onDeactivationClick()" style="display:none;" type="button" id="deactivateCpn"
                 class="btn btn-danger pull-right">Deactivate
         </button>
 
-        <button onclick="onCreateCodeClick()" style="display:none;" type="button" id="createCodeCpn"
-                class="btn btn-success pull-right">Create Code
-        </button>
     </h2>
     <table class="table table-striped" data-row-style="rowStyle">
         <thead>

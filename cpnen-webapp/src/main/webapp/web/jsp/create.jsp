@@ -152,7 +152,7 @@
 
                 <div class="form-group">
                     <label for="ruleType">RULE TYPE</label> <select
-                        onchange="checkDicountType('create')" class="form-control"
+                        onchange="checkDiscountType('create')" class="form-control"
                         id="ruleType">
 
                     <option>PERCENTAGE</option>

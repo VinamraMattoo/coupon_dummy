@@ -78,3 +78,5 @@ function onDeleteClick() {
 function onGenerateCodeClick() {
     confirm("showing couponcodes");
 }
+
+
