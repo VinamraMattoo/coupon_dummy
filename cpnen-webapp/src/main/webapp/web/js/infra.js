@@ -6,7 +6,6 @@
  */
 
 
-
 function showCoupon(Id) {
     hideOthers(3);
     $.get("./view_coupon.jsp", function (data) {
@@ -18,17 +17,17 @@ function showCoupon(Id) {
 }
 
 /*function which is called when edit buttn is clicked
-*calls a generic editCoupon() function
-*/
+ *calls a generic editCoupon() function
+ */
 function onEditClick() {
     var id = couponId;
     editCoupon(id);
 }
 
 /*gets the editCoupon.jsp into the div
-and the mapping.jsp into the div*/
+ and the mapping.jsp into the div*/
 function editCoupon(cid) {
-    couponId=cid;
+    couponId = cid;
     hideOthers(5);
     $.get("./editCoupon.jsp", function (data) {
         $("#editCoupon").empty().append(data);
@@ -299,3 +298,41 @@ window.codeOptionsEvents = {
         console.log(value, row, index);
     }
 };
+
+
+/*function to map the data returned into the view coupon table*/
+function populateView(response, id) {
+    couponId = id;
+    var tags = "";
+    for (var key in response) {
+
+        if (key == "discountRule") {
+            tags += populateDiscount(response[key]);
+        }
+        else if (key == "applicableFrom" || key == "applicableTill" || key == "createdOn" || key == "publishedOn" || key == "deactivatedOn") {
+            tags += "<tr><td>" + key + " </td><td>" + getDateInFormat(response[key]) + "</td></tr>";
+            if (key == "publishedOn") {
+                checkStatusVal(response[key]);
+            }
+            if (key == "deactivatedOn") {
+                checkForDeactivation(response[key]);
+            }
+        }
+        else {
+
+            tags += "<tr><td>" + key + " </td><td>" + response[key] + "</td></tr>";
+
+        }
+    }
+    $('#viewCurrentCoupon').append(tags);
+
+
+}
+/*function populates the discount rules from the json array into the view table*/
+function populateDiscount(discountArray) {
+    var tags;
+    for (var key in discountArray) {
+        tags += "<tr><td>" + key + " </td><td>" + discountArray[key] + "</td></tr>";
+    }
+    return tags;
+}

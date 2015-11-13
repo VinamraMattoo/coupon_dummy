@@ -1,10 +1,10 @@
 //all the utility functions to handle edit coupon handling
 /*
-* function to map current values for the particular couponId into the edit form input
-* */
+ * function to map current values for the particular couponId into the edit form input
+ * */
 
 function populateEdit(response) {
-    alert(JSON.stringify(response));
+
     for (var arr in response) {
         switch (arr) {
 
@@ -113,5 +113,7 @@ function populateEdit(response) {
 }
 /*returns milliseconds input into standard YYYY-MM-DDTHH:mm:ss format*/
 function getDateInFormat(date) {
-    return moment(date).format();
+    if (date == null)
+        return "null";
+    return moment(date).format("YYYY-MM-DDTHH:mm:ss");
 }

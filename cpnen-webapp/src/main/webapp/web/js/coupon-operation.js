@@ -67,24 +67,6 @@ function getCouponDetails(couponId, flag) {
 }
 
 
-function populateView(response, id) {
-    couponId = id;
-    var tags = "";
-    for (var key in response) {
-
-        tags += "<tr><td>" + key + " </td><td>" + response[key] + "</td></tr>";
-        if (key == "publishedOn") {
-            checkStatusVal(response[key]);
-        }
-        if (key == "deactivatedOn") {
-            checkForDeactivation(response[key]);
-        }
-    }
-
-    $('#viewCurrentCoupon').append(tags);
-
-
-}
 //======================================  INCOMPLETE CODES  =======================================
 function onDeactivationClick() {
     confirm("Do you really want to deactivate?");

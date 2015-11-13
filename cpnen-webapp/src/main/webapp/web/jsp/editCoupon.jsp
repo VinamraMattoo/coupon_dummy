@@ -13,7 +13,7 @@
 
     </ul>
     
-    <div class="panel panel-default" style="width: 753px;">
+    <div class="panel panel-default" id="editCouponForm" style="width: 753px;">
         <div class="panel-body" id="edit_couponAttributes"
              style="height: 400px; width: 750px; overflow: auto;">
             <form class="form-horizontal" role="form">

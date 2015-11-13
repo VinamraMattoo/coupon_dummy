@@ -82,14 +82,12 @@ function getMillSec(date) {
 
 /* ============ edit coupon json function ==============
  * function creates the  json data for the  edit coupon forms
- * similar functioality as create coupon json function
+ * similar functionality as create coupon json function
  */
 
 function edit_coupon_submit() {
-
-    var data = $("#edit_coupon").map(function () {
-        var JsonData = {
-
+       var editJson = $("#editCouponForm").map(function () {
+        var editArray = {
 
             "name": $("#edit_name").val(),
 
@@ -142,15 +140,15 @@ function edit_coupon_submit() {
             }
 
         };
-        return JsonData;
+        return  editArray;
     }).get();
-    alert(JSON.stringify(data[0]));
+    alert(JSON.stringify(editJson[0]));
 
-    if (checkForPublish(data) == "true") {
+    if (checkForPublish(editJson) == "true") {
         return;
     }
     else {
-        editCouponAjax(data);
+        editCouponAjax(editJson);
     }
 
 }
