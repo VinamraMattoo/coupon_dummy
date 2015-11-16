@@ -4,12 +4,12 @@
     <div style="border:solid;width:70px"><input type="checkbox"><span> Global</span></div>
 
     <br>
-    <hr>
+
     <table disabled
            id="mappingTable"
            data-toggle="table"
            data-search="true"
-           data-url="temp.txt"
+           data-url="/cpnen/web/rws/products"
            data-pagination="true"
            data-striped="true"
            data-height="400"
@@ -52,7 +52,6 @@
 
 <div class="col-md-offset-1 col-md-5">
     <br>
-    <hr>
     <table disabled
            id="brandTable"
            data-toggle="table"

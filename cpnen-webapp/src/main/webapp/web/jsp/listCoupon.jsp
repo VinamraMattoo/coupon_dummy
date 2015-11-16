@@ -1,3 +1,4 @@
+<%-- tabular listing of all present coupon with their status and  attributes--%>
 <link rel="stylesheet"
       href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.0/bootstrap-table.css">
 
@@ -6,12 +7,12 @@
 <script
         src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/locale/bootstrap-table-en-US.js"></script>
 
-
 <br><br>
-<h1 align="center"><code>Coupon listings</code></h1>
+<h1 align="center">Coupon listings</h1>
 
 <div class="col-md-9" style="width: 950px;">
 
+    <%--table to display coupons and various attributes--%>
     <table id="serverTable"
            data-toggle="table"
            data-url="../rws/coupon/list"
@@ -22,7 +23,7 @@
         <thead>
         <tr>
             <th class="hidden" data-field="description" data-formatter="descriptionFormatter">desc</th>
-            <th data-field="id" data-formatter="idFormatter" data-align="right" data-sortable="true">ID</th>
+            <th data-field="id" class="hidden" data-formatter="idFormatter" data-align="right" data-sortable="true">ID</th>
             <th data-field="name" data-formatter="nameFormatter" data-align="center" data-sortable="true">Name</th>
             <th data-field="from" data-formatter="fromFormatter">From</th>
             <th data-field="till"data-formatter="tillFormatter">Till</th>

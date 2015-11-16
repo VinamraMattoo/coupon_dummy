@@ -1,8 +1,9 @@
+<%--page showing all the  arrtributes of a specifc coupon--%>
 <div>
     <br><br>
 
     <h2>Coupon details
-        <button onclick="onEditClick()" style="display:none;" id="editCpn" type="button"
+        <button onclick="viewCouponEdit()" style="display:none;" id="editCpn" type="button"
                 class="btn btn-info pull-right">Edit
         </button>
 

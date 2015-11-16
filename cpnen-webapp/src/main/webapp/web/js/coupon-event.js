@@ -12,16 +12,15 @@ function showCoupon(id) {
 }
 
 /*function which is called when edit buttn is clicked
- *calls a generic editCoupon() function
+ *calls a generic showEditCoupon() function
  */
-function onEditClick() {
+function viewCouponEdit() {
     var id = $("#storedCouponId").val();
-    editCoupon(id);
+    showEditCoupon(id);
 }
 
-/*gets the editCoupon.jsp into the div
- and the mapping.jsp into the div*/
-function editCoupon(cid) {
+/*shows the edit coupon div */
+function showEditCoupon(cid) {
     hideOtherDivs(5);
     getCouponDetails(cid, "edit");
 }

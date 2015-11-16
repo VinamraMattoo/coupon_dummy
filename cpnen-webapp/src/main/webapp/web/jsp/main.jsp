@@ -1,3 +1,4 @@
+<%--the landing page for the  webapp--%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,6 +31,7 @@
     </style>
 </head>
 <body>
+<%--navbar--%>
 <nav class="navbar navbar-fixed-top" role="navigation"
      style="background-color: #3fc1be">
     <div class="navbar-header">
@@ -98,7 +100,7 @@
 </nav>
 
 <br><br><br><br>
-
+<%--wrapper div for  the  webapp which contains all the  page fragments to be shown--%>
 <div id="page-wrapper" style="padding-left: 200px">
     <div class="row">
         <div class="col-md-8 col-md-offset-1">
@@ -142,6 +144,7 @@
 
 </div>
 
+<%--local js plugins sources--%>
 <script src="../js/moment.js"></script>
 
 <script src="../js/bootstrap-datetimepicker.min.js"></script>

@@ -1,5 +1,5 @@
 /*
-* functions of coupon code creation  are in this js file.
+* functions for coupon code creation  are in this js file.
 * */
 
 /*function to load the code creation page into the div */

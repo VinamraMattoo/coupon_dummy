@@ -1,3 +1,4 @@
+<%--tabular to list the  coupon codes for all or a particular coupon with all related attrbutes--%>
 <link rel="stylesheet"
       href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.0/bootstrap-table.css">
 
@@ -5,10 +6,8 @@
         src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/bootstrap-table.js"></script>
 <script
         src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/locale/bootstrap-table-en-US.js"></script>
-
-
 <br><br>
-<h1 align="center"><code>Coupon Codes listings</code></h1>
+<h1 align="center">Coupon Codes listings</h1>
 
 <div class="col-md-9" style="width: 950px;">
 
@@ -21,8 +20,8 @@
          data-height="400">
     <thead>
     <tr>
-      <th data-field="id">id</th>
-     <th data-field="couponId">c_id</th>
+      <th data-field="id" class="hidden">id</th>
+     <th data-field="couponId" class="hidden">c_id</th>
       <th data-field="code">code</th>
       <th data-field="createdOn">created on</th>
       <th data-field="createdBy">created by</th>
@@ -33,15 +32,4 @@
     </tr>
     </thead>
   </table>
-  <br>
-  <button id="somebtn" class="btn btn-danger btn-lg">click to change</button>
-
-  <br>
-<%--
-  $(document).ready(function(){
-  $('#serverTable').bootstrapTable('removeAll');
-  $('#serverTable').bootstrapTable('refresh',{url: './rws/coupon/'+  +'/codes'});
-  });
---%>
-
 </div>

@@ -1,8 +1,11 @@
+<%--similar to create coupon with preddefined values for a specific coupon--%>
+
 <div class="container">
     <br> <br>
 
     <h1 class="text-center" style="width: 750px;">Edit Coupon</h1>
     <br>
+    <%--panel to accept edit  input  parameters--%>
     <ul class="list-inline">
         <li style="width: 330px; height: 20px; font-size: x-large;"><a
                 href="#" onclick="couponEditTabSwitcher(0)">Coupon Details</a></li>
@@ -185,11 +188,10 @@
 
         </div>
     </div>
-    <%--    onchange="publishChanged()" add this to handle publish--%>
     <div>
         <input type="checkbox" style="margin-left: 300px;"
                id="edit_publish"><label for="edit_publish"> Publish</label>
-        <submit class="btn btn-primary " onclick="edit_coupon_submit()" style="margin-left: 300px;">Submit</submit>
+        <submit class="btn btn-primary " onclick="submitEditCoupon()" style="margin-left: 300px;">Submit</submit>
     </div>
 
 </div>

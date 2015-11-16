@@ -3,7 +3,7 @@
  * function to map current values for the particular couponId into the edit form input
  * */
 
-function populateEdit(response) {
+function populateEditCouponValues(response) {
 
     for (var arr in response) {
         switch (arr) {
@@ -37,10 +37,10 @@ function populateEdit(response) {
                 break;
 
             case "applicableFrom" :
-                $("#edit_applicableFrom").val(getDateInFormat(response[arr]));
+                $("#edit_applicableFrom").val(dateFormatting(response[arr]));
                 break;
             case "applicableTill" :
-                $("#edit_applicableTill").val(getDateInFormat(response[arr]));
+                $("#edit_applicableTill").val(dateFormatting(response[arr]));
                 break;
 
             case "transactionValMin" :
@@ -116,7 +116,7 @@ function populateEdit(response) {
     }
 }
 /*returns milliseconds input into standard YYYY-MM-DDTHH:mm:ss format*/
-function getDateInFormat(date) {
+function dateFormatting(date) {
     if (date == null)
         return "null";
     return moment(date).format(getCurrentDateTimeFormat());

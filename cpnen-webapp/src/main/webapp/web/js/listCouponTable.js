@@ -225,7 +225,7 @@ function operateFormatter(value, row, index) {
 
 window.operateEvents = {
     'click .like': function (e, value, row, index) {
-        editCoupon(c_id);
+        showEditCoupon(c_id);
         console.log(value, row, index);
     },
     'click .edit': function (e, value, row, index) {

@@ -1,3 +1,5 @@
+/*all coupon creation related function are defined here*/
+
 /*date time picker for calender input */
 function dateTimeInput() {
     $('#applicableFrom').datetimepicker({

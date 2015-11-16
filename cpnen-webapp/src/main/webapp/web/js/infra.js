@@ -1,8 +1,8 @@
 //  all infrastructure functions are handled in this  js  file
 
-/*function gets create.jsp ,mapping.jsp,listCoupon.jsp and listCouponCodes.jsp into the divs */
+/*function gets createCoupon.jsp ,mapping.jsp,listCoupon.jsp and listCouponCodes.jsp into the divs */
 $(document).ready(function () {
-    $.get("./create.jsp", function (data) {
+    $.get("./createCoupon.jsp", function (data) {
 
         $("#createCoupon").empty().append(data);
         dateTimeInput();
@@ -12,7 +12,7 @@ $(document).ready(function () {
         });
     });
     $.get("./editCoupon.jsp", function (data) {
-        $("#editCoupon").empty().append(data);
+        $("#showEditCoupon").empty().append(data);
         editDateTimePicker();
         $.get("./mapping.jsp", function (data) {
             $("#edit_couponMapping").append(data);
@@ -25,7 +25,7 @@ $(document).ready(function () {
         $("#listCouponCodes").append(data);
     });
 
-    $.get("./view_coupon.jsp", function (data) {
+    $.get("./viewCoupon.jsp", function (data) {
         $("#viewCreatedCoupon").empty().append(data);
 
     });
@@ -36,7 +36,7 @@ $(document).ready(function () {
 
 /*function hides all the other divs which are there  in the array*/
 function hideOtherDivs(id) {
-    var divsArray = ["createCoupon", "showCoupons", "listCouponCodes", "viewCreatedCoupon", "statusInfo", "editCoupon", "createCode", "createCouponCode"];
+    var divsArray = ["createCoupon", "showCoupons", "listCouponCodes", "viewCreatedCoupon", "statusInfo", "showEditCoupon", "createCode", "createCouponCode"];
     for (var i = 0; i < divsArray.length; i++) {
         if (i == id) {
             $("#" + divsArray[i]).show();
@@ -156,7 +156,7 @@ function populateCouponDetailsTable(response, id) {
             tags += populateDiscount(response[key]);
         }
         else if (key == "applicableFrom" || key == "applicableTill" || key == "createdOn" || key == "publishedOn" || key == "deactivatedOn") {
-            tags += "<tr><td>" + key + " </td><td>" + getDateInFormat(response[key]) + "</td></tr>";
+            tags += "<tr><td>" + key + " </td><td>" + dateFormatting(response[key]) + "</td></tr>";
             if (key == "publishedOn") {
                 checkForPublished(response[key]);
             }
@@ -176,7 +176,7 @@ function populateCouponDetailsTable(response, id) {
 }
 /*function populates the discount rules from the json array into the view table*/
 function populateDiscount(discountArray) {
-    var tags;
+    var tags="";
     for (var key in discountArray) {
         tags += "<tr><td>" + key + " </td><td>" + discountArray[key] + "</td></tr>";
     }

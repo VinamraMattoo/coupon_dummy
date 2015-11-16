@@ -1,8 +1,10 @@
 <br><br>
 
-<h1 align="center">Coupon Code Create</h1>
+<h1 align="center">Create coupon codes</h1>
 
 <div class="col-md-9 col-md-offset-2 jumbotron">
+    <%-- form to get the basic inputs for  creating coupon codes--%>
+
     <form action="">
         <br>
         Coupon Code:*
@@ -24,6 +26,8 @@
         </select>
         <br>
         <br>
+
+        <%--inputs to get user registration data (not required field)--%>
 
         <div id="registerDiv">
             <div class="input_fields_wrap">

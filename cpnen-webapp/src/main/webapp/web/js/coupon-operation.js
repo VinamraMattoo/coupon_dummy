@@ -56,7 +56,7 @@ function getCouponDetails(couponId, flag) {
 
         success: function (data) {
             if (flag == "edit")
-                populateEdit(data);
+                populateEditCouponValues(data);
             else
                 populateCouponDetailsTable(data, couponId);
         },

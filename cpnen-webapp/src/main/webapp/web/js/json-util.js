@@ -6,7 +6,7 @@
  *for date creation getMillSec function is called and value is converted to milliseconds and passed into the  json
  */
 
-function createCouponSubmit() {
+function submitCreateCoupon() {
 
     var data = $("#createCoupon").map(function () {
 
@@ -68,7 +68,7 @@ function createCouponSubmit() {
 
 //check if status is published
 
-    if (checkForPublish(data) === false) {
+    if (checkIfPublished(data) === false) {
         createCouponAjax(data);
     }
 }
@@ -83,7 +83,7 @@ function getMillSec(date) {
  * similar functionality as create coupon json function
  */
 
-function edit_coupon_submit() {
+function submitEditCoupon() {
     var editJson = $("#editCouponForm").map(function () {
         var editArray = {
 
@@ -143,9 +143,9 @@ function edit_coupon_submit() {
 
     var couponId = $("#couponId").val();
 
-    alert(JSON.stringify(editJson[0]));
+    console.log(JSON.stringify(editJson[0]));
 
-    if (checkForPublish(editJson) == false)
+    if (checkIfPublished(editJson) == false)
         editCouponAjax(editJson, couponId);
 
 }

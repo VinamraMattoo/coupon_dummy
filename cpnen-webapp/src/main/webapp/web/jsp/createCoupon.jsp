@@ -1,23 +1,28 @@
+<%--divs to accept the coupon parameters while creating  new  coupon--%>
+
 <div class="container">
     <br> <br>
 
     <h1 class="text-center" style="width: 750px;">Create Coupon</h1>
     <br>
     <ul class="list-inline">
+        <%--coupon details  panel--%>
         <li style="width: 330px; height: 20px; font-size: x-large;"><a
                 href="#" onclick="couponCreateTabSwitcher(0)">Coupon Details</a></li>
-        <li style="width: 260px; height: 20px; font-size: x-large;"><a
+        <%--coupon mapping panel--%>
+
+            <li style="width: 260px; height: 20px; font-size: x-large;"><a
                 href="#" onclick="couponCreateTabSwitcher(1)">Mapping</a></li>
-        <li style="font-size: x-large;"><a href="#"
-                                           onclick="couponCreateTabSwitcher(2)">Rules</a></li>
+
+            <%--coupon rules panel--%>
+        <li style="font-size: x-large;"><a href="#" onclick="couponCreateTabSwitcher(2)">Rules</a></li>
 
     </ul>
     <div class="panel panel-default" style="width: 753px;">
         <div class="panel-body" id="couponAttributes"
              style="height: 400px; width: 750px; overflow: auto;">
+            <%--coupoon detail form--%>
             <form class="form-horizontal" role="form">
-
-
                 <div class="col-md-4 col-md-offset-1">
                     <div class="form-group">
                         <label for="name">Coupon Name</label> <input
@@ -134,16 +139,16 @@
                     </div>
 
                 </div>
-
             </form>
 
         </div>
+        <%--coupon mproducts and brands listing--%>
         <div id="couponMapping"
              style="display: none; height: 400px; width: 750px; overflow: auto;">
 
         </div>
 
-
+        <%--coupon rules definition input form--%>
         <div id="couponRules"
              style="display: none; height: 400px; width: 750px; overflow: auto;">
             <br> <br>
@@ -184,11 +189,11 @@
 
         </div>
     </div>
-
+    <%--checkbox to publish coupon--%>
     <div>
         <input type="checkbox" style="margin-left: 300px;"
                id="publish"><label for="publish"> Publish</label>
-        <submit class="btn btn-primary " onclick="createCouponSubmit()" style="margin-left: 300px;">Submit</submit>
+        <submit class="btn btn-primary " onclick="submitCreateCoupon()" style="margin-left: 300px;">Submit</submit>
     </div>
 
 </div>

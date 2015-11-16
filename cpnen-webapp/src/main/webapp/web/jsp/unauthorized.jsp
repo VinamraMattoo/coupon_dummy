@@ -1,3 +1,4 @@
+<%--similar to login.html--%>
 <html>
 <head>
     <meta charset="utf-8">
