@@ -1,3 +1,7 @@
+/*
+functions related to edit operation are here
+ */
+
 /*edit date time picker for calender input*/
 function editDateTimePicker() {
     $('#edit_applicableFrom').datetimepicker({

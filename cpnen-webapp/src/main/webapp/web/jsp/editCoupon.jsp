@@ -5,11 +5,11 @@
     <br>
     <ul class="list-inline">
         <li style="width: 330px; height: 20px; font-size: x-large;"><a
-                href="#" onclick="toggleEditDiv(0)">Coupon Details</a></li>
+                href="#" onclick="couponEditTabSwitcher(0)">Coupon Details</a></li>
         <li style="width: 260px; height: 20px; font-size: x-large;"><a
-                href="#" onclick="toggleEditDiv(1)">Mapping</a></li>
+                href="#" onclick="couponEditTabSwitcher(1)">Mapping</a></li>
         <li style="font-size: x-large;"><a href="#"
-                                           onclick="toggleEditDiv(2)">Rules</a></li>
+                                           onclick="couponEditTabSwitcher(2)">Rules</a></li>
 
     </ul>
 

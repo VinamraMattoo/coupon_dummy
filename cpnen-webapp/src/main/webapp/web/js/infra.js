@@ -112,11 +112,16 @@ function checkForPublished(status) {
     if (status == null) {
         $("#editCpn").show();
         $("#deleteCpn").show();
+        $("#deactivateCpn").hide();
+        $("#generateCode").hide();
+        $("#extendAppTill").hide();
     }
     else {
         $("#deactivateCpn").show();
         $("#generateCode").show();
         $("#extendAppTill").show();
+        $("#editCpn").hide();
+        $("#deleteCpn").hide();
     }
 
     return;
@@ -130,7 +135,7 @@ function checkForDeactivation(status) {
         $("#generateCode").hide();
         $("#editCpn").hide();
         $("#deleteCpn").hide();
-
+        $("#extendAppTill").hide();
     }
 
     return;

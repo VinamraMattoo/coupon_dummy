@@ -1,5 +1,5 @@
 /*
- *
+ *all button click events other than submit is handled here
  * */
 
 /*
@@ -103,4 +103,8 @@ function onDeleteClick() {
 }
 function onGenerateCodeClick() {
     confirm("showing couponcodes");
+}
+//create a bs-popup to extend applicablity
+function extendApplicabiltyDuration() {
+
 }

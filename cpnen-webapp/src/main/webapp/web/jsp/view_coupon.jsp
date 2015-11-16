@@ -18,6 +18,10 @@
                 class="btn btn-danger pull-right">Deactivate
         </button>
 
+        <button onclick="extendApplicabiltyDuration()" style="display:none;" type="button" id="extendAppTill"
+                class="btn btn-success pull-right">Extend validity
+        </button>
+
     </h2>
     <table class="table table-striped" data-row-style="rowStyle">
         <thead>
