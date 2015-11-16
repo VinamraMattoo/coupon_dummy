@@ -58,25 +58,12 @@ function getCouponDetails(couponId, flag) {
             if (flag == "edit")
                 populateEdit(data);
             else
-                populateViewTable(data, couponId);
+                populateCouponDetailsTable(data, couponId);
         },
         failure: function (errMsg) {
             showStatusMessage(errMsg, "errMsg");
         }
     });
-}
-
-
-//======================================  INCOMPLETE CODES  =======================================
-function onDeactivationClick() {
-    confirm("Do you really want to deactivate?");
-}
-
-function onDeleteClick() {
-    confirm("Do you really want to delete?");
-}
-function onGenerateCodeClick() {
-    confirm("showing couponcodes");
 }
 
 

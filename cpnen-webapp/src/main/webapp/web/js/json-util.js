@@ -68,10 +68,7 @@ function createCouponSubmit() {
 
 //check if status is published
 
-    if (checkForPublish(data) == "true") {
-        return;
-    }
-    else {
+    if (checkForPublish(data) === false) {
         createCouponAjax(data);
     }
 }
@@ -87,7 +84,7 @@ function getMillSec(date) {
  */
 
 function edit_coupon_submit() {
-       var editJson = $("#editCouponForm").map(function () {
+    var editJson = $("#editCouponForm").map(function () {
         var editArray = {
 
             "name": $("#edit_name").val(),
@@ -141,18 +138,14 @@ function edit_coupon_submit() {
             }
 
         };
-        return  editArray;
+        return editArray;
     }).get();
 
-    var couponId=$("#couponId").val();
+    var couponId = $("#couponId").val();
 
     alert(JSON.stringify(editJson[0]));
 
-    if (checkForPublish(editJson) == "true") {
-        return;
-    }
-    else {
-        editCouponAjax(editJson,couponId);
-    }
+    if (checkForPublish(editJson) == false)
+        editCouponAjax(editJson, couponId);
 
 }

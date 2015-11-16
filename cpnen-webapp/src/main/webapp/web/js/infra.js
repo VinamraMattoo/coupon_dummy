@@ -49,7 +49,7 @@ function hideOtherDivs(id) {
 
 
 /*function toggles div while editing coupon*/
-function toggleEditDiv(id) {
+function couponEditTabSwitcher(id) {
     var arr = ["edit_couponAttributes", "edit_couponMapping", "edit_couponRules"];
     for (var i = 0; i < arr.length; i++) {
         if (i == id) {
@@ -62,7 +62,7 @@ function toggleEditDiv(id) {
 
 
 /*function toggles div while creating coupon*/
-function toggleCreateDiv(id) {
+function couponCreateTabSwitcher(id) {
     var arr = ["couponAttributes", "couponMapping", "couponRules"];
     for (var i = 0; i < arr.length; i++) {
         if (i == id) {
@@ -76,7 +76,6 @@ function toggleCreateDiv(id) {
 function getCurrentDateTimeFormat() {
     return 'YYYY-MM-DDTHH:mm:ss';
 }
-
 
 
 /*checks the type of discount selected while creating*/
@@ -141,7 +140,7 @@ function checkForDeactivation(status) {
 //this function has to be broken
 
 /*function to map the data returned into the view coupon table*/
-function populateViewTable(response, id) {
+function populateCouponDetailsTable(response, id) {
 
     var tags = "";
     for (var key in response) {

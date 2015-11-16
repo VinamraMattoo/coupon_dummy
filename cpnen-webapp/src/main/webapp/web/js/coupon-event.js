@@ -1,4 +1,8 @@
 /*
+ *
+ * */
+
+/*
  * To show the coupon values just created for the coupon-id
  */
 function showCoupon(id) {
@@ -28,10 +32,10 @@ function showStatusMessage(coupnId, eventType) {
     hideOtherDivs(4);
     if (eventType == "create") {
 
-        $("#infoPageId").html(" Your Coupon has been created successfully. Click <a href=\"#\" onclick=\"showCoupon(coupnId)\">here</a> to view the coupon.");
+        $("#infoPageId").html(" Your Coupon has been created successfully. Click <a href=\"#\" onclick=\"showCoupon(" + coupnId + ")\">here</a> to view the coupon.");
     }
     else if (eventType == "edited") {
-        $("#infoPageId").html(" Your Coupon has been modified successfully. Click <a href=\"#\" onclick=\"showCoupon(coupnId)\">here</a> to view the coupon.");
+        $("#infoPageId").html(" Your Coupon has been modified successfully. Click <a href=\"#\" onclick=\"showCoupon(" + coupnId + ")\">here</a> to view the coupon.");
     }
     else if (eventType == "errMsg") {
         $("#infoPageId").html(" Something went wrong. Server responded with the message " + eventType + ".");
@@ -86,4 +90,17 @@ function checkEventHandler() {
         });
         console.log(checkedBrands);
     });
+}
+
+
+//======================================  INCOMPLETE CODES  =======================================
+function onDeactivationClick() {
+    confirm("Do you really want to deactivate?");
+}
+
+function onDeleteClick() {
+    confirm("Do you really want to delete?");
+}
+function onGenerateCodeClick() {
+    confirm("showing couponcodes");
 }
