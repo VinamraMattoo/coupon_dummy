@@ -140,7 +140,7 @@ function codesFormatter(value, row, index) {
 function openListing(id) {
     $('#codeListTable').bootstrapTable('removeAll');
     $('#codeListTable').bootstrapTable('refresh', {url: './rws/coupon/' + id + '/codes'});
-    hideOthers(2);
+    hideOtherDivs(2);
 }
 
 

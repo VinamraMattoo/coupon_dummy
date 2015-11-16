@@ -10,7 +10,7 @@
                 class="btn btn-danger pull-right">Delete
         </button>
 
-        <button onclick="onCreateCodeClick()" style="display:none;" id="generateCode" type="button"
+        <button onclick="createCouponCode()" style="display:none;" id="generateCode" type="button"
                 class="btn btn-info pull-right">Create Coupon Codes
         </button>
 
@@ -28,6 +28,8 @@
         </thead>
         <tbody id="viewCurrentCoupon"></tbody>
     </table>
-
+    <div hidden>
+        <input type="text" id="storedCouponId"/>
+    </div>
 
 </div>

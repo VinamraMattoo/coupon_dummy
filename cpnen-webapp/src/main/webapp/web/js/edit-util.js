@@ -12,6 +12,10 @@ function populateEdit(response) {
                 $("#edit_name").val(response[arr]);
                 break;
 
+            case "couponId" :
+                $("#couponId").val(response[arr]);
+                break;
+
             case "description" :
                 $("#edit_description").val(response[arr]);
                 break;
@@ -115,5 +119,5 @@ function populateEdit(response) {
 function getDateInFormat(date) {
     if (date == null)
         return "null";
-    return moment(date).format("YYYY-MM-DDTHH:mm:ss");
+    return moment(date).format(getCurrentDateTimeFormat());
 }

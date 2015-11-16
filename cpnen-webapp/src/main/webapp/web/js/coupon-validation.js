@@ -8,7 +8,7 @@
 
 function checkForPublish(data) {
     if ($("#publish").is(':checked')) {
-        var status = validateOnPublish(JSON.parse(data[0]));
+        var status = validateOnPublish(data[0]);
         if (status == "true") {
             return true;
         }
@@ -24,6 +24,7 @@ function checkForPublish(data) {
 function validateOnPublish(inputJson) {
 
     var flag = "false";
+    alert(JSON.stringify(inputJson));
     for (var key in inputJson) {
         switch (key) {
 
@@ -44,6 +45,7 @@ function validateOnPublish(inputJson) {
 
                     $("#statusBar").empty().append("<h3>Please specify an application type</h3>");
                     flag = "true";
+                    alert(flag);
                     return flag;
                 }
                 break;
@@ -140,6 +142,7 @@ function validateOnPublish(inputJson) {
 
         }
     }
+    alert(flag);
     return flag;
 
 }

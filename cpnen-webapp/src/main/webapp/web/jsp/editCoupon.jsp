@@ -5,14 +5,14 @@
     <br>
     <ul class="list-inline">
         <li style="width: 330px; height: 20px; font-size: x-large;"><a
-                href="#" onclick="editOthers(0)">Coupon Details</a></li>
+                href="#" onclick="toggleEditDiv(0)">Coupon Details</a></li>
         <li style="width: 260px; height: 20px; font-size: x-large;"><a
-                href="#" onclick="editOthers(1)">Mapping</a></li>
+                href="#" onclick="toggleEditDiv(1)">Mapping</a></li>
         <li style="font-size: x-large;"><a href="#"
-                                           onclick="editOthers(2)">Rules</a></li>
+                                           onclick="toggleEditDiv(2)">Rules</a></li>
 
     </ul>
-    
+
     <div class="panel panel-default" id="editCouponForm" style="width: 753px;">
         <div class="panel-body" id="edit_couponAttributes"
              style="height: 400px; width: 750px; overflow: auto;">
@@ -20,6 +20,8 @@
 
 
                 <div class="col-md-4 col-md-offset-1">
+                    <div hidden><input type='text' id="couponId"/></div>
+
                     <div class="form-group">
                         <label for="edit_name">Coupon Name</label> <input
                             class="form-control" type="text" id="edit_name"/>

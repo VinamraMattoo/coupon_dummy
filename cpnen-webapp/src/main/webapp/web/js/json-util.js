@@ -5,7 +5,7 @@
  * for the checkbox is :checked is used to get a boolean value
  *for date creation getMillSec function is called and value is converted to milliseconds and passed into the  json
  */
-var couponId;
+
 function createCouponSubmit() {
 
     var data = $("#createCoupon").map(function () {
@@ -65,6 +65,7 @@ function createCouponSubmit() {
         };
         return JsonData;
     }).get();
+
 //check if status is published
 
     if (checkForPublish(data) == "true") {
@@ -142,13 +143,16 @@ function edit_coupon_submit() {
         };
         return  editArray;
     }).get();
+
+    var couponId=$("#couponId").val();
+
     alert(JSON.stringify(editJson[0]));
 
     if (checkForPublish(editJson) == "true") {
         return;
     }
     else {
-        editCouponAjax(editJson);
+        editCouponAjax(editJson,couponId);
     }
 
 }

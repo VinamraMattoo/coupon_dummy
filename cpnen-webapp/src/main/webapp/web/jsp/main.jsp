@@ -23,8 +23,6 @@
             src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/locale/bootstrap-table-en-US.js"></script>
 
 
-    <script src="../js/moment.js"></script>
-    <script src="../js/bootstrap-datetimepicker.min.js"></script>
     <style>
         body {
             overflow-x: hidden;
@@ -43,7 +41,7 @@
                 class="icon-bar"></span>
         </button>
 
-        <img src="../images/portea.png" width="200" onclick="hideOthers(4)"
+        <img src="../images/portea.png" width="200" onclick="hideOtherDivs(4)"
              style="padding-top: 10px; margin-left: 10px;">
 
     </div>
@@ -53,9 +51,9 @@
         <form name="logoutForm" method="POST" action="logout">
             <button type="submit" class="navbar navbar-left btn btn-danger"
                     title="log out from current account"
-        style="text-align: center; margin-top: 10px; right: 100px; left: -50px;">
-        Logout&nbsp;&nbsp;<span class="glyphicon glyphicon-adjust"></span>
-        </button>
+                    style="text-align: center; margin-top: 10px; right: 100px; left: -50px;">
+                Logout&nbsp;&nbsp;<span class="glyphicon glyphicon-adjust"></span>
+            </button>
         </form>
 
     </div>
@@ -69,7 +67,7 @@
             </strong></a>
                 <ul id="demo" class="collapse">
                     <li>
-                        <button class="btn btn-link" id="create_new_coupon" onclick="hideOthers(0)"
+                        <button class="btn btn-link" id="create_new_coupon" onclick="hideOtherDivs(0)"
                                 title=" Create new coupons from here"
                                 style="padding-right: 70px; border-left-width: 1px; padding-left: 15px; text-decoration: none; color: #ffffff">
                             Create
@@ -77,7 +75,7 @@
                         </button>
                     </li>
                     <li>
-                        <button class="btn btn-link" onclick="hideOthers(1)"
+                        <button class="btn btn-link" onclick="hideOtherDivs(1)"
                                 title=" List coupons from here"
                                 style="padding-right: 70px; border-left-width: 1px; padding-left: 15px; text-decoration: none; color: #ffffff">
                             List
@@ -85,7 +83,7 @@
                         </button>
                     </li>
                     <li>
-                        <button class="btn btn-link" onclick="hideOthers(2)"
+                        <button class="btn btn-link" onclick="hideOtherDivs(2)"
                                 title=" manage coupon codes from here"
                                 style="padding-right: 70px; border-left-width: 1px; padding-left: 15px; text-decoration: none; color: #ffffff">
                             List
@@ -107,6 +105,7 @@
             <br><br>
 
             <div id="statusBar"></div>
+
             <div id="createCoupon" hidden></div>
 
             <div id="showCoupons" hidden></div>
@@ -143,6 +142,10 @@
 
 </div>
 
+<script src="../js/moment.js"></script>
+
+<script src="../js/bootstrap-datetimepicker.min.js"></script>
+
 <script src="../js/listCouponTable.js"></script>
 
 <script src="../js/json-util.js"></script>
@@ -150,6 +153,14 @@
 <script src="../js/coupon-validation.js"></script>
 
 <script src="../js/coupon-operation.js"></script>
+
+<script src="../js/coupon-edit.js"></script>
+
+<script src="../js/coupon-event.js"></script>
+
+<script src="../js/coupon-code-create.js"></script>
+
+<script src="../js/coupon-create.jsp.js"></script>
 
 <script src="../js/edit-util.js"></script>
 

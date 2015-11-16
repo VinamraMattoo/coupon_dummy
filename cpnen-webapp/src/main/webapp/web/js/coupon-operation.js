@@ -26,7 +26,7 @@ function createCouponAjax(inputJson) {
  *  ajax call to server with the  edit json data and hits  the  particular  url
  */
 
-function editCouponAjax(editJson) {
+function editCouponAjax(editJson,couponId) {
     $.ajax({
 
         type: "PATCH",
@@ -58,7 +58,7 @@ function getCouponDetails(couponId, flag) {
             if (flag == "edit")
                 populateEdit(data);
             else
-                populateView(data, couponId);
+                populateViewTable(data, couponId);
         },
         failure: function (errMsg) {
             showStatusMessage(errMsg, "errMsg");
