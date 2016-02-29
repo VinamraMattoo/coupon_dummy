@@ -7,58 +7,96 @@ import java.util.Date;
 @Table(name = "coupon_discount")
 public class CouponDiscount {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private Integer id;
-	
-	@ManyToOne
-	@JoinColumn(name = "coupon_id")
-	private Coupon coupon;
-		
-	@JoinColumn(name = "user_id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
+
+    @OneToOne
+    @JoinColumn(name = "coupon_disc_req_id")
+    private CouponDiscountRequest couponDiscountRequest;
+
+    @JoinColumn(name = "requester_id")
     @ManyToOne
-	private User user;
-	
-	@Column(name = "user_phone")
-	private String userPhone;
-	
-	@Column(name = "created_on")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdOn;
+    private User requester;
 
-    public CouponDiscount() {}
+    @JoinColumn(name = "beneficiary_id")
+    @ManyToOne
+    private User beneficiary;
 
-    public int getId() {
+    @JoinColumn(name = "patient_brand_id")
+    @ManyToOne
+    private Brand patientBrand;
+
+    @JoinColumn(name = "area_id")
+    @ManyToOne
+    private Area areaId;
+
+    @JoinColumn(name = "referrer_id")
+    @ManyToOne
+    private Referrer referrerId;
+
+    /**
+     * A coupon discount request is in a given client context or a transaction. This field captures the identifier
+     * of this context. An example context is subscription-creation which will result in creation of a subscription
+     * which will have an id
+     */
+    @Column(name = "client_context_id", columnDefinition = "varchar(32)")
+    private String clientContextId;
+
+    /**
+     * A coupon discount request is in a given client context or a transaction. This field captures the type of this
+     * context. Example context types is {@link ContextType#APPOINTMENT}
+     *
+     * @see ContextType
+     */
+    @Column(name = "client_context_type")
+    @Enumerated(EnumType.STRING)
+    private ContextType clientContextType;
+
+    @Column(name = "total_cost")
+    private Double totalCost;
+
+    @Column(name = "discount_amount")
+    private Double discountAmount;
+
+    @Column(name = "created_on")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdOn;
+
+    public CouponDiscount() {
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public Coupon getCoupon() {
-        return coupon;
+    public CouponDiscountRequest getCouponDiscountRequest() {
+        return couponDiscountRequest;
     }
 
-    public void setCoupon(Coupon coupon) {
-        this.coupon = coupon;
+    public void setCouponDiscountRequest(CouponDiscountRequest couponDiscountRequest) {
+        this.couponDiscountRequest = couponDiscountRequest;
     }
 
-    public User getUser() {
-        return user;
+    public User getRequester() {
+        return requester;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setRequester(User requester) {
+        this.requester = requester;
     }
 
-    public String getUserPhone() {
-        return userPhone;
+    public User getBeneficiary() {
+        return beneficiary;
     }
 
-    public void setUserPhone(String userPhone) {
-        this.userPhone = userPhone;
+    public void setBeneficiary(User beneficiary) {
+        this.beneficiary = beneficiary;
     }
 
     public Date getCreatedOn() {
@@ -67,5 +105,77 @@ public class CouponDiscount {
 
     public void setCreatedOn(Date createdOn) {
         this.createdOn = createdOn;
+    }
+
+    public String getClientContextId() {
+        return clientContextId;
+    }
+
+    public void setClientContextId(String clientContextId) {
+        this.clientContextId = clientContextId;
+    }
+
+    public ContextType getClientContextType() {
+        return clientContextType;
+    }
+
+    public void setClientContextType(ContextType clientContextType) {
+        this.clientContextType = clientContextType;
+    }
+
+    public Double getTotalCost() {
+        return totalCost;
+    }
+
+    public void setTotalCost(Double totalCost) {
+        this.totalCost = totalCost;
+    }
+
+    public Area getAreaId() {
+        return areaId;
+    }
+
+    public void setAreaId(Area areaId) {
+        this.areaId = areaId;
+    }
+
+    public Referrer getReferrerId() {
+        return referrerId;
+    }
+
+    public void setReferrerId(Referrer referrerId) {
+        this.referrerId = referrerId;
+    }
+
+    public Brand getPatientBrand() {
+        return patientBrand;
+    }
+
+    public void setPatientBrand(Brand patientBrand) {
+        this.patientBrand = patientBrand;
+    }
+
+    public Double getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(Double discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CouponDiscount that = (CouponDiscount) o;
+
+        return id.equals(that.id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }

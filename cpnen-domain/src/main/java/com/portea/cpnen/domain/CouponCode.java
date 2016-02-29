@@ -18,6 +18,9 @@ public class CouponCode {
 	
 	@Column(name = "code", columnDefinition = "varchar(128)")
 	private String code;
+
+    @Column(name = "channel_name", columnDefinition = "varchar(128)")
+    private String channelName;
 	
 	@Column(name = "created_on")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -37,11 +40,11 @@ public class CouponCode {
 
     public CouponCode() {}
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -59,6 +62,14 @@ public class CouponCode {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getChannelName() {
+        return channelName;
+    }
+
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
     }
 
     public Date getCreatedOn() {
@@ -91,5 +102,25 @@ public class CouponCode {
 
     public void setDeactivatedBy(User deactivatedBy) {
         this.deactivatedBy = deactivatedBy;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CouponCode that = (CouponCode) o;
+
+        return !(id != null ? !id.equals(that.id) : that.id != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
+    public boolean isActive() {
+        return (getDeactivatedBy() == null);
     }
 }

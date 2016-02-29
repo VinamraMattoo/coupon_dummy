@@ -2,10 +2,18 @@ package com.portea.commp.smsen.domain;
 
 public enum SmsPrimaryProcessingState {
 
-    CREATED,
+    LOADED_FOR_CREATION,
 
-    UNDER_PROCESS,
+    CREATED_FOR_SUBMISSION,
 
-    COMPLETED
+    SUBMISSION_UNDER_PROCESS,
+
+    SUBMISSION_COMPLETED,
+
+    STATUS_CHECK_UNDER_PROCESS,
+
+    STATUS_CHECK_COMPLETED
+
+    ;
 
 }

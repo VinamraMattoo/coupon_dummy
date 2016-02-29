@@ -1,0 +1,22 @@
+{
+  "requesterId": "1",
+  "beneficiaryId": "1",
+  "patientBrandId": "1",
+  "areaId": "1",
+  "referrerId": "1",
+  "contextType": "APPOINTMENT",
+  "totalCost": "100",
+  "codes": [
+    "C1-D1"
+  ],
+  "products": [{
+    "id": 1,
+    "count": 2,
+    "unitCost": 10,
+    "productType": "SERVICE",
+    "purchaseCount": 3,
+    "remarks": "blah blah"
+  }],
+  "sourceName": "CLINICIAN_APP",
+  "withinSubscription": "true"
+}

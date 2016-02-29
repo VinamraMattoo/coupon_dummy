@@ -1,0 +1,56 @@
+System : Coupon Management Application
+Date : December 22 2015, 7:45 PM
+Reviewer : Naveen Kushalapaa
+Attendees : Ravi Sinha, Bharath Ambati, Karthik Gorlagunta, Naveen Kushalappa, Vinamra Mattoo
+
+Prepared by : Naveen Kushalappa
+
+Review Findings:
+
+1) Add coupon name uniqueness validation while creating, editing and copy coupon creations.
+	Review recommendations : Implement coupon name uniqueness validation for all types of coupons(draft and active).
+
+2) No default input values for select input type in create,copy,edit and fast coupon creation pages.
+	Review recommendations : Add default values for select input types in creation,update,copy anf fast coupons.
+
+3) Optional input applicable use count in coupon creation page appears in the middle of the form .
+	Review recommendations : All relative input form inputs should be moved to the end.
+
+4) Add tooltip for coupon submit button and advanced search buttons in all forms.
+	Review recommendations : Tooltips should be added wherever missing.
+
+5) Click event in any row of mapping tables isn't handled.
+	Review recommendations : On click in all mapping tables should result in check/uncheck of the mappings.
+
+6) Select all option in filter search for all mappings tables are not working.
+	Review recommendations : Functionality logic to be checked and updated.
+
+7) Transaction value range validations are not working for all forms.
+	Review recommendations : Functionality logic to be checked and updated.
+
+8) Context type of subscription should be selected for creating a coupon with application type of 'nth time per subscription/ nth time per AB subscription' .
+	Review recommendations : No modifications required as application types are irrelevant while creating a new coupon .
+
+9) Code name displayed in coupon code listing is not styled appropriately.
+	Review recommendations : Perform css changes.
+
+10) On successful coupon deactivation from coupon listing page an intermediate status page is shown with a success message with no links to view coupon or for listing pages .
+	Review recommendations : Remove the intermediate status page and instead refresh the page
+
+11) No user confirmation when Delete/deactivate operations for coupon/code.
+	Review recommendations : Add user confirmation on all dangerous operations like delete a draft coupon or deactivate an active coupon or deactivate a code.
+
+12) Advanced search for a channel name in coupon code listings is not working.
+	Review recommendations : Functionality logic to be checked and updated.
+
+13) Unable to select all advanced search date range inputs.
+	Review recommendations : Functionality logic to be checked and updated.
+
+14) Tables in view coupon page are not aligned.
+	Review recommendations : Perform css changes.
+
+15) Unable to input previous dates in advanced search date inputs as current date is taken as default.
+	Review recommendations : Remove default date inputs and time inputs in advanced search .
+
+16) Unhandled unauthorised login response message on an unauthorised login attempt .
+	Review recommendations : Modify unauthorised login page.

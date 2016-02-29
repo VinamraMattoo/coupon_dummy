@@ -1,0 +1,107 @@
+/**
+ * This gradle build file contains tasks for working with local database.
+ * This build fragment depends on 'local-db.properties'
+ */
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'mysql:mysql-connector-java:5.1.38'
+    }
+}
+
+configurations {
+    mysqldriver
+}
+
+dependencies {
+    mysqldriver 'mysql:mysql-connector-java:5.1.38'
+}
+
+ext.localDbProps = new Properties()
+localDbProps.load(new FileInputStream(project(':cpnen-webapp').projectDir.absolutePath +
+        '/local-db.properties'))
+
+def antSqlTaskParams = [
+        classpath: configurations.mysqldriver.asPath,
+        driver: 'com.mysql.jdbc.Driver',
+        url: localDbProps['jdbc.url'],
+        userid: localDbProps['jdbc.user'],
+        password: localDbProps['jdbc.password'],
+        onerror: 'abort',
+        showWarnings: true,
+        print: true
+]
+
+def docsProjectPath = project(':cpnen-docs').projectDir.absolutePath
+def devScriptsFolder = docsProjectPath + '/db/script/dev'
+
+task devDbTaskSetup() {
+
+    doFirst {
+        if (antSqlTaskParams.url.contains('://localhost') == false) {
+            throw new GradleException(
+                    "DB Tasks (from db-local-tasks) should be run only on localhost. " +
+                            "Please check local-db.properties")
+        }
+    }
+
+    doLast {
+        URLClassLoader loader = GroovyObject.class.classLoader
+        configurations.mysqldriver.each { File file ->
+            loader.addURL(file.toURI().toURL())
+        }
+        println 'MySQL Driver Loaded...'
+    }
+}
+
+task createDevDB(dependsOn: 'devDbTaskSetup') {
+    doLast {
+        ant.echo 'Starting database creation ...'
+        ant.sql(antSqlTaskParams) {
+            transaction(src: "${devScriptsFolder}/CPNEN-Create-Tables.DEV.sql")
+        }
+        ant.echo 'Database creation completed ...'
+    }
+}
+
+task emptyDevDB(dependsOn: 'devDbTaskSetup') {
+    doLast {
+        ant.echo 'Starting to empty database ...'
+        ant.sql(antSqlTaskParams) {
+            transaction(src: "${devScriptsFolder}/CPNEN-Remove-Complete-Data.DEV.sql")
+        }
+        ant.echo 'Database emptying completed ...'
+    }
+}
+
+task populateDevDB(dependsOn: 'devDbTaskSetup') {
+    doLast {
+        ant.echo 'Starting database population ...'
+        ant.sql(antSqlTaskParams) {
+            transaction(src: "${devScriptsFolder}/CPNEN-Populate-Test-Data.DEV.sql")
+        }
+        ant.echo 'Database population completed ...'
+    }
+}
+
+task removeDevDB(dependsOn: 'devDbTaskSetup') {
+    doLast {
+        ant.echo 'Starting database removal ...'
+        ant.sql(antSqlTaskParams) {
+            transaction(src: "${devScriptsFolder}/CPNEN-Drop-Tables.DEV.sql")
+
+        }
+        ant.echo 'Database removal completed ...'
+    }
+}
+
+task renewDevDB(dependsOn: ['removeDevDB', 'createDevDB', 'populateDevDB']) {}
+
+emptyDevDB.shouldRunAfter(createDevDB)
+populateDevDB.shouldRunAfter(createDevDB)
+populateDevDB.shouldRunAfter(emptyDevDB)
+createDevDB.shouldRunAfter(removeDevDB)

@@ -18,13 +18,6 @@ public class CouponDiscountRequestCodeAudit {
 	@ManyToOne
 	@JoinColumn(name = "code_id")
 	private CouponCode couponCode;
-	
-	@Column(name = "created_on")
-	private Date createdOn;
-	
-	@Column(name = "status")
-	@Enumerated(EnumType.STRING)
-	private CouponDiscountRequestStatus status;
 
 	public CouponDiscountRequestCodeAudit() {}
 
@@ -52,19 +45,19 @@ public class CouponDiscountRequestCodeAudit {
 		this.couponCode = couponCode;
 	}
 
-	public Date getCreatedOn() {
-		return createdOn;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-	public void setCreatedOn(Date createdOn) {
-		this.createdOn = createdOn;
-	}
+        CouponDiscountRequestCodeAudit that = (CouponDiscountRequestCodeAudit) o;
 
-	public CouponDiscountRequestStatus getStatus() {
-		return status;
-	}
+        return id.equals(that.id);
 
-	public void setStatus(CouponDiscountRequestStatus status) {
-		this.status = status;
-	}
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

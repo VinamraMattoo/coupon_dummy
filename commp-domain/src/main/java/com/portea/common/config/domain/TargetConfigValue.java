@@ -1,9 +1,14 @@
 package com.portea.common.config.domain;
 
+import com.portea.commp.smsen.domain.User;
+
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
-@Table(name = "cmn_target_config_value")
+@Table(name = "cmn_target_config_value",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"target_config_id"})})
+@Cacheable
 public class TargetConfigValue {
 
     @Id
@@ -17,6 +22,14 @@ public class TargetConfigValue {
 
     @Column(name = "value", columnDefinition = "varchar(256)")
     private String value;
+
+    @Column(name = "last_updated_on")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdatedOn;
+
+    @JoinColumn(name = "last_updated_by")
+    @ManyToOne
+    private User lastUpdatedBy;
 
     public TargetConfigValue() {
     }
@@ -43,6 +56,22 @@ public class TargetConfigValue {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public User getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    public void setLastUpdatedBy(User lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
+    }
+
+    public Date getLastUpdatedOn() {
+        return lastUpdatedOn;
+    }
+
+    public void setLastUpdatedOn(Date lastUpdatedOn) {
+        this.lastUpdatedOn = lastUpdatedOn;
     }
 
     @Override

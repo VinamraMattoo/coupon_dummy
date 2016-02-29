@@ -1,0 +1,38 @@
+------------------------------------------------------------------------------------------
+Adding Thread pool to Wildfly's Managed Executor Service
+------------------------------------------------------------------------------------------
+
+. Connect to CLI, If you don't know how to connect please read How-to-connect-to-wildfly-CLI.txt.
+
+. Use the following command to add a thread pool to managed executor service.
+
+  /subsystem=ee/managed-executor-service=<Thread-pool-name>:add(jndi-name=<Jndi-name>,
+  core-threads=<no-of-core-threads>,hung-task-threshold=<hung-value>,max-threads=<max-no-of-threads>,
+  keepalive-time=<thread-max-idle-time>)
+
+  . The following thread pools are used in our current sms engine for different sms priorities(Direct, High, Medium, Low):
+    /subsystem=ee/managed-executor-service=Submission-Direct:add(jndi-name=java\:jboss\/ee\/concurrency\/executor\/Submission-Direct,core-threads=16,hung-task-threshold=60000,max-threads=32,keepalive-time=5000)
+    /subsystem=ee/managed-executor-service=Submission-High:add(jndi-name=java\:jboss\/ee\/concurrency\/executor\/Submission-High,core-threads=16,hung-task-threshold=60000,max-threads=32,keepalive-time=5000)
+    /subsystem=ee/managed-executor-service=Submission-Medium:add(jndi-name=java\:jboss\/ee\/concurrency\/executor\/Submission-Medium,core-threads=2,hung-task-threshold=60000,max-threads=10,keepalive-time=5000)
+    /subsystem=ee/managed-executor-service=Submission-Low:add(jndi-name=java\:jboss\/ee\/concurrency\/executor\/Submission-Low,core-threads=1,hung-task-threshold=60000,max-threads=5,keepalive-time=5000)
+    /subsystem=ee/managed-executor-service=Status-Direct:add(jndi-name=java\:jboss\/ee\/concurrency\/executor\/Status-Direct,core-threads=1,hung-task-threshold=60000,max-threads=5,keepalive-time=5000)
+    /subsystem=ee/managed-executor-service=Status-High:add(jndi-name=java\:jboss\/ee\/concurrency\/executor\/Status-High,core-threads=1,hung-task-threshold=60000,max-threads=5,keepalive-time=5000)
+    /subsystem=ee/managed-executor-service=Status-Medium:add(jndi-name=java\:jboss\/ee\/concurrency\/executor\/Status-Medium,core-threads=1,hung-task-threshold=60000,max-threads=5,keepalive-time=5000)
+    /subsystem=ee/managed-executor-service=Status-Low:add(jndi-name=java\:jboss\/ee\/concurrency\/executor\/Status-Low,core-threads=1,hung-task-threshold=60000,max-threads=5,keepalive-time=5000)
+
+. Remove already existing thread pool.
+
+  /subsystem=ee/managed-executor-service=other:remove
+
+. To remove existing sms engine thread pools:
+  /subsystem=ee/managed-executor-service=Submission-Direct:remove
+  /subsystem=ee/managed-executor-service=Submission-High:remove
+  /subsystem=ee/managed-executor-service=Submission-Medium:remove
+  /subsystem=ee/managed-executor-service=Submission-Low:remove
+  /subsystem=ee/managed-executor-service=Status-Direct:remove
+  /subsystem=ee/managed-executor-service=Status-High:remove
+  /subsystem=ee/managed-executor-service=Status-Medium:remove
+  /subsystem=ee/managed-executor-service=Status-Low:remove
+
+  reference:
+  https://docs.jboss.org/author/display/WFLY9/EE+Concurrency+Utilities+Configuration

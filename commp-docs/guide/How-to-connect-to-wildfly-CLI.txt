@@ -1,0 +1,15 @@
+------------------------------------------------------------------------------------------
+Connecting to wildfly command line interface
+------------------------------------------------------------------------------------------
+
+. Start Wildfly.
+
+. Connect to Wildfly's command line interface(CLI) using the following command.
+  $JBOSS_HOME/bin/jboss-cli.sh --connect --controller=localhost:<port>
+
+  example:
+  $JBOSS_HOME/bin/jboss-cli.sh --connect --controller=localhost:9990
+
+. Once connected to CLI you should see.
+  [standalone@localhost:9990 /]
+

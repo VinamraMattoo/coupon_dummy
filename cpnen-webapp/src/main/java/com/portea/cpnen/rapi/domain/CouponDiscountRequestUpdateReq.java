@@ -6,21 +6,12 @@ import java.util.List;
 
 public class CouponDiscountRequestUpdateReq {
 
-    private String userId;
+    private Double totalCost;
     private List<SelectedProduct> products;
     private String codes[];
-    private CouponDiscountRequestStatus status;
 
     public CouponDiscountRequestUpdateReq() {
         products = Collections.emptyList();
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public List<SelectedProduct> getProducts() {
@@ -39,21 +30,37 @@ public class CouponDiscountRequestUpdateReq {
         this.codes = codes;
     }
 
-    public CouponDiscountRequestStatus getStatus() {
-        return status;
+    public Double getTotalCost() {
+        return totalCost;
     }
 
-    public void setStatus(CouponDiscountRequestStatus status) {
-        this.status = status;
+    public void setTotalCost(Double totalCost) {
+        this.totalCost = totalCost;
+    }
+
+    public String inspectNullParameters() {
+
+        if (this.totalCost == null) {
+            return "totalCost";
+        }
+
+        if (this.codes == null) {
+            return "codes";
+        }
+
+        if (this.products == null) {
+            return "products";
+        }
+
+        return null;
     }
 
     @Override
     public String toString() {
         return "CouponDiscountRequestUpdateReq{" +
-                "userId='" + userId + '\'' +
-                ", products=" + products +
+                " products=" + products +
                 ", codes=" + Arrays.toString(codes) +
-                ", status=" + status +
+                ", totalCost=" + totalCost +
                 '}';
     }
 }

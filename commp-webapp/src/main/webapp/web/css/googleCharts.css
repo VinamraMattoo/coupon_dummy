@@ -1,0 +1,10 @@
+.googleChartSelect {
+    width: 20px;
+    margin-left: 40px;
+    font-size: 10px;
+    appearance: none;
+    -moz-appearance: none;
+    background-color: white;
+    border: 0;
+    outline: 0;
+}

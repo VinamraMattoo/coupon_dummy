@@ -16,22 +16,25 @@ public class CouponDiscountProduct {
 	private CouponDiscount couponDiscount;
 	
 	@ManyToOne
-	@JoinColumn(name = "product_id")
-	private Product product;
+	@JoinColumn(name = "coupon_product_adapter_id")
+	private ProductAdapter productAdapter;
 	
 	@Column(name = "product_count")
 	private Integer productCount;
 	
 	@Column(name = "product_unit_price")
-	private Integer productUnitPrice;
+	private Double productUnitPrice;
+
+    @Column(name = "purchase_instance_count")
+    private Integer purchaseInstanceCount;
 
     public CouponDiscountProduct() {}
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -43,27 +46,51 @@ public class CouponDiscountProduct {
         this.couponDiscount = couponDiscount;
     }
 
-    public Product getProduct() {
-        return product;
+    public ProductAdapter getProductAdapter() {
+        return productAdapter;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductAdapter(ProductAdapter productAdapter) {
+        this.productAdapter = productAdapter;
     }
 
-    public int getProductCount() {
+    public Integer getProductCount() {
         return productCount;
     }
 
-    public void setProductCount(int productCount) {
+    public void setProductCount(Integer productCount) {
         this.productCount = productCount;
     }
 
-    public int getProductUnitPrice() {
+    public Double getProductUnitPrice() {
         return productUnitPrice;
     }
 
-    public void setProductUnitPrice(int productUnitPrice) {
+    public void setProductUnitPrice(Double productUnitPrice) {
         this.productUnitPrice = productUnitPrice;
+    }
+
+    public Integer getPurchaseInstanceCount() {
+        return purchaseInstanceCount;
+    }
+
+    public void setPurchaseInstanceCount(Integer purchaseInstanceCount) {
+        this.purchaseInstanceCount = purchaseInstanceCount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CouponDiscountProduct that = (CouponDiscountProduct) o;
+
+        return id.equals(that.id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }

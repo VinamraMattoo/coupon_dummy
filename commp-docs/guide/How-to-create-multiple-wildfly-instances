@@ -1,0 +1,28 @@
+It is not necessary to have separate copies of wilfly to run multiple wildfly instances.
+Instead a copy of standalone folder will do. To Copy the standalone directory, without log,
+use the following command.
+rsync -ax --exclude *.log.* $JBOSS_HOME/standalone/ $JBOSS_HOME/standalone-1
+
+Launch an instance on a specified base directory.
+
+$JBOSS_HOME/bin/standalone.sh -Djboss.server.base.dir=$JBOSS_HOME/standalone-1
+
+-Djboss.socket.binding.port-offset=100 parameter is useful for using multiple instance at same time.
+it makes WildFly to apply a offset for all of number of ports to listen. for example,
+following instances can be running at the same time with its own configuration and same core modules:
+
+$JBOSS_HOME/bin/standalone.sh -Djboss.server.base.dir=$JBOSS_HOME/standalone-1 -Djboss.socket.binding.port-offset=100
+$JBOSS_HOME/bin/standalone.sh -Djboss.server.base.dir=$JBOSS_HOME/standalone-2 -Djboss.socket.binding.port-offset=200
+
+Note that if you use port offset and when you want to use jboss-cli,
+you need to start jboss-cli with an additional parameter for each instances like following:
+./jboss-cli.sh --controller=localhost:8180 --connect
+
+-Djboss.http.port=9090 parameter is useful for manually specifying port for an instance. This command is not
+recommended, as It will not apply offset for all listening ports. This command is included for the completeness of
+the document. Following is an example to specify wildfly to run on specific ports.
+
+$JBOSS_HOME/standalone.sh -Djboss.http.port=8080 -Djboss.management.http.port=9991 -Djboss.server.base.dir=$JBOSS_HOME/standalone-1 -b=0.0.0.0 &
+
+
+

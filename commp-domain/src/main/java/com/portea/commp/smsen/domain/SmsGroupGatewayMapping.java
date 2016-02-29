@@ -1,10 +1,11 @@
 package com.portea.commp.smsen.domain;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
-@Table(name = "sms_group_gateway_mapping",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"sms_group_id", "gateway_id", "priority"})})
+@Table(name = "smsen_sms_group_gateway_mapping",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"sms_group_id", "gateway_id"})})
 public class SmsGroupGatewayMapping {
 
     @Id
@@ -22,6 +23,14 @@ public class SmsGroupGatewayMapping {
 
     @Column(name = "priority")
     private Integer priority;
+
+    @Column(name = "last_updated_on")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdatedOn;
+
+    @JoinColumn(name = "last_updated_by")
+    @ManyToOne
+    private User lastUpdatedBy;
 
     public SmsGroupGatewayMapping() {
     }
@@ -58,6 +67,22 @@ public class SmsGroupGatewayMapping {
         this.priority = priority;
     }
 
+    public User getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    public void setLastUpdatedBy(User lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
+    }
+
+    public Date getLastUpdatedOn() {
+        return lastUpdatedOn;
+    }
+
+    public void setLastUpdatedOn(Date lastUpdatedOn) {
+        this.lastUpdatedOn = lastUpdatedOn;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -74,4 +99,13 @@ public class SmsGroupGatewayMapping {
         return getId() != null ? getId().hashCode() : 0;
     }
 
+    @Override
+    public String toString() {
+        return "SmsGroupGatewayMapping{" +
+                "id=" + id +
+                ", smsGroup=" + smsGroup.getName() +
+                ", smsGateway=" + smsGateway.getName() +
+                ", priority=" + priority +
+                '}';
+    }
 }

@@ -1,21 +1,41 @@
 package com.portea.cpnen.rapi.service;
 
-import com.portea.cpnen.domain.CouponDiscountRequest;
-import com.portea.cpnen.rapi.domain.ApplicableDiscountResp;
-import com.portea.cpnen.rapi.domain.CouponDiscountRequestCreateReq;
-import com.portea.cpnen.rapi.domain.CouponDiscountRequestUpdateReq;
+import com.portea.cpnen.rapi.domain.*;
+import com.portea.cpnen.vo.ProductVo;
+import com.portea.cpnen.web.rapi.domain.CouponCodeVO;
 
 import javax.ejb.Local;
+import java.util.List;
 
 @Local
 public interface CouponEngineRequestProcessor {
 
-    CouponDiscountRequest createCouponDiscountRequest(CouponDiscountRequestCreateReq request);
+    CouponDiscountRequestResponse createCouponDiscountRequest(CouponDiscountRequestCreateReq request);
 
-    void updateCouponDiscountRequest(CouponDiscountRequestUpdateReq request);
+    void updateCouponDiscountRequest(Integer cdrId, CouponDiscountRequestUpdateReq request);
 
-    void deleteCouponDiscountRequest(Integer cdrId);
+    void cancelCouponDiscountRequest(Integer cdrId);
 
     ApplicableDiscountResp getCurrentApplicableDiscount(Integer cdrId);
+
+    void addCouponCodeToRequest(Integer cdrId, String code);
+
+    void deleteCouponCodeFromRequest(Integer cdrId, String code);
+
+    void addProductToRequest(Integer cdrId, ProductUpdateReq productUpdateReq);
+
+    void deleteProductFromRequest(Integer cdrId, Integer productId, String ProductType, CostUpdateReq costUpdateReq);
+
+    List<CouponCodeVO> getCouponCodes(Integer cdrId);
+
+    List<ProductVo> getProducts(Integer cdrId);
+
+    int commitCDR(Integer cdrId, String clientContextId);
+
+    int applyCDR(Integer cdrId, String clientContextId);
+
+    CouponDiscountRequestStatusResp getCDRStatus(Integer cdrId);
+
+    CouponInfoResponse getCoupon(String couponCode);
 
 }

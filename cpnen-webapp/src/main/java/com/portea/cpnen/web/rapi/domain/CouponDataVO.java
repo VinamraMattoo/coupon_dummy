@@ -13,7 +13,7 @@ public class CouponDataVO {
     private CouponApplicationType applicationType;
     private Integer appUseCount;
     private String status;
-    private Integer codes;
+    private Long codes;
     private String description;
     private Date from;
     private Date till;
@@ -21,14 +21,16 @@ public class CouponDataVO {
     private Date createdOn;
     private Boolean global;
     private Date deactivatedOn;
-    private Integer deactivatedBy;
+    private String deactivatedBy;
     private Date publishedOn;
-    private Integer publishedBy;
+    private String publishedBy;
     private Date lastUpdatedOn;
-    private Integer lastUpdatedBy;
-    private Integer createdBy;
+    private String lastUpdatedBy;
+    private String createdBy;
     private List<BrandVo> brandVos;
 
+
+    public CouponDataVO() {}
 
     public Integer getId() {
         return id;
@@ -78,11 +80,11 @@ public class CouponDataVO {
         this.status = status;
     }
 
-    public Integer getCodes() {
+    public Long getCodes() {
         return codes;
     }
 
-    public void setCodes(Integer codes) {
+    public void setCodes(Long codes) {
         this.codes = codes;
     }
 
@@ -142,11 +144,11 @@ public class CouponDataVO {
         this.deactivatedOn = deactivatedOn;
     }
 
-    public Integer getDeactivatedBy() {
+    public String getDeactivatedBy() {
         return deactivatedBy;
     }
 
-    public void setDeactivatedBy(Integer deactivatedBy) {
+    public void setDeactivatedBy(String deactivatedBy) {
         this.deactivatedBy = deactivatedBy;
     }
 
@@ -158,11 +160,11 @@ public class CouponDataVO {
         this.publishedOn = publishedOn;
     }
 
-    public Integer getPublishedBy() {
+    public String getPublishedBy() {
         return publishedBy;
     }
 
-    public void setPublishedBy(Integer publishedBy) {
+    public void setPublishedBy(String publishedBy) {
         this.publishedBy = publishedBy;
     }
 
@@ -174,16 +176,12 @@ public class CouponDataVO {
         this.lastUpdatedOn = lastUpdatedOn;
     }
 
-    public Integer getLastUpdatedBy() {
+    public String getLastUpdatedBy() {
         return lastUpdatedBy;
     }
 
-    public void setLastUpdatedBy(Integer lastUpdatedBy) {
+    public void setLastUpdatedBy(String lastUpdatedBy) {
         this.lastUpdatedBy = lastUpdatedBy;
-    }
-
-    public Integer getCreatedBy() {
-        return createdBy;
     }
 
     public List<BrandVo> getBrandVos() {
@@ -194,8 +192,11 @@ public class CouponDataVO {
         this.brandVos = brandVos;
     }
 
-    public void setCreatedBy(Integer createdBy) {
-        this.createdBy = createdBy;
+    public String getCreatedBy() {
+        return createdBy;
     }
 
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 }

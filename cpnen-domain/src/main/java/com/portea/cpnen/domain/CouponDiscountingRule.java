@@ -40,9 +40,6 @@ public class CouponDiscountingRule {
 	
 	@Column(name = "disc_percentage")
 	private Integer discountPercentage;
-	
-	@Column(name = "priority")
-	private Integer priority;
 
     public CouponDiscountingRule() {}
 
@@ -118,11 +115,19 @@ public class CouponDiscountingRule {
         this.discountPercentage = discountPercentage;
     }
 
-    public int getPriority() {
-        return priority;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CouponDiscountingRule that = (CouponDiscountingRule) o;
+
+        return id.equals(that.id);
+
     }
 
-    public void setPriority(int priority) {
-        this.priority = priority;
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }

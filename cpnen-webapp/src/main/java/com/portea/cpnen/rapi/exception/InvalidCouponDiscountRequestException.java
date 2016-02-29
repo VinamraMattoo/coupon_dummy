@@ -31,7 +31,7 @@ public class InvalidCouponDiscountRequestException extends CouponApplicationExce
     @Override
     public String getExplanatoryMessage() {
         return MessageFormat.format(
-                "Coupon discount request {0} is invalid::{0}",
+                "Coupon discount request id {0} is invalid::{0}",
                 cdrId
         );
     }

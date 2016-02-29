@@ -1,41 +1,73 @@
 package com.portea.cpnen.vo;
 
+import com.portea.cpnen.domain.ProductType;
+
 public class ProductVo {
 
-    public int getUnitCost() {
-        return unitCost;
-    }
-
-    public void setUnitCost(int unitCost) {
-        this.unitCost = unitCost;
-    }
-
-    private int unitCost;
-    private int id;
-    private int count;
+    private Integer id;
+    private ProductType productType;
+    private Integer count;
+    private Integer purchaseCount;
+    private Double unitCost;
+    private String remarks;
+    private Integer productBrand;
 
     public ProductVo() {}
 
-    public ProductVo(int id, int count, int unitCost) {
-        this.id = id;
-        this.count = count;
-        this.unitCost = unitCost;
-    }
-
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+
+    public Double getUnitCost() {
+        return unitCost;
+    }
+
+    public void setUnitCost(Double unitCost) {
+        this.unitCost = unitCost;
+    }
+
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getCount() {
+    public Integer getCount() {
         return count;
     }
 
-    public void setCount(int count) {
+    public void setCount(Integer count) {
         this.count = count;
     }
 
+    public ProductType getProductType() {
+        return productType;
+    }
+
+    public void setProductType(ProductType productType) {
+        this.productType = productType;
+    }
+
+    public Integer getPurchaseCount() {
+        return purchaseCount;
+    }
+
+    public void setPurchaseCount(Integer purchaseCount) {
+        this.purchaseCount = purchaseCount;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    public Integer getProductBrand() {
+        return productBrand;
+    }
+
+    public void setProductBrand(Integer productBrand) {
+        this.productBrand = productBrand;
+    }
 }

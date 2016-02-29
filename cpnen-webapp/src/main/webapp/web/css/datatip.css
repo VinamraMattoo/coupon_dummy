@@ -1,0 +1,11 @@
+#datatipDiv {
+    position: absolute;
+    display: none;
+    font-size: 14px;
+    background-color:lime;
+    color: black;
+    border: 2px solid #d58512;
+    padding: 7px;
+    border-radius: 20px;
+    z-index: 9999;
+}

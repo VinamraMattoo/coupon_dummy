@@ -2,14 +2,30 @@
 /*
  * function to map current values for the particular couponId into the edit form input
  * */
+"use strict";
+
+var selectedProductMappings = [];
+var selectedBrandMappings = [];
+var selectedAreaMappings = [];
+var selectedReferralMappings = [];
+
 
 function populateEditCouponValues(response) {
+    hideOtherDivs(5);
+    getPreviousSelections(response);
+    $('#editMappingTable').bootstrapTable('refresh');
+    $('#editBrandTable').bootstrapTable('refresh');
+    $('#editAreaTable').bootstrapTable('refresh');
+    $('#editReferrersTable').bootstrapTable('refresh');
+    couponEditTabSwitcher(0);
 
     for (var arr in response) {
         switch (arr) {
 
             case "name" :
                 $("#edit_name").val(response[arr]);
+                $("#edit_name_response").empty();
+                $("#edit_storedName").val(response[arr]);
                 break;
 
             case "couponId" :
@@ -20,12 +36,26 @@ function populateEditCouponValues(response) {
                 $("#edit_description").val(response[arr]);
                 break;
 
+            case "isAllAreas" :
+                $("#editMappingAreasGlobal").prop('checked', response[arr]);
+                break;
+
+            case "isAllBrands" :
+                $("#editMappingBrandsGlobal").prop('checked', response[arr]);
+                break;
+
+            case "isAllProducts" :
+                $("#editMappingProductsGlobal").prop('checked', response[arr]);
+                break;
+
             case "inclusive" :
-                $("#edit_inclusive").prop('checked', response[arr]);
+                var exclusive = !(response[arr]);
+                $("#edit_inclusive").prop('checked', exclusive);
                 break;
 
             case "applicationType" :
                 $("#edit_applicationType").val(response[arr]);
+                validateApplicationType('edit', response[arr]);
                 break;
 
             case "actorType" :
@@ -37,10 +67,10 @@ function populateEditCouponValues(response) {
                 break;
 
             case "applicableFrom" :
-                $("#edit_applicableFrom").val(dateFormatting(response[arr]));
+                $("#edit_applicableFrom").val(formatDate(response[arr]));
                 break;
             case "applicableTill" :
-                $("#edit_applicableTill").val(dateFormatting(response[arr]));
+                $("#edit_applicableTill").val(formatDate(response[arr]));
                 break;
 
             case "transactionValMin" :
@@ -67,7 +97,7 @@ function populateEditCouponValues(response) {
                 break;
 
             case "global" :
-                $("#edit_global").prop('checked', response[arr]);
+                $("#editGlobal").prop('checked', response[arr]);
                 break;
 
             case "nthTime" :
@@ -75,49 +105,128 @@ function populateEditCouponValues(response) {
                 break;
 
 
-            case "nthTimeReccuring" :
-                $("#edit_nthTimeReccuring").prop('checked', response[key]);
+            case "nthTimeRecurring" :
+                $("#edit_nthTimeRecurring").prop('checked', response[arr]);
                 break;
 
 
             case "discountRule" :
-                for (var value in arr) {
-                    switch (value) {
-                        case "ruleType" :
-                            $("#edit_ruleType").val(arr[value]);
-                            break;
+                $("#edit_ruleType").val(response[arr].ruleType);
 
-                        case "discountPercentage" :
-                            $("#edit_discountPercentage").val(arr[value]);
-                            break;
-
-                        case "discountFlatAmount" :
-                            $("#edit_discountFlatAmount").val(arr[value]);
-                            break;
-
-                        case "description" :
-                            $("#edit_ruleDesc").val(arr[value]);
-                            break;
-                    }
-
+                if (response[arr].ruleType === "PERCENTAGE") {
+                    $("#edit_discountValue").val(response[arr].discountPercentage);
                 }
+                else
+                    $("#edit_discountValue").val(response[arr].discountFlatAmount);
+
+
+                $("#edit_ruleDesc").val(response[arr].description);
+
                 break;
-            case "productMapping" :
-                for (var val in arr) {
-                    if (val == "productId") var prodId = arr[val];
-                }
+
+            case "lastUpdatedOn" :
+                $("#editStoredLastUpdatedOn").val(response[arr]);
                 break;
-            case "brandMapping" :
-                for (var va in arr) {
-                    if (va == "brandId") var brandId = arr[va];
-                }
+
+            case "isB2B" :
+                $("#editB2BId").prop('checked', response[arr]);
                 break;
+
+            case "isB2C" :
+                $("#editB2CId").prop('checked', response[arr]);
+                break
+
         }
     }
+    updateReferralsTable('edit');
+    tableGlobalSelector('edit','brand', 0);
+    tableGlobalSelector('edit','product', 0);
+    tableGlobalSelector('edit','area', 0);
+
+
 }
 /*returns milliseconds input into standard YYYY-MM-DDTHH:mm:ss format*/
-function dateFormatting(date) {
+function formatDate(date) {
     if (date == null)
-        return "null";
+        return "";
+
     return moment(date).format(getCurrentDateTimeFormat());
+    /* var localDate = UTCtoLocal(date);
+     console.log("to local" + moment(localDate).format(getCurrentDateTimeFormat()));
+     return moment(localDate).format(getCurrentDateTimeFormat());*/
+}
+
+//checks the row if it was previously checked
+function getBrandsChecked(value, row) {
+    var bool = false;
+    if (selectedBrandMappings.length > 0) {
+        for (var key in selectedBrandMappings) {
+
+            if (row.id === selectedBrandMappings[key].id) {
+
+                bool = true;
+                return bool;
+
+            }
+        }
+    }
+    return bool;
+
+}
+
+
+//data -formatter for checking for previous values
+function getState(value, row) {
+    var bool = false;
+    var mapId = row.id;
+    var mapType = row.type;
+    if (selectedProductMappings.length > 0) {
+        for (var key in selectedProductMappings) {
+
+            if (mapId === selectedProductMappings[key].pid && mapType === selectedProductMappings[key].type) {
+
+                bool = true;
+                return bool;
+
+            }
+        }
+    }
+    return bool;
+}
+
+
+//data -formatter for checking for previous values
+function getAreaState(value, row) {
+    var bool = false;
+    if (selectedAreaMappings.length > 0) {
+        for (var key in selectedAreaMappings) {
+
+            if (row.id === selectedAreaMappings[key].id) {
+
+                bool = true;
+                return bool;
+
+            }
+        }
+    }
+    return bool;
+}
+
+//data -formatter for checking for previous values
+function getReferralState(value, row) {
+    var bool = false;
+    var mapId = row.id;
+    var mapType = row.type;
+    if (selectedReferralMappings.length > 0) {
+        for (var key in selectedReferralMappings) {
+
+            if (mapId === selectedReferralMappings[key].pid && mapType === selectedReferralMappings[key].type) {
+
+                bool = true;
+                return bool;
+
+            }
+        }
+    }
+    return bool;
 }

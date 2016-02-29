@@ -28,18 +28,31 @@ public class QuartzCdiSetupContextListener implements ServletContextListener {
         final SchedulerFactory schedulerFactory =
                 (SchedulerFactory) sce.getServletContext().getAttribute(QUARTZ_FACTORY_KEY);
 
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Got the instance of scheduler factory " + schedulerFactory);
+        }
+
         try {
             schedulerFactory.getScheduler().setJobFactory(cdiJobFactory);
+
             if (LOG.isDebugEnabled()) {
-                LOG.debug("CDI Job Factory has been set for the Quartz scheduler");
+                LOG.debug("CDI Job Factory has been set on the Quartz scheduler");
             }
-        } catch (SchedulerException e) {
+
+            JobCleaner jobCleaner = new JobCleaner((QuartzCdiJobFactory) cdiJobFactory);
+            schedulerFactory.getScheduler().getListenerManager().addJobListener(jobCleaner);
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Job cleaner has been set on the Quartz scheduler");
+            }
+        }
+        catch (SchedulerException e) {
             LOG.error("Unable to set the CDI Job Factory");
             return;
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Got the instance of scheduler factory" + schedulerFactory);
+            LOG.debug("Quartz scheduler initialization complete.");
         }
     }
 

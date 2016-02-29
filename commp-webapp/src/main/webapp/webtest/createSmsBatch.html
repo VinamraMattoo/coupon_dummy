@@ -1,0 +1,153 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/live-search.css">
+    <link rel="stylesheet"
+          href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet"
+          href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap-theme.css">
+    <link rel="stylesheet" type="text/css" href="../web/css/sweetalert.css">
+    <link rel="stylesheet" type="text/css" href="css/createSmsBatch.css">
+    <link rel="stylesheet" href="../web/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="css/loader-normalize.css">
+    <link rel="stylesheet" href="css/loader-main.css">
+
+    <script src="js/modernizr-2.6.2.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+    <script src="../web/js/moment.js"></script>
+    <script src="../web/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.js"></script>
+    <script src="js/createSmsBatch.js"></script>
+    <script src="js/live-search.js"></script>
+    <script src="../web/js/sweetalert.min.js"></script>
+    <script src="../web/js/sweet-alert-operations.js"></script>
+    <title>Create Sms Batch</title>
+</head>
+<body>
+<div id="loading-content">
+</div>
+<div class="container">
+    <h1 align="center">Sms Testing page</h1>
+    <div class="container col-md-6">
+        <h2 align="center">Pump Sms</h2>
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="control-label col-md-4" for="gn">Group Name: </label>
+                <div class="col-md-8">
+
+                    <input id="gn" type="text" class="ps-i-w" value=""
+                           name="groupName"><br>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-4" for="un">User Name: </label>
+                <div class="col-md-8">
+
+                    <input id="un" type="text" class="ps-i-w" value=""
+                           name="userName"><br>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-4" for="pn">Phone Number: </label>
+                <div class="col-md-8">
+
+                    <input id="pn" type="text" class="ps-i-w" value="8888888888"
+                           name="phoneNumber"><br>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-4" for="cnt">Count: </label>
+                <div class="col-md-8">
+
+                    <input id="cnt" type="text" class="ps-i-w" value="1"
+                           onfocus="if(this.value == '1') this.value='';"
+                           onblur="if(this.value == '') this.value='1';"
+                           name="count"><br>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-4" for="bn">Brand Name: </label>
+                <div class="col-md-8">
+
+                    <input id="bn" type="text" class="ps-i-w" value="Portea"
+                           name="brandName"><br>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-4" for="rt">Receiver Type: </label>
+                <div class="col-md-8">
+
+                    <input id="rt" type="text" class="ps-i-w" value="patient"
+                           name="receiverType"><br>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-4" for="msg">Message: </label>
+                <div class="col-md-8">
+
+                    <textarea id="msg" rows="4" cols="65" class="form-control" placeholder="Enter message here.." maxlength="800"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-4" for="attm">Append date to Msg: </label>
+                <div class="col-md-1">
+
+                    <input id="attm" type="checkbox">
+                </div>
+            </div>
+            <div>
+                <div class="col-md-offset-4 col-md-8">
+                    <button id="createBtn" type="submit" class="btn btn-xs btn-success">Submit Single</button>
+                    <button type="submit" disabled="disabled" onclick="createBulkSMS" id="createBulkSMSBtn" class="btn btn-xs btn-success">Submit Bulk</button>
+                    <button type="submit" id="addMoreSMSInBulkBtn" onclick="clickAddMoreBulkSmsBtn()" class="btn btn-xs btn-success"><span class="glyphicon glyphicon-plus"></span></button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="container col-md-6">
+        <h2 align="center">Sms stats</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <label for="smsCount">Sms submitted in last: </label>
+            </div>
+            <div class="col-md-4" >
+                <input id="smsCount" type="number" min="0" step="1" value = "10" style="width:60px;height:22px"/>
+                <select id="timeUnit">
+                    <option>Seconds</option>
+                    <option>Minutes</option>
+                    <option>Hours</option>
+                    <option>Days</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" id="getLatestStatsBtn" class="btn btn-xs btn-success">Submit</button>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-8">
+
+                <label for="fromDate">From </label>
+                <input style="width:100px;height:22px;font-size:11px;" id="fromDate" placeholder="From" type="text">
+                <label for="tillDate">Till </label>
+                <input style="width:100px;height:22px;font-size:11px;" id="tillDate" placeholder="From" type="text">
+                <button type="submit" id="getStatsBtn" class="btn btn-xs btn-success">Submit</button>
+            </div>
+            <br>
+            <br>
+            <br>
+        </div>
+
+        <br>
+        <div class="row">
+            <div class="col-md-offset-0 col-md-12">
+                <div id = "latestStatResult"></div>
+            </div>
+        </div>
+        <br>
+    </div>
+</div>
+
+</body>
+</html>

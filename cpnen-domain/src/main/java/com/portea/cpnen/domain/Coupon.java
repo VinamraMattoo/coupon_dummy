@@ -25,6 +25,14 @@ public class Coupon {
 	@JoinColumn(name = "created_by")
     @ManyToOne
 	private User createdBy;
+
+    @Column(name = "last_updated_on")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdatedOn;
+
+    @JoinColumn(name = "last_updated_by")
+    @ManyToOne
+    private User lastUpdatedBy;
 	
 	@Column(name = "deactivated_on")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -36,13 +44,22 @@ public class Coupon {
 	
 	@Column(name = "inclusive")
 	private Boolean inclusive;
-	
-	@Column(name = "channel_name",columnDefinition = "varchar(128)")
-	private String channelName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category")
+    private CouponCategory category;
 		
 	@Enumerated(EnumType.STRING)
     @Column(name = "application_type")
 	private CouponApplicationType applicationType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "actor_type")
+    private ActorType actorType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "context_type")
+    private ContextType contextType;
 	
 	@Column(name = "applicable_from")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -61,23 +78,52 @@ public class Coupon {
 	@Column(name = "trans_val_max")
 	private Integer transactionMaxValue;
 	
-	@Column(name = "prod_count_min")
-	private Integer productMinCount;
-	
-	@Column(name = "prod_count_max")
-	private Integer productMaxCount;
-	
-	@Column(name = "prod_count_span")
-	private Boolean productCountSpanApplicable;
+	@Column(name = "discount_amt_max")
+	private Integer discountAmountMax;
+
+	@Column(name = "discount_amt_min")
+	private Integer discountAmountMin;
+
+    @Column(name = "global")
+    private Boolean global;
+
+    @Column(name = "is_for_all_areas")
+    private Boolean isForAllAreas;
+
+    @Column(name = "is_for_all_products")
+    private Boolean isForAllProducts;
+
+    @Column(name = "is_for_all_brands")
+    private Boolean isForAllBrands;
+
+    @Column(name = "is_for_all_b2b")
+    private Boolean isForAllB2B;
+
+    @Column(name = "is_for_all_b2c")
+    private Boolean isForAllB2C;
+
+    @Column(name = "nth_time")
+    private Integer nthTime;
+
+    @Column(name = "nth_time_recurring")
+    private Boolean nthTimeRecurring;
+
+    @Column(name = "published_on")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date publishedOn;
 
     @JoinColumn(name = "published_by")
     @ManyToOne
     private User publishedBy;
 
-    @Column(name = "published_on")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date publishedOn;
-	
+    /**
+     * If this value is true coupon applicability count is checked across all codes.
+     * ex: If the applicability count is 10 and trackUseAcrossCodes is true only 10
+     * codes can be used for this coupon. If this value is false each code can be used 10 times.
+     */
+    @Column(name = "track_use_across_codes")
+    private Boolean trackUseAcrossCodes;
+
 	public Coupon() {}
 
     public Integer getId() {
@@ -120,6 +166,22 @@ public class Coupon {
         this.createdBy = createdBy;
     }
 
+    public Date getLastUpdatedOn() {
+        return lastUpdatedOn;
+    }
+
+    public void setLastUpdatedOn(Date lastUpdatedOn) {
+        this.lastUpdatedOn = lastUpdatedOn;
+    }
+
+    public User getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    public void setLastUpdatedBy(User lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
+    }
+
     public Date getDeactivatedOn() {
         return deactivatedOn;
     }
@@ -136,7 +198,7 @@ public class Coupon {
         this.deactivatedBy = deactivatedBy;
     }
 
-    public Boolean isInclusive() {
+    public Boolean getInclusive() {
         return inclusive;
     }
 
@@ -144,12 +206,12 @@ public class Coupon {
         this.inclusive = inclusive;
     }
 
-    public String getChannelName() {
-        return channelName;
+    public CouponCategory getCategory() {
+        return category;
     }
 
-    public void setChannelName(String channelName) {
-        this.channelName = channelName;
+    public void setCategory(CouponCategory category) {
+        this.category = category;
     }
 
     public CouponApplicationType getApplicationType() {
@@ -158,6 +220,22 @@ public class Coupon {
 
     public void setApplicationType(CouponApplicationType applicationType) {
         this.applicationType = applicationType;
+    }
+
+    public ActorType getActorType() {
+        return actorType;
+    }
+
+    public void setActorType(ActorType actorType) {
+        this.actorType = actorType;
+    }
+
+    public ContextType getContextType() {
+        return contextType;
+    }
+
+    public void setContextType(ContextType contextType) {
+        this.contextType = contextType;
     }
 
     public Date getApplicableFrom() {
@@ -200,28 +278,52 @@ public class Coupon {
         this.transactionMaxValue = transactionMaxValue;
     }
 
-    public Integer getProductMinCount() {
-        return productMinCount;
+    public Integer getDiscountAmountMax() {
+        return discountAmountMax;
     }
 
-    public void setProductMinCount(Integer productMinCount) {
-        this.productMinCount = productMinCount;
+    public void setDiscountAmountMax(Integer discountAmountMax) {
+        this.discountAmountMax = discountAmountMax;
     }
 
-    public Integer getProductMaxCount() {
-        return productMaxCount;
+    public Integer getDiscountAmountMin() {
+        return discountAmountMin;
     }
 
-    public void setProductMaxCount(Integer productMaxCount) {
-        this.productMaxCount = productMaxCount;
+    public void setDiscountAmountMin(Integer discountAmountMin) {
+        this.discountAmountMin = discountAmountMin;
     }
 
-    public Boolean isProductCountSpanApplicable() {
-        return productCountSpanApplicable;
+    public Boolean getGlobal() {
+        return global;
     }
 
-    public void setProductCountSpanApplicable(Boolean productCountSpanApplicable) {
-        this.productCountSpanApplicable = productCountSpanApplicable;
+    public void setGlobal(Boolean global) {
+        this.global = global;
+    }
+
+    public Integer getNthTime() {
+        return nthTime;
+    }
+
+    public void setNthTime(Integer nthTime) {
+        this.nthTime = nthTime;
+    }
+
+    public Boolean getNthTimeRecurring() {
+        return nthTimeRecurring;
+    }
+
+    public void setNthTimeRecurring(Boolean nthTimeRecurring) {
+        this.nthTimeRecurring = nthTimeRecurring;
+    }
+
+    public Date getPublishedOn() {
+        return publishedOn;
+    }
+
+    public void setPublishedOn(Date publishedOn) {
+        this.publishedOn = publishedOn;
     }
 
     public User getPublishedBy() {
@@ -232,11 +334,76 @@ public class Coupon {
         this.publishedBy = publishedBy;
     }
 
-    public Date getPublishedOn() {
-        return publishedOn;
+    public Boolean getTrackUseAcrossCodes() {
+        return trackUseAcrossCodes;
     }
 
-    public void setPublishedOn(Date publishedOn) {
-        this.publishedOn = publishedOn;
+    public void setTrackUseAcrossCodes(Boolean trackUseAcrossCodes) {
+        this.trackUseAcrossCodes = trackUseAcrossCodes;
+    }
+
+    public Boolean getIsForAllAreas() {
+        return isForAllAreas;
+    }
+
+    public void setIsForAllAreas(Boolean isForAllAreas) {
+        this.isForAllAreas = isForAllAreas;
+    }
+
+    public Boolean getIsForAllProducts() {
+        return isForAllProducts;
+    }
+
+    public void setIsForAllProducts(Boolean isForAllProducts) {
+        this.isForAllProducts = isForAllProducts;
+    }
+
+    public Boolean getIsForAllBrands() {
+        return isForAllBrands;
+    }
+
+    public void setIsForAllBrands(Boolean isForAllBrands) {
+        this.isForAllBrands = isForAllBrands;
+    }
+
+    public Boolean getIsForAllB2B() {
+        return isForAllB2B;
+    }
+
+    public void setIsForAllB2B(Boolean isForAllB2B) {
+        this.isForAllB2B = isForAllB2B;
+    }
+
+    public Boolean getIsForAllB2C() {
+        return isForAllB2C;
+    }
+
+    public void setIsForAllB2C(Boolean isForAllB2C) {
+        this.isForAllB2C = isForAllB2C;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Coupon coupon = (Coupon) o;
+
+        return !(id != null ? !id.equals(coupon.id) : coupon.id != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
+    public boolean isActive() {
+
+        return getDeactivatedBy() == null;
+    }
+
+    public boolean isPublished() {
+        return getPublishedBy() != null;
     }
 }

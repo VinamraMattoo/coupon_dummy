@@ -1,0 +1,33 @@
+{
+  "name": "test",
+  "description": "",
+  "inclusive": true,
+  "applicationType": null,
+  "actorType": null,
+  "category": null,
+  "contextType": null,
+  "applicableFrom": "",
+  "applicableTill": "",
+  "applicableUseCount": "",
+  "nthTime": "",
+  "transactionValMin": "",
+  "transactionValMax": "",
+  "discountAmountMin": "",
+  "discountAmountMax": "",
+  "global": false,
+  "isAllAreas": false,
+  "isAllProducts": false,
+  "isAllBrands": false,
+  "isB2B": false,
+  "isB2C": false,
+  "published": false,
+  "nthTimeRecurring": false,
+  "productMapping": [],
+  "referrerMapping": [],
+  "brandMapping": [],
+  "areaMapping": [],
+  "discountRule": {
+    "description": "",
+    "ruleType": null
+  }
+}

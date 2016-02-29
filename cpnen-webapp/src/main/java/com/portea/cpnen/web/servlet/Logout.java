@@ -28,7 +28,8 @@ public class Logout extends HttpServlet {
         }
 
         //no encoding because we have invalidated the session
-        response.sendRedirect("/cpnen/web/login.html");
+        String contextPath = request.getContextPath();
+        response.sendRedirect(contextPath+"/web/login.html");
 
     }
 

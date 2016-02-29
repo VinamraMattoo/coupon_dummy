@@ -15,6 +15,10 @@ public abstract class BaseJpaDao<ID, E> implements Dao<ID, E> {
         entityClass = persistentClass;
     }
 
+    public Class<E> getEntityClass() {
+        return entityClass;
+    }
+
     @Override
     public E create(E entity) {
         entityManager.persist(entity);

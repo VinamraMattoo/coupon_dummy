@@ -1,5 +1,7 @@
 package com.portea.common.config.domain;
 
+import com.portea.commp.smsen.domain.User;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -28,6 +30,10 @@ public class TargetConfigAudit {
 
     @Column(name = "active")
     private Boolean active;
+
+    @JoinColumn(name = "created_by")
+    @ManyToOne
+    private User createdBy;
 
     public TargetConfigAudit() {
     }
@@ -78,6 +84,18 @@ public class TargetConfigAudit {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
     }
 
     @Override

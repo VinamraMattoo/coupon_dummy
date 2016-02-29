@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "cmn_config_target_type")
+@Cacheable
 public class ConfigTargetType {
 
     @Id
@@ -12,7 +13,8 @@ public class ConfigTargetType {
     private Integer id;
 
     @Column(name = "type_name", columnDefinition = "varchar(128)")
-    private String name;
+    @Enumerated(value = EnumType.STRING)
+    private com.portea.commp.smsen.domain.ConfigTargetType targetType;
 
     @Column(name = "description", columnDefinition = "varchar(512)")
     private String description;
@@ -28,12 +30,12 @@ public class ConfigTargetType {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public com.portea.commp.smsen.domain.ConfigTargetType getTargetType() {
+        return targetType;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTargetType(com.portea.commp.smsen.domain.ConfigTargetType targetType) {
+        this.targetType = targetType;
     }
 
     public String getDescription() {

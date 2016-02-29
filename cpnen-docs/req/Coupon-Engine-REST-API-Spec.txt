@@ -1,6 +1,6 @@
 POST /rapi/cdr
 
-PATCH /rapi/cdr/{id}
+PUT /rapi/cdr/{id}
 
 GET /rapi/cdr/{id}
 

@@ -1,13 +1,14 @@
 package com.portea.commp.smsen.job;
 
+import com.portea.common.config.domain.ConfigEngineParam;
 import com.portea.commp.smsen.dao.SmsAssemblyDao;
+import com.portea.commp.smsen.domain.ConfigTargetType;
 import com.portea.commp.smsen.domain.SmsAssembly;
-import com.portea.commp.smsen.domain.SmsQueue;
-import com.portea.commp.smsen.engine.SmsQueueManager;
-import com.portea.commp.smsen.engine.SmsQueuePriority;
-import com.portea.commp.smsen.vo.SmsInAssembly;
+import com.portea.commp.smsen.engine.batch.SmsBatchedQueueManager;
+import com.portea.commp.service.ejb.SmsEngineUtil;
 import com.portea.dao.JpaDao;
 import com.portea.util.LogUtil;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -22,35 +23,50 @@ import java.util.concurrent.TimeUnit;
 /**
  * A job which retrieves a new batch of SMS to be queued for processing. The queued SMS are
  */
+@DisallowConcurrentExecution
 public class SmsSchedulerJob implements Job {
 
     private Logger LOG = LoggerFactory.getLogger(SmsSchedulerJob.class);
 
     @Inject
-    private SmsQueueManager smsQueueManager;
+    private SmsBatchedQueueManager smsBatchedQueueManager;
+
 
     @Inject @JpaDao
     private SmsAssemblyDao smsAssemblyDao;
 
     @Inject
-    private JobManager jobManager;
+    private SmsEngineUtil smsEngineUtil;
 
     @Asynchronous
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        LogUtil.entryTrace("execute", LOG);
 
-        if (jobManager.isSchedulerJobRunning()) {
-            LogUtil.exitTrace("execute", LOG, "Another job instance is running");
-            return;
+        try {
+
+            doWork();
+
+        }
+        catch (Exception e) {
+            LOG.error("Error", e);
         }
 
-        jobManager.setSchedulerJobRunning(true);
+    }
+
+    private void doWork() throws Exception{
+        LogUtil.entryTrace("execute", LOG);
+
         long start = System.nanoTime();
 
-        List<SmsAssembly> smsAssemblyList = smsAssemblyDao.getNextBatchFromAssembly(5, 500);
+        Integer batchWindow = Integer.parseInt(smsEngineUtil.
+                getTargetConfigValue(ConfigTargetType.SMS_ENGINE, ConfigEngineParam.NEXT_SMS_BATCH_LOAD_WINDOW,
+                        null, ConfigEngineParam.NEXT_SMS_BATCH_LOAD_WINDOW.getDefaultValue()));
 
-        if (LOG.isDebugEnabled()) LOG.debug("No. of sms fetched from assembly " + smsAssemblyList.size());
+        Integer maxBatchLimit = smsBatchedQueueManager.getMaxSmsToLoadForSubmission();
+
+        List<SmsAssembly> smsAssemblyList = smsAssemblyDao.getNextBatchFromAssembly(batchWindow, maxBatchLimit);
+
+        LOG.trace("No. of sms fetched from assembly " + smsAssemblyList.size());
 
         while(true) {
 
@@ -67,7 +83,7 @@ public class SmsSchedulerJob implements Job {
                 partialList = smsAssemblyList.subList(0, smsAssemblyList.size());
             }
 
-            smsQueueManager.queueSms(partialList);
+            smsBatchedQueueManager.queueSmsForSubmission(partialList);
 
             partialList.clear();
         }
@@ -75,11 +91,11 @@ public class SmsSchedulerJob implements Job {
 
 
         long end = System.nanoTime();
-        if (LOG.isDebugEnabled()) LOG.debug("SMS Load time : " +
+        LOG.trace("SMS Load time : " +
                         TimeUnit.SECONDS.convert((end-start), TimeUnit.NANOSECONDS) +
                         " seconds"
         );
         LogUtil.exitTrace("execute", LOG);
-        jobManager.setSchedulerJobRunning(false);
+
     }
 }

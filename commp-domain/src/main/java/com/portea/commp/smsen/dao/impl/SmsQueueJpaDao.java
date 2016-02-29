@@ -9,14 +9,12 @@ import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @JpaDao
 @Dependent
-public class SmsQueueJpaDao extends BaseJpaDao<Integer, SmsQueue> implements SmsQueueDao {
+public class SmsQueueJpaDao extends BaseJpaDao<Long, SmsQueue> implements SmsQueueDao {
 
     public SmsQueueJpaDao() {
         super(SmsQueue.class);
@@ -30,16 +28,14 @@ public class SmsQueueJpaDao extends BaseJpaDao<Integer, SmsQueue> implements Sms
 
 
     @Override
-    public List<SmsQueue> getNextBatchFromQueue(int seconds, int resultSize) {
-        Query query = entityManager.createNamedQuery("getNextBatchFromQueue");
+    public List<SmsQueue> getNextBatchFromQueue(int milliSec, int resultSize) {
+
+        Long seconds = TimeUnit.MILLISECONDS.toSeconds(milliSec);
+        Query query = entityManager.createNativeQuery("" +
+                "SELECT * FROM `smsen_sms_queue` WHERE scheduledTime < " +
+                "DATE_ADD(CONVERT_TZ(now(), (SELECT @@time_zone), scheduled_time_zone), INTERVAL "+seconds+" SECOND)",
+                SmsQueue.class);
         query.setMaxResults(resultSize);
-
-        LocalDateTime ldt = LocalDateTime.now();
-        ldt.plusSeconds((long) seconds);
-
-        Date date = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
-
-        query.setParameter("scheduledTime", date);
 
         return query.getResultList();
     }

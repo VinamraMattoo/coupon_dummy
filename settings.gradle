@@ -1,4 +1,4 @@
-rootProject.name = 'CouponEnginePoc'
+rootProject.name = 'java-projects'
 
 include 'util', 'domain-cmn',
         'cpnen-docs', 'cpnen-domain', 'cpnen-webapp',

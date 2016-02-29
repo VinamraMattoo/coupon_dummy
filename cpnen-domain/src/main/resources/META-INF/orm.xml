@@ -4,63 +4,22 @@
                  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd"
                  version="2.1">
 
-    <named-query name="totalCategoryCount">
-        <query>
-            SELECT count(*) FROM Category
-        </query>
-    </named-query>
-
-    <named-query name="getParentCategoryID">
-        <query>
-            SELECT c.parent.id FROM Category c where c.id = :id
-        </query>
-    </named-query>
-
-    <named-query name="getCountOfApplicableCategories">
-        <query>
-            SELECT count(*) FROM CouponCategoryMap ccm where ccm.coupon.id= :id AND ccm.category.id IN :ids
-            AND ccm.applicable = :applicable
-        </query>
-    </named-query>
 
     <named-query name="getCouponCodes">
         <query>
             FROM CouponCode WHERE code in :codes
         </query>
     </named-query>
+
+    <named-query name="getCodes">
+        <query>
+            FROM CouponCode
+        </query>
+    </named-query>
+
     <named-query name="getCouponCode">
         <query>
             FROM CouponCode WHERE code = :code
-        </query>
-    </named-query>
-
-    <named-query name="findListRulesOrderByPriority">
-        <query>
-            SELECT cdr.id FROM CouponDiscountingRule cdr INNER JOIN cdr.coupon c WHERE c.id= :id
-            ORDER BY cdr.priority ASC
-        </query>
-    </named-query>
-
-    <named-query name="getDiscount">
-        <query>
-            SELECT cdri.value FROM CouponDiscountingRuleInterval cdri INNER JOIN cdri.couponDiscRule cdr
-            WHERE cdr.id = :id AND ((cdri.type = :prodType AND :prodCount BETWEEN cdri.intervalStart AND
-            cdri.intervalEnd) OR (cdri.type = :transType and :transVal BETWEEN cdri.intervalStart AND
-            cdri.intervalEnd))
-        </query>
-    </named-query>
-
-    <named-query name="getIntervalCount">
-        <query>
-            SELECT count(*) FROM CouponDiscountingRuleInterval cdri INNER JOIN cdri.couponDiscRule cdr
-            WHERE cdr.id = :id
-        </query>
-    </named-query>
-
-    <named-query name="checkRejectedCode">
-        <query>
-            SELECT cdrc.id FROM CouponDiscountRequestCode cdrc INNER JOIN cdrc.couponDiscountRequest
-            cdr WHERE cdr.id = :id AND cdrc.status = :status
         </query>
     </named-query>
 
@@ -71,47 +30,21 @@
         </query>
     </named-query>
 
-    <named-query name="getProductVos">
-        <query>
-            SELECT NEW com.portea.cpnen.vo.ProductVo (cdrp.product.id,cdrp.productCount,cdrp.productUnitPrice)
-            FROM CouponDiscountRequestProduct cdrp WHERE cdrp.couponDiscountRequest.id = :id
-        </query>
-    </named-query>
-
-    <named-query name="getCountOfApplicableProducts">
-        <query>
-            SELECT count(*) FROM CouponProductMap cpm where cpm.coupon.id = :id and cpm.product.id in :ids
-            AND cpm.applicable = :applicable
-        </query>
-    </named-query>
-
-    <named-query name="getProductsForIds">
-        <query>
-            SELECT p From Product p WHERE id in :ids
-        </query>
-    </named-query>
-
-    <named-query name="totalProdCount">
-        <query>
-            SELECT count(*) FROM Product
-        </query>
-    </named-query>
-
-    <named-query name="getParentProdID">
-        <query>
-            SELECT p.parent.id FROM Product p where p.id = :id
-        </query>
-    </named-query>
-
     <named-query name="getUserPassword">
         <query>
-            SELECT u.password FROM User u where u.name = :name
+            SELECT u.password FROM User u where u.login = :login
         </query>
     </named-query>
 
     <named-query name="getUserId">
         <query>
             SELECT u.id FROM User u where u.name = :name
+        </query>
+    </named-query>
+
+    <named-query name="getUserNames">
+        <query>
+            SELECT u.name FROM User u where u.name LIKE CONCAT(:name, '%'))
         </query>
     </named-query>
 
@@ -130,6 +63,425 @@
     <named-query name="getCouponCount">
         <query>
             SELECT count(id) FROM Coupon c
+        </query>
+    </named-query>
+
+    <named-query name="getCodeForCouponId">
+        <query>
+            SELECT cc FROM CouponCode cc WHERE cc.coupon.id = :couponId
+        </query>
+    </named-query>
+
+    <named-query name="getCodeCountForCoupon">
+        <query>
+            SELECT count(id) FROM CouponCode cc WHERE cc.coupon.id = :couponId
+        </query>
+    </named-query>
+
+    <named-query name="getCodeCount">
+        <query>
+            SELECT count(id) FROM CouponCode
+        </query>
+    </named-query>
+
+    <named-query name="getProductAdapter">
+        <query>
+            FROM ProductAdapter p WHERE p.productId = :productId AND p.productType = :type
+        </query>
+    </named-query>
+
+    <named-query name="getProductAdapterMapping">
+        <query>
+            FROM CouponProductAdapterMapping cpm WHERE cpm.coupon = :coupon
+        </query>
+    </named-query>
+
+    <named-query name="getBrandMapping">
+        <query>
+            FROM CouponBrandMapping cbm WHERE cbm.coupon = :coupon
+        </query>
+    </named-query>
+
+    <named-query name="getAreaMapping">
+        <query>
+            FROM CouponAreaMapping cam WHERE cam.coupon = :coupon
+        </query>
+    </named-query>
+
+    <named-query name="getReferrerMapping">
+        <query>
+            FROM CouponReferrerMapping crm WHERE crm.coupon = :coupon
+        </query>
+    </named-query>
+
+    <named-query name="getDiscountRule">
+        <query>
+            FROM CouponDiscountingRule cdr WHERE cdr.coupon = :coupon
+        </query>
+    </named-query>
+
+    <named-query name="getProductsCount">
+        <query>
+            SELECT ( SELECT count(*) from Service WHERE subService = 0 AND deleted = 0)
+            + ( SELECT count(*) from Package WHERE deleted = 0)
+            as total from Service
+        </query>
+    </named-query>
+
+    <named-query name="getBrands">
+        <query>
+            FROM Brand
+        </query>
+    </named-query>
+
+    <named-query name="getAreas">
+        <query>
+            FROM Area
+        </query>
+    </named-query>
+
+    <named-query name="getReferrersByBrandAndType">
+        <query>
+            Select rr FROM Referrer rr where rr.brandId = :brandId AND rr.referrerType = :referrerType
+        </query>
+    </named-query>
+
+    <named-query name="getReferrers">
+        <query>
+            FROM Referrer
+        </query>
+    </named-query>
+
+    <named-query name="deleteCouponProdMapping">
+        <query>
+            DELETE FROM CouponProductAdapterMapping WHERE coupon = :coupon
+        </query>
+    </named-query>
+
+    <named-query name="deleteCouponBrandMapping">
+        <query>
+            DELETE FROM CouponBrandMapping WHERE coupon = :coupon
+        </query>
+    </named-query>
+
+    <named-query name="deleteCouponAreaMapping">
+        <query>
+            DELETE FROM CouponAreaMapping WHERE coupon = :coupon
+        </query>
+    </named-query>
+
+    <named-query name="deleteCouponReferrerMapping">
+        <query>
+            DELETE FROM CouponReferrerMapping WHERE coupon = :coupon
+        </query>
+    </named-query>
+
+    <named-query name="deleteCouponRule">
+        <query>
+            DELETE FROM CouponDiscountingRule WHERE coupon = :coupon
+        </query>
+    </named-query>
+
+    <named-query name="deleteCouponCodes">
+        <query>
+            DELETE FROM CouponCode WHERE coupon = :coupon
+        </query>
+    </named-query>
+
+    <named-query name="getCouponIdForName">
+        <query>
+            SELECT id FROM Coupon WHERE name = :name
+        </query>
+    </named-query>
+
+    <named-query name="getCodeIdForCode">
+        <query>
+            SELECT id FROM CouponCode where code = :code and deactivatedBy IS NULL
+        </query>
+    </named-query>
+
+    <named-query name="getProductAdapters">
+        <query>
+            FROM ProductAdapter where productId in :ids and productType = :type
+        </query>
+    </named-query>
+
+    <named-query name="getCouponCodeMap">
+        <query>
+            SELECT c, cc.code FROM CouponCode cc INNER JOIN cc.coupon c
+            where cc.code in :codes
+        </query>
+    </named-query>
+
+    <named-query name="findCouponProductMapping">
+        <query>
+            FROM CouponProductAdapterMapping WHERE coupon = :coupon AND productAdapter = :product
+        </query>
+    </named-query>
+
+    <named-query name="findCouponBrandMapping">
+        <query>
+            FROM CouponBrandMapping WHERE coupon = :coupon AND brand = :brand
+        </query>
+    </named-query>
+
+    <named-query name="findCouponAreaMapping">
+        <query>
+            FROM CouponAreaMapping WHERE coupon = :coupon AND area = :area
+        </query>
+    </named-query>
+
+    <named-query name="findCouponReferrerMapping">
+        <query>
+            FROM CouponReferrerMapping WHERE coupon = :coupon AND referrer = :referrer
+        </query>
+    </named-query>
+
+    <named-query name="getCouponAppliedCount">
+        <query>
+            SELECT COUNT(cd.id) FROM CouponDiscountCode cd INNER JOIN cd.couponCode co WHERE co.coupon = :coupon
+        </query>
+    </named-query>
+
+    <named-query name="getUserCouponAppliedCount">
+        <query>
+            SELECT COUNT(cd.id) FROM CouponDiscountCode cd INNER JOIN cd.couponCode co
+            INNER JOIN cd.couponDiscount cd  WHERE co.coupon = :coupon AND cd.beneficiary = :user
+        </query>
+    </named-query>
+
+    <named-query name="getCodesForDiscountRequest">
+        <query>
+            SELECT cdrc FROM CouponDiscountRequestCode cdrc INNER JOIN
+            cdrc.couponDiscountRequest WHERE cdrc.couponDiscountRequest = :cdr
+        </query>
+    </named-query>
+
+    <named-query name="getProductsForDiscountRequest">
+        <query>
+            SELECT cdrp FROM CouponDiscountRequestProduct cdrp INNER JOIN
+            cdrp.couponDiscountRequest WHERE cdrp.couponDiscountRequest = :cdr
+        </query>
+    </named-query>
+
+    <named-query name="getRequestCodeForReqId">
+        <query>
+            SELECT cdrc FROM CouponDiscountRequestCode cdrc INNER JOIN cdrc.couponCode cc
+            WHERE cdrc.couponDiscountRequest.id = :cdrId AND cc.id = :codeId
+        </query>
+    </named-query>
+
+    <named-query name="getProductById">
+        <query>
+            SELECT cdrp FROM CouponDiscountRequestProduct cdrp WHERE
+            cdrp.couponDiscountRequest.id = :cdrId AND cdrp.productId = :productId AND cdrp.productType = :productType
+        </query>
+    </named-query>
+
+    <named-query name="getCodeAppliedCount">
+        <query>
+            SELECT count(cdc.id) FROM CouponDiscountCode cdc
+            INNER JOIN cdc.couponCode cc WHERE cc.deactivatedBy
+            IS NULL AND cc.code = :code
+        </query>
+    </named-query>
+
+    <named-query name="getUserCodeAppliedCount">
+        <query>
+            SELECT count(cdc.id) FROM CouponDiscountCode cdc
+            INNER JOIN cdc.couponCode cc INNER JOIN cdc.couponDiscount cd WHERE cc.deactivatedBy
+            IS NULL AND cc.code = :code AND cd.beneficiary = :user
+        </query>
+    </named-query>
+
+    <named-query name="getCouponsForName">
+        <query>
+            From Coupon WHERE name = :name
+        </query>
+    </named-query>
+
+    <named-query name="getUser">
+        <query>
+            FROM User u where u.login = :login
+        </query>
+    </named-query>
+
+    <named-query name="getUserRoles">
+        <query>
+            SELECT roleId FROM UserRoleMapping WHERE userId = :userId
+        </query>
+    </named-query>
+
+    <named-query name="getRoles">
+        <query>
+            SELECT role.name FROM Role role WHERE id in :roleIds
+        </query>
+    </named-query>
+
+    <named-query name="getParentRoleId">
+        <query>
+            SELECT parentId FROM Role WHERE id = :id
+        </query>
+    </named-query>
+
+    <named-query name="getRoleId">
+        <query>
+            SELECT id FROM Role WHERE name = :name
+        </query>
+    </named-query>
+
+    <named-query name="deactivateCodes">
+        <query>
+            UPDATE CouponCode SET deactivatedBy = :deactivatedBy, deactivatedOn = :deactivatedOn WHERE coupon = :coupon
+        </query>
+    </named-query>
+
+    <named-query name="getServices">
+        <query>
+            From Service WHERE id in :ids AND subService = 0 AND deleted = 0
+        </query>
+    </named-query>
+
+    <named-query name="getPackages">
+        <query>
+            From Package WHERE id in :ids AND deleted = 0
+        </query>
+    </named-query>
+
+    <named-query name="getCouponAudit">
+        <query>
+            FROM CouponAudit WHERE coupon = :coupon
+        </query>
+    </named-query>
+
+    <named-query name="deleteCouponBrandMappingAudit">
+        <query>
+            DELETE FROM CouponBrandMappingAudit WHERE couponAudit = :couponAudit
+        </query>
+    </named-query>
+
+    <named-query name="deleteCouponAreaMappingAudit">
+        <query>
+            DELETE FROM CouponAreaMappingAudit WHERE couponAudit = :couponAudit
+        </query>
+    </named-query>
+
+    <named-query name="deleteCouponReferrerMappingAudit">
+        <query>
+            DELETE FROM CouponReferrerMappingAudit WHERE couponAudit = :couponAudit
+        </query>
+    </named-query>
+
+    <named-query name="deleteProdAdapterMappingAudit">
+        <query>
+            DELETE FROM CouponProductAdapterMappingAudit WHERE couponAudit = :couponAudit
+        </query>
+    </named-query>
+
+    <named-query name="deleteCouponDiscountingRuleAudit">
+        <query>
+            DELETE FROM CouponDiscountingRuleAudit WHERE couponAudit = :couponAudit
+        </query>
+    </named-query>
+
+    <named-query name="deleteCouponCoreAudit">
+        <query>
+            DELETE FROM CouponCoreAudit WHERE couponAudit = :couponAudit
+        </query>
+    </named-query>
+
+    <named-query name="deleteCouponAudit">
+        <query>
+            DELETE FROM CouponAudit WHERE coupon = :coupon
+        </query>
+    </named-query>
+
+    <named-query name="getCouponActorDetails">
+        <query>
+            Select count(id),actorType FROM Coupon WHERE applicableTill > :date AND
+            publishedBy IS NOT NULL GROUP BY actorType
+        </query>
+    </named-query>
+
+    <named-query name="getCouponCategoryDetails">
+        <query>
+            Select count(id),category FROM Coupon WHERE applicableTill > :date AND
+            publishedBy IS NOT NULL GROUP BY category
+        </query>
+    </named-query>
+
+    <named-query name="getCouponValidityDetails">
+        <query>
+            Select count(id), contextType FROM Coupon WHERE applicableTill between :startDate and :endDate
+        </query>
+    </named-query>
+
+    <named-query name="getCouponDiscountDetails">
+        <query>
+            Select count(id) FROM Coupon WHERE applicableTill > :date AND discountAmountMax >= :startRange AND :endRange > discountAmountMax
+        </query>
+    </named-query>
+
+    <named-query name="getCouponContextTypeDetails">
+        <query>
+            Select count(id),contextType FROM Coupon WHERE applicableTill > :date AND
+            publishedBy IS NOT NULL GROUP BY contextType
+        </query>
+    </named-query>
+
+    <named-query name="getCouponDiscountRequestStatus">
+        <query>
+            Select count(id) FROM CouponDiscountRequest where
+            latestUpdatedOn between :startDate and :endDate AND status = :status
+        </query>
+    </named-query>
+
+    <named-query name="getCouponDiscountRequestMinMax">
+        <query>
+            Select min(cd.discountAmount),avg(cd.discountAmount), max(cd.discountAmount) FROM CouponDiscount cd INNER JOIN cd.couponDiscountRequest cdr where
+            cdr.latestUpdatedOn between :startDate and :endDate
+        </query>
+    </named-query>
+
+    <named-query name="getCouponAreaDetails">
+        <query>
+            Select count(cam.id),cam FROM CouponAreaMapping cam INNER JOIN cam.coupon cc WHERE cc.applicableTill > :date AND
+            cc.publishedBy IS NOT NULL GROUP BY cam.area
+        </query>
+    </named-query>
+
+    <named-query name="getCouponDiscountDetailsByArea">
+        <query>
+            Select count(id),cd FROM CouponDiscount cd WHERE cd.createdOn between :startDate and :endDate and
+            clientContextId IS NOT NULL GROUP BY areaId
+        </query>
+    </named-query>
+
+    <named-query name="getCouponDiscountsGivenByArea">
+        <query>
+            Select sum(discountAmount),cd FROM CouponDiscount cd WHERE cd.createdOn between :startDate and :endDate and
+            clientContextId IS NOT NULL GROUP BY areaId
+        </query>
+    </named-query>
+
+    <named-query name="getCouponDiscountsGivenByBrand">
+        <query>
+            Select sum(discountAmount),cd FROM CouponDiscount cd WHERE cd.createdOn between :startDate and :endDate and
+            clientContextId IS NOT NULL GROUP BY patientBrand
+        </query>
+    </named-query>
+
+    <named-query name="getCouponDiscountDetailsByBrand">
+        <query>
+            Select count(id),cd FROM CouponDiscount cd WHERE cd.createdOn between :startDate and :endDate and
+            clientContextId IS NOT NULL GROUP BY patientBrand
+        </query>
+    </named-query>
+
+    <named-query name="getCouponDiscountDetailsByReferrerType">
+        <query>
+            Select count(cd.id),cd FROM CouponDiscount cd INNER JOIN cd.referrerId ref WHERE cd.createdOn between :startDate and :endDate and
+            cd.clientContextId IS NOT NULL GROUP BY ref.referrerType
         </query>
     </named-query>
 

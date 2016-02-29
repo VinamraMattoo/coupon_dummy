@@ -6,6 +6,10 @@ public enum ConfigTargetType {
 
     SMS_TEMPLATE,
 
-    SMS_ENGINE
+    SMS_ENGINE,
+
+    SMS_TYPE,
+
+    ;
 
 }

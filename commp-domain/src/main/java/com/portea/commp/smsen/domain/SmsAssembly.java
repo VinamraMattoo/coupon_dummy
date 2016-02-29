@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "sms_assembly")
+@Table(name = "smsen_sms_assembly")
 public class SmsAssembly {
 
     @Id
@@ -77,6 +77,31 @@ public class SmsAssembly {
 
     @Column(name = "scheduled_time_zone", columnDefinition = "varchar(32)")
     private String scheduledTimeZone;
+
+    @JoinColumn(name = "record_id")
+    @OneToOne
+    private SmsRecord smsRecord;
+
+    @Column(name = "sms_requested_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date smsRequestedAt;
+
+    @Column(name = "correlation_id_check_count")
+    private Integer correlationIdCheckTrialCount;
+
+    @Column(name = "gateway_finding_failure_count")
+    private Integer gatewayFindingFailureCount;
+
+    @Column(name = "received_correlation_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date receivedCorrelationIdAt;
+
+    @Column(name ="status_check_trial_count")
+    private Integer statusCheckTrialCount;
+
+    @Column(name = "source_name", columnDefinition = "varchar(64)")
+    @Enumerated(value = EnumType.STRING)
+    private SmsSource sourceName;
 
     public SmsAssembly() {
     }
@@ -241,6 +266,23 @@ public class SmsAssembly {
         this.scheduledTimeZone = scheduledTimeZone;
     }
 
+    public SmsRecord getSmsRecord() {
+        return smsRecord;
+    }
+
+    public void setSmsRecord(SmsRecord smsRecord) {
+        this.smsRecord = smsRecord;
+    }
+
+
+    public Date getSmsRequestedAt() {
+        return smsRequestedAt;
+    }
+
+    public void setSmsRequestedAt(Date smsRequestedAt) {
+        this.smsRequestedAt = smsRequestedAt;
+    }
+
     /**
      * Utility method to check whether this SMS is currently under process and queued
      */
@@ -249,10 +291,24 @@ public class SmsAssembly {
         SmsPrimaryProcessingState primary = this.smsPrimaryProcessingState;
         SmsSecondaryProcessingState secondary = this.smsSecondaryProcessingState;
 
-        if ((primary != null && primary == SmsPrimaryProcessingState.UNDER_PROCESS)
+        if ((primary != null && primary == SmsPrimaryProcessingState.SUBMISSION_UNDER_PROCESS)
                 && (secondary != null &&
-                (secondary == SmsSecondaryProcessingState.QUEUED ||
-                secondary == SmsSecondaryProcessingState.QUEUED_IN_RETRY))) {
+                (secondary == SmsSecondaryProcessingState.QUEUED_FOR_SUBMISSION ||
+                secondary == SmsSecondaryProcessingState.QUEUED_IN_RETRY_FOR_SUBMISSION))) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public boolean isQueuedForStatusCheck() {
+        SmsPrimaryProcessingState primary = this.smsPrimaryProcessingState;
+        SmsSecondaryProcessingState secondary = this.smsSecondaryProcessingState;
+
+        if ((primary != null && primary == SmsPrimaryProcessingState.STATUS_CHECK_UNDER_PROCESS)
+                && (secondary != null &&
+                (secondary == SmsSecondaryProcessingState.QUEUED_FOR_STATUS_CHECK))) {
             return true;
         }
         else {
@@ -276,4 +332,43 @@ public class SmsAssembly {
         return getId() != null ? getId().hashCode() : 0;
     }
 
+    public Integer getCorrelationIdCheckTrialCount() {
+        return correlationIdCheckTrialCount;
+    }
+
+    public void setCorrelationIdCheckTrialCount(Integer submissionTrialCount) {
+        this.correlationIdCheckTrialCount = submissionTrialCount;
+    }
+
+    public Integer getGatewayFindingFailureCount() {
+        return gatewayFindingFailureCount;
+    }
+
+    public void setGatewayFindingFailureCount(Integer gatewayFindingFailureCount) {
+        this.gatewayFindingFailureCount = gatewayFindingFailureCount;
+    }
+
+    public Date getReceivedCorrelationIdAt() {
+        return receivedCorrelationIdAt;
+    }
+
+    public void setReceivedCorrelationIdAt(Date receivedCorrelationIdAt) {
+        this.receivedCorrelationIdAt = receivedCorrelationIdAt;
+    }
+
+    public Integer getStatusCheckTrialCount() {
+        return statusCheckTrialCount;
+    }
+
+    public void setStatusCheckTrialCount(Integer statusCheckTrialCount) {
+        this.statusCheckTrialCount = statusCheckTrialCount;
+    }
+
+    public SmsSource getSourceName() {
+        return sourceName;
+    }
+
+    public void setSourceName(SmsSource sourceName) {
+        this.sourceName = sourceName;
+    }
 }

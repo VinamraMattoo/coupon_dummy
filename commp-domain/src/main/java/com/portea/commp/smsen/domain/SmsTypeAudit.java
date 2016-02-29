@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "sms_type_audit")
+@Table(name = "smsen_sms_type_audit")
 public class SmsTypeAudit {
 
     @Id
@@ -35,6 +35,10 @@ public class SmsTypeAudit {
     @Column(name = "created_on")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdOn;
+
+    @JoinColumn(name = "created_by")
+    @ManyToOne
+    private User createdBy;
 
     public SmsTypeAudit() {
     }
@@ -85,6 +89,14 @@ public class SmsTypeAudit {
 
     public void setCreatedOn(Date createdOn) {
         this.createdOn = createdOn;
+    }
+
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
     }
 
     @Override

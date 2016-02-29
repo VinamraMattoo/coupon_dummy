@@ -3,7 +3,9 @@ package com.portea.common.config.domain;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "cmn_config_param")
+@Table(name = "cmn_config_param",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"config_target_type_id", "name"})})
+@Cacheable
 public class ConfigParam {
 
     @Id
@@ -17,6 +19,9 @@ public class ConfigParam {
 
     @Column(name = "name", columnDefinition = "varchar(128)")
     private String name;
+
+    @Column(name = "description", columnDefinition = "varchar(1024)")
+    private String description;
 
     @Column(name = "value_data_type", columnDefinition = "varchar(32)")
     @Enumerated(value = EnumType.STRING)
@@ -55,6 +60,14 @@ public class ConfigParam {
 
     public void setValueDataType(ConfigParamValueDataType valueDataType) {
         this.valueDataType = valueDataType;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

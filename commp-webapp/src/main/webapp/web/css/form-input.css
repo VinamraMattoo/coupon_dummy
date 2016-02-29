@@ -1,0 +1,32 @@
+/*For modal inputs*/
+.modalInput {
+    padding-bottom: 0;
+    padding-top: 0;
+    font-size: 12px;
+}
+.left-inner-addon {
+    position: relative;
+}
+.left-inner-addon input {
+    padding-left: 30px;
+}
+.left-inner-addon span {
+    position: absolute;
+    padding: 2px 2px;
+    pointer-events: none;
+}
+
+.right-inner-addon {
+    position: relative;
+}
+.right-inner-addon input {
+    padding-right: 30px;
+}
+.right-inner-addon span {
+    position: absolute;
+    right: 0;
+    padding: 2px 2px;
+}
+.right-inner-addon span:hover{
+    cursor: pointer;
+}

@@ -2,18 +2,18 @@ package com.portea.commp.smsen.gw;
 
 public enum MockSmsGatewayStatus implements GatewaySmsStatus {
 
-    IN_PROCESS("In Process", "DUMMY_GATEWAY_1", false),
-    FAILED("Failed", "DUMMY_GATEWAY_1", true),
-    DELIVERED("Completed", "DUMMY_GATEWAY_1", true);
+    MOCK_IN_PROCESS("Mock In Process", false, GssSuccessType.SUCCESS_IN_PROGRESS),
+    MOCK_FAILED("Mock Failed", true, GssFailureType.FAILURE_GENERAL),
+    MOCK_DELIVERED("Mock Completed", true, GssSuccessType.SUCCESS_COMPLETED);
 
     private final String name;
-    private final String smsGatewayName;
     private final boolean terminal;
+    private final GatewaySmsStatusType type;
 
-    MockSmsGatewayStatus(String name, String smsGatewayName, boolean terminal) {
+    MockSmsGatewayStatus(String name, boolean terminal, GatewaySmsStatusType type) {
         this.name = name;
-        this.smsGatewayName = smsGatewayName;
         this.terminal = terminal;
+        this.type = type;
     }
 
     @Override
@@ -28,6 +28,16 @@ public enum MockSmsGatewayStatus implements GatewaySmsStatus {
 
     @Override
     public String getSmsGatewayName() {
-        return smsGatewayName;
+        return MockSmsGatewayHandler.GATEWAY_NAME;
+    }
+
+    @Override
+    public GatewaySmsStatusType getType(){
+        return type;
+    }
+
+    @Override
+    public boolean isSuccess() {
+        return getType().isSuccess();
     }
 }

@@ -20,4 +20,5 @@ public class BrandVo {
     public void setName(String name) {
         this.name = name;
     }
+
 }

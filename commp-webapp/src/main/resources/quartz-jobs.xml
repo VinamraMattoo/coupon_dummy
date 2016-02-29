@@ -28,8 +28,17 @@
         <job>
             <name>commp-sms-scheduler</name>
             <group>commp-sms-jobs</group>
-            <description>Quartz job to retrieve new batch of SMS from the assembly to be put in processing queues</description>
+            <description>Quartz job to retrieve new batch of SMS from the assembly to be put in processing queues for submission</description>
             <job-class>com.portea.commp.smsen.job.SmsSchedulerJob</job-class>
+            <durability>true</durability>
+            <recover>false</recover>
+        </job>
+
+        <job>
+            <name>commp-sms-status-scheduler</name>
+            <group>commp-sms-jobs</group>
+            <description>Quartz job to retrieve new batch of SMS from the assembly to be put in processing queues for status check</description>
+            <job-class>com.portea.commp.smsen.job.SmsStatusSchedulerJob</job-class>
             <durability>true</durability>
             <recover>false</recover>
         </job>
@@ -52,6 +61,18 @@
                 <group>commp-sms-triggers</group>
                 <description>A trigger to trigger 'commp-sms-scheduler' job every 5 seconds</description>
                 <job-name>commp-sms-scheduler</job-name>
+                <job-group>commp-sms-jobs</job-group>
+                <repeat-count>-1</repeat-count> <!-- repeat indefinitely  -->
+                <repeat-interval>5000</repeat-interval> <!--  every 5 seconds -->
+            </simple>
+        </trigger>
+
+        <trigger>
+            <simple>
+                <name>commp-sms-status-scheduler-trigger</name>
+                <group>commp-sms-triggers</group>
+                <description>A trigger to trigger 'commp-sms-scheduler' job every 5 seconds</description>
+                <job-name>commp-sms-status-scheduler</job-name>
                 <job-group>commp-sms-jobs</job-group>
                 <repeat-count>-1</repeat-count> <!-- repeat indefinitely  -->
                 <repeat-interval>5000</repeat-interval> <!--  every 5 seconds -->

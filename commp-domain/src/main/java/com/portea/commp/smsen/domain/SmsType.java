@@ -1,9 +1,16 @@
 package com.portea.commp.smsen.domain;
 
 import javax.persistence.*;
+import java.util.Date;
 
+/**
+ * SMS type has been modeled from the 'category' attribute of existing table 'sms_template'. However instead of SMS
+ * templates types are SMS groups are associated with types. This provide cleaner hierarchy for SMS
+ *
+ * With SMS type being an independent table, it affords greater flexibility in defining configuration for SMS types.
+ */
 @Entity
-@Table(name = "sms_type")
+@Table(name = "smsen_sms_type")
 public class SmsType {
 
     @Id
@@ -19,6 +26,14 @@ public class SmsType {
 
     @Column(name = "expires_in")
     private Integer expiresIn;
+
+    @Column(name = "last_updated_on")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdatedOn;
+
+    @JoinColumn(name = "last_updated_by")
+    @ManyToOne
+    private User lastUpdatedBy;
 
     @Embedded
     @AttributeOverrides({
@@ -81,6 +96,22 @@ public class SmsType {
 
     public void setTypeMatchCoolingPeriod(CoolingPeriod typeMatchCoolingPeriod) {
         this.typeMatchCoolingPeriod = typeMatchCoolingPeriod;
+    }
+
+    public User getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    public void setLastUpdatedBy(User lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
+    }
+
+    public Date getLastUpdatedOn() {
+        return lastUpdatedOn;
+    }
+
+    public void setLastUpdatedOn(Date lastUpdatedOn) {
+        this.lastUpdatedOn = lastUpdatedOn;
     }
 
     @Override

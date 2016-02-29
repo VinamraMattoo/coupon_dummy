@@ -1,0 +1,245 @@
+For a given update request if the response code is 200 ok then change the values accordingly. If the response code
+indicates any error no update will be done and the response will have the error information.
+
+
+=================================================System Configuration=======================================
+
+request :
+    description : Get all system configurations.
+    Method : GET
+    URL : /admin/smsen/configuration
+
+response :
+    Format : JSON
+    example :
+
+    [
+        {
+        "id": 1,
+        "name": "NEW_SMS_LOAD_WINDOW",
+        "description": "parameter value object",
+        "dataType": "NUMBER",
+        "active": false,
+        "value": 10
+        },
+        {
+           "id": 2,
+           "name": "WAIT_TIME_FOR_CORRELATION_ID",
+           "description": "description",
+           "dataType": "NUMBER",
+           "active": true,
+           "value" : 300
+        }
+    ]
+
+
+-- UPDATE --
+
+request :
+    description : Update a specific system configuration.
+    Method : PUT
+    URL : /admin/smsen/configuration
+    Format : JSON
+    input example  :
+    [
+        {
+            "id": 10,
+            "value": 240
+        },
+        {
+            "id": 14,
+            "active": true
+        }
+    ]
+
+
+response :
+    success or failure
+
+
+
+================================================Gateway-Group Configuration======================================
+request :
+    description : Get all group-gateway mapping data.
+    Method : GET
+    URL : /admin/groups/mapping/gateways
+
+response :
+    Format : JSON
+    example :
+    [
+      {
+        "id": 2,
+        "name": "Appointment Scheduled",
+        "desc": "sms group description goes here..",
+        "cpContentMatchType": "ABSOLUTE_PERIOD",
+        "cpContentMatchValue": 1313,
+        "cpTypeMatchType": "CALENDAR_DAY",
+        "cpTypeMatchValue": 2,
+        "gwPriorities": [
+          {
+            "id": 1,
+            "name": "MGAGE",
+            "priority": 1
+          }
+        ]
+      }
+    ]
+
+
+-- UPDATE --
+
+request :
+    description : Update group-gateway mapping data.
+    Method : PUT
+    URL : /admin/groups/mapping/gateways
+    input example :
+    [
+      {
+        "id": 1,
+        "gwPriorities": [
+          {
+            "id": 1,
+            "priority": 2
+          },
+          {
+            "id": 2,
+            "priority": 2
+          }
+        ]
+      }
+    ]
+
+response :
+    success or failure
+
+-- DELETE --
+
+request :
+    description : Delete group and gateway mapping data.
+    Method : DELETE
+    URL : /admin/groups/mapping/gateways
+    input example :
+    [
+      {
+        "id": 1,
+        "gwPriorities": [
+          {
+            "id": 1
+          },
+          {
+            "id": 2
+          }
+        ]
+      }
+    ]
+
+response :
+    success or failure
+
+
+=================================================Type - Group - Template Configuration========================================
+request :
+    description : Get All Sms Types mapped to groups mapped to templates
+    Method : GET
+    URL : /types/groups/templates
+
+response :
+    Format : JSON
+    example :
+    [
+      {
+        "id": 1,
+        "name": "Marketing",
+        "desc": "description",
+        "cpContentMatchType": "ABSOLUTE_PERIOD",
+        "cpContentMatchValue": 300,
+        "cpTypeMatchType": "CALENDAR_DAY",
+        "cpTypeMatchValue": 2,
+        "expiresIn": 15,
+        "smsGroupVOs": [
+          {
+            "id": 1,
+            "name": "Appointment summary",
+            "desc": "description",
+            "cpContentMatchType": "ABSOLUTE_PERIOD",
+            "cpContentMatchValue": 300,
+            "cpTypeMatchType": "CALENDAR_DAY",
+            "cpTypeMatchValue": 2,
+            "isBulk": false,
+            "priority": 2,
+            "smsTemplateVOs": [
+              {
+                "id": 1,
+                "name": "patient_lead_sms",
+                "retryCount": 2,
+                "messageExpiry": 30
+              }
+            ]
+          }
+        ]
+      }
+    ]
+
+
+-- UPDATE --
+
+request :
+    description : Update type data.
+    Method : PUT
+    URL : /admin/types
+    input example :
+    [
+        {
+            "id": 1,
+            "cpContentMatchType": "ABSOLUTE_PERIOD",
+            "cpContentMatchValue": 150,
+            "cpTypeMatchType": "CALENDAR_DAY",
+            "cpTypeMatchValue": 1
+        }
+    ]
+
+response :
+    success or failure
+
+
+-- UPDATE --
+
+request :
+    description : Update group data.
+    Method : PUT
+    URL : /admin/groups
+    input example :
+    [
+        {
+            "id": 1,
+            "cpTypeMatchType": "CALENDAR_DAY",
+            "cpTypeMatchValue": 1,
+            "is_bulk": true,
+            "priority": 3
+
+        }
+    ]
+
+response :
+    success or failure
+
+
+-- UPDATE --
+
+request :
+    description : Update group data.
+    Method : PUT
+    URL : /admin/templates
+    input example :
+    [
+        {
+            "id": 1,
+            "name": "patient_lead_sms",
+            "retryCount": 4,
+            "messageExpiry": 15
+        }
+    ]
+
+response :
+    success or failure

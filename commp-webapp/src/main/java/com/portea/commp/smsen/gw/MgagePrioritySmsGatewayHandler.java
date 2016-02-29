@@ -1,26 +1,33 @@
 package com.portea.commp.smsen.gw;
 
-import com.portea.commp.smsen.domain.SmsAssembly;
+import java.util.Map;
 
-public class MgagePrioritySmsGatewayHandler implements SmsGatewayHandler {
+public class MgagePrioritySmsGatewayHandler extends MgageSmsGatewayHandler {
 
-    @Override
-    public String submitSMS(SmsAssembly smsAssembly) {
-        throw new RuntimeException("Not implemented yet.");
-    }
+    public static final String SMS_GATEWAY_NAME = "MGAGE_PRIORITY";
 
-    @Override
-    public GatewaySmsStatus querySmsStatus(String correlationId) {
-        throw new RuntimeException("Not implemented yet.");
+    public MgagePrioritySmsGatewayHandler(Map<String, String> config) {
+        super(config);
     }
 
     @Override
     public String getSmsGatewayName() {
-        throw new RuntimeException("Not implemented yet.");
+        return SMS_GATEWAY_NAME;
     }
 
     @Override
-    public boolean isSmsStatusTerminal(String smsStatusName) {
-        throw new RuntimeException("Not implemented yet.");
+    protected GatewaySmsStatus findGatewaySmsStatus(String statusName) {
+        for(GatewaySmsStatus gatewaySmsStatus : MgagePrioritySmsGatewayStatus.values()){
+            if(gatewaySmsStatus.getName().equals(statusName)){
+                return gatewaySmsStatus;
+            }
+        }
+        return null;
     }
+
+    @Override
+    public Integer getSmsSubmissionCount() {
+        return null;
+    }
+
 }

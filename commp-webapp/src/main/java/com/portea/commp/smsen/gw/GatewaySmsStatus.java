@@ -20,4 +20,16 @@ public interface GatewaySmsStatus {
      */
     String getSmsGatewayName();
 
+    /**
+     * Returns the type of this status.
+     */
+    GatewaySmsStatusType getType();
+
+    /**
+     * Returns whether this status represents success or failure state.
+     */
+    boolean isSuccess();
+
+    String name();
+
 }

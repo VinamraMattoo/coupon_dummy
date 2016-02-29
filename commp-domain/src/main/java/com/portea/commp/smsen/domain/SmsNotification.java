@@ -3,7 +3,7 @@ package com.portea.commp.smsen.domain;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "sms_notification")
+@Table(name = "smsen_sms_notification")
 public class SmsNotification {
 
     @Id

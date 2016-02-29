@@ -1,13 +1,15 @@
 package com.portea.cpnen.dao.impl;
 
 import com.portea.cpnen.dao.CouponDiscountReqProdDao;
+import com.portea.cpnen.domain.CouponDiscountRequest;
 import com.portea.cpnen.domain.CouponDiscountRequestProduct;
-import com.portea.cpnen.vo.ProductVo;
+import com.portea.cpnen.domain.ProductType;
 import com.portea.dao.JpaDao;
 import com.portea.dao.impl.BaseJpaDao;
 
 import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
@@ -27,10 +29,16 @@ public class CouponDiscountReqProdJpaDao extends BaseJpaDao<Integer, CouponDisco
     }
 
     @Override
-    public List<ProductVo> getProductVos(Integer cdrId) {
-        Query query = entityManager.createNamedQuery("getProductVos",ProductVo.class).setParameter("id",cdrId);
-        List<ProductVo> productVos = query.getResultList();
-        return productVos;
+    public CouponDiscountRequestProduct getRequestProductById(Integer cdrId, Integer productId, ProductType productType) throws NoResultException{
+        Query query = entityManager.createNamedQuery("getProductById", CouponDiscountRequestProduct.class).setParameter("cdrId",cdrId).setParameter("productId", productId)
+                .setParameter("productType", productType);
+        return (CouponDiscountRequestProduct)query.getSingleResult();
     }
 
+    @Override
+    public List<CouponDiscountRequestProduct> getProducts(CouponDiscountRequest couponDiscountRequest) {
+        Query query = entityManager.createNamedQuery("getProductsForDiscountRequest", CouponDiscountRequestProduct.class);
+        query.setParameter("cdr", couponDiscountRequest);
+        return query.getResultList();
+    }
 }

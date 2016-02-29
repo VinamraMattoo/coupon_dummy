@@ -1,12 +1,14 @@
 package com.portea.cpnen.dao.impl;
 
 import com.portea.cpnen.dao.CouponDiscountingRuleDao;
+import com.portea.cpnen.domain.Coupon;
 import com.portea.cpnen.domain.CouponDiscountingRule;
 import com.portea.dao.JpaDao;
 import com.portea.dao.impl.BaseJpaDao;
 
 import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
@@ -25,12 +27,17 @@ public class CouponDiscountingRuleJpaDao extends BaseJpaDao<Integer, CouponDisco
         this.entityManager = entityManager;
     }
 
-
     @Override
-    public List<Integer> getRuleIds(int couponId) {
-        Query query = entityManager.createNamedQuery("findListRulesOrderByPriority").setParameter("id", couponId);
-        List<Integer> list = query.getResultList();
-        return list;
+    public CouponDiscountingRule getRule(Coupon coupon) throws NoResultException{
+        Query query = entityManager.createNamedQuery("getDiscountRule", CouponDiscountingRule.class);
+        query.setParameter("coupon", coupon);
+        return (CouponDiscountingRule) query.getSingleResult();
     }
 
+    @Override
+    public void delete(Coupon coupon) {
+        Query query = entityManager.createNamedQuery("deleteCouponRule");
+        query.setParameter("coupon", coupon);
+        query.executeUpdate();
+    }
 }

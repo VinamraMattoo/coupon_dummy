@@ -1,0 +1,87 @@
+System : Coupon Management Application
+Date : 22-Dec-2015, 8:00 PM
+Reviewer : Vinamra Mattoo
+Attendees : Ravi Sinha, Bharat Ambati, Naveen Khushalappa, Karthik Gorlagunta, Vinamra Mattoo
+Proposed by : Vinamra Mattoo
+
+Review Findings :
+
+1. Alert box appears on quick coupon creation submit
+		Review recommendations : Removal of the alert box
+
+2. On clicking the Portea logo the  display message overlaps the dashboard message
+		Review recommendations : dashboard message is kept separate from display messages
+
+3. Code id being displayed in code details page
+		Review recommendations : Removal of this field from code details page
+
+4. After executing advanced search, or navigating to the following pages from a specialized link,
+   the user does not have an option to switch to default listing that uses default search criteria
+    a. coupon listing
+	b. code listing
+		Review recommendations : Reset list (text link) to be added in the page
+
+5. Distinct Coupon name validation not implemented in
+	a.create coupon	
+	b.edit coupon
+	c.copy coupon
+		Review recommendations : Distinct coupon name validation is implemented in all the above pages
+
+6. Error message returned by server is not being read and displayed
+		Review recommendations : Value from the appropriate header should be extracted and presented to the end user
+
+7. validation for Transaction min/max is being done twice
+		Review recommendations : Removal of extra validation and also removing its status as a recommended field
+
+8. when the max discount value is lesser than min discount value but still (max value should be lesser than min value) error is displayed and form submission is halted
+		Review recommendations : Functionality logic to be checked and repaired
+
+9. the client is able to send the data which is not required for the current selected application type
+	eg the nth time value and applicable use count values can be sent for the application types not requiring these values
+		Review recommendations : not sending the values that are not required by the selected application type
+
+10.	the server is accepting the values that are not required by the given application type and saving into the database
+    eg the nth time value and applicable use count values are being accepted for the application types not requiring these values
+
+11.  Error  messages being displayed in a heading(big) format
+		Review recommendations : Colour should be red and font size smaller
+
+12. On submission of copy coupon form "500 internal server error" is returned
+		Review recommendations : Usage of proper id
+
+13. server is sending the id for following  fields
+	a. Published by
+	b. Updated by
+	c. Created by
+	d. Deactivated by
+		Review recommendations : server sends the names instead of id
+
+14. column based Sorting for coupon names and codes in coupon listing is unhandled on server side
+		Review recommendations :url being sent to the server be parsed accordingly to attain this functionality
+
+15. Confirm boxes  for all deactivations and deletions
+		Review recommendations : addition of confirm boxes
+
+16. the UI used for selection of global (coupon advance search) is confusing
+		Review recommendations : keeping 2 checkboxes while not allowing both of them to be unchecked at the same time so that null result in the table doesn't show up
+
+17.	the UI used for selection of inclusive (coupon advance search) is confusing
+		Review recommendations : keeping 2 checkboxes while not allowing both of them to be unchecked at the same time so that null result in the table doesn't show up
+
+18. unable to select the dates before today's date in advance search (coupon advance search )
+		Review recommendations : changing the date function to allow the selection of any arbitrary date
+
+19. unable to remove the default date in all the  "from" date inputs boxes of coupon advanced search
+		Review recommendations : not setting any default value for this field
+
+20. Unable to select a date in coupon code advanced search
+		Review recommendations : changing the type of the input box
+
+21. App use count input type to be changed from text to number in all the forms
+		Review recommendations : changing the  type of input box to number
+
+22. the tooltip of the min max discount range is ambiguous (if it a percentage value or a amount value)
+		Review recommendations : tooltip adjustments to be done to remove ambiguity
+
+23. switching to view coupon details from  code details page using the view coupon button doesnt show coupon attributes
+		Review recommendations : functionality logic to be checked and updated

@@ -101,4 +101,20 @@ public class CouponDiscountSummary {
     public void setTransactionValLowest(Integer transactionValLowest) {
         this.transactionValLowest = transactionValLowest;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CouponDiscountSummary that = (CouponDiscountSummary) o;
+
+        return id.equals(that.id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

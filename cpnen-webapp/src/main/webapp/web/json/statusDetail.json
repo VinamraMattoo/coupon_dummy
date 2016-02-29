@@ -1,0 +1,38 @@
+{
+  "discountData": [{
+    "requested": 10,
+    "cancelled": 12,
+    "applied": 12,
+    "dayOfWeek": "Tu"
+  }, {
+    "requested": 15,
+    "cancelled": 13,
+    "applied": 17,
+    "dayOfWeek": "Mo"
+  }, {
+    "requested": 14,
+    "cancelled": 17,
+    "applied": 12,
+    "dayOfWeek": "Su"
+  }, {
+    "requested": 17,
+    "cancelled": 19,
+    "applied": 11,
+    "dayOfWeek": "Sa"
+  }, {
+    "requested": 13,
+    "cancelled": 15,
+    "applied": 16,
+    "dayOfWeek": "Fr"
+  }, {
+    "requested": 17,
+    "cancelled": 17,
+    "applied": 12,
+    "dayOfWeek": "Th"
+  }, {
+    "requested": 18,
+    "cancelled": 14,
+    "applied": 13,
+    "dayOfWeek": "We"
+  }]
+}

@@ -1,5 +1,7 @@
 package com.portea.commp.service.rapi;
 
+import com.portea.commp.service.exception.CommpApplicationExceptionMapper;
+
 import javax.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +17,7 @@ public class CommpApplication extends Application {
     public CommpApplication() {
         classes.add(CommpRestService.class);
         classes.add(CommpRestTestService.class);
+        classes.add(CommpApplicationExceptionMapper.class);
     }
 
     @Override

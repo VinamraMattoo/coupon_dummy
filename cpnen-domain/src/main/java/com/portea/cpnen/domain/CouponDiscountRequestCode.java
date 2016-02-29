@@ -18,22 +18,14 @@ public class CouponDiscountRequestCode {
 	@ManyToOne
 	@JoinColumn(name = "code_id")
 	private CouponCode couponCode;
-	
-	@Column(name = "created_on")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdOn;
-	
-	@Column(name = "latest_status")
-    @Enumerated(EnumType.STRING)
-	private CouponDiscountRequestStatus status;
 
     public CouponDiscountRequestCode() {}
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -53,19 +45,19 @@ public class CouponDiscountRequestCode {
         this.couponCode = couponCode;
     }
 
-    public Date getCreatedOn() {
-        return createdOn;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CouponDiscountRequestCode that = (CouponDiscountRequestCode) o;
+
+        return !(id != null ? !id.equals(that.id) : that.id != null);
+
     }
 
-    public void setCreatedOn(Date createdOn) {
-        this.createdOn = createdOn;
-    }
-
-    public CouponDiscountRequestStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(CouponDiscountRequestStatus status) {
-        this.status = status;
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

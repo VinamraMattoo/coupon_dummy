@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "sms_gateway_status_audit")
+@Table(name = "smsen_sms_gateway_status_audit")
 public class SmsGatewayStatusAudit {
 
     @Id

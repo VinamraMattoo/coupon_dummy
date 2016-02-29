@@ -1,0 +1,46 @@
+{
+  "name": "test",
+  "description": "",
+  "inclusive": true,
+  "applicationType": "MANY_TIMES",
+  "actorType": "STAFF",
+  "contextType": "APPOINTMENT",
+  "applicableFrom": 1453314600000,
+  "applicableTill": 1453401000000,
+  "transactionValMin": "100",
+  "transactionValMax": "5000",
+  "discountAmountMin": "1",
+  "discountAmountMax": "420",
+  "global": false,
+  "isAllAreas": false,
+  "isAllProducts": false,
+  "isAllBrands": false,
+  "isB2B": false,
+  "isB2C": false,
+  "category": "SALES",
+  "applicableUseCount": "",
+  "nthTime": "",
+  "nthTimeRecurring": false,
+  "published": false,
+  "productMapping": [{
+    "productId": 1,
+    "name": "Elder care plan (1 Year)",
+    "type": "PACKAGE"
+  }],
+  "referrerMapping": [{
+    "referrerId": 1,
+    "name": "JustDIal",
+    "type": "B2C"
+  }],
+  "brandMapping": [{
+    "brandId": 1
+  }],
+  "areaMapping": [{
+    "areaId": 1
+  }],
+  "discountRule": {
+    "description": "discount!",
+    "ruleType": "PERCENTAGE",
+    "discountPercentage": "55"
+  }
+}

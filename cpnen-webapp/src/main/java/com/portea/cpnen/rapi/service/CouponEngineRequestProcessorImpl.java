@@ -2,15 +2,13 @@ package com.portea.cpnen.rapi.service;
 
 import com.portea.cpnen.dao.*;
 import com.portea.cpnen.domain.*;
-import com.portea.cpnen.rapi.domain.ApplicableDiscountResp;
-import com.portea.cpnen.rapi.domain.CouponDiscountRequestCreateReq;
-import com.portea.cpnen.rapi.domain.CouponDiscountRequestUpdateReq;
-import com.portea.cpnen.rapi.domain.SelectedProduct;
+import com.portea.cpnen.domain.CouponDiscountRequestStatus;
+import com.portea.cpnen.domain.Package;
+import com.portea.cpnen.rapi.domain.*;
 import com.portea.cpnen.rapi.exception.*;
 import com.portea.cpnen.vo.ProductVo;
+import com.portea.cpnen.web.rapi.domain.CouponCodeVO;
 import com.portea.dao.JpaDao;
-import com.portea.util.BeanUtil;
-import com.portea.util.LogUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +17,8 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.ws.rs.InternalServerErrorException;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
 
 @Stateless
 public class CouponEngineRequestProcessorImpl implements CouponEngineRequestProcessor {
@@ -29,13 +29,10 @@ public class CouponEngineRequestProcessorImpl implements CouponEngineRequestProc
     CouponCodeDao couponCodeDao;
 
     @Inject @JpaDao
+    CouponDao couponDao;
+
+    @Inject @JpaDao
     UserDao userDao;
-
-    @Inject @JpaDao
-    ProductDao productDao;
-
-    @Inject @JpaDao
-    CategoryDao categoryDao;
 
     @Inject @JpaDao
     CouponDiscountRequestDao couponDiscountRequestDao;
@@ -56,326 +53,260 @@ public class CouponEngineRequestProcessorImpl implements CouponEngineRequestProc
     CouponDiscountReqProdAuditDao couponDiscountReqProdAuditDao;
 
     @Inject @JpaDao
-    CouponCategoryMapDao couponCategoryMapDao;
-
-    @Inject @JpaDao
-    CouponProductMapDao couponProductMapDao;
-
-    @Inject @JpaDao
     CouponDiscountingRuleDao couponDiscountingRuleDao;
 
     @Inject @JpaDao
-    CouponDiscountingRuleIntervalDao couponDiscountingIntervalRuleDao;
+    private ProductAdapterDao productAdapterDao;
+
+    @Inject @JpaDao
+    private CouponProductAdapterMappingDao couponProductAdapterMappingDao;
+
+    @Inject @JpaDao
+    private CouponDiscountCodeDao couponDiscountCodeDao;
+
+    @Inject @JpaDao
+    private BrandDao brandDao;
+
+    @Inject @JpaDao
+    private AreaDao areaDao;
+
+    @Inject @JpaDao
+    private ReferrerDao referrerDao;
+
+    @Inject @JpaDao
+    private CouponDiscountReqProdDao couponDiscountRequestProductDao;
+
+    @Inject @JpaDao
+    private CouponBrandMappingDao couponBrandMappingDao;
+
+    @Inject @JpaDao
+    private CouponAreaMappingDao couponAreaMappingDao;
+
+    @Inject @JpaDao
+    private CouponReferrerMappingDao couponReferrerMappingDao;
+
+    @Inject @JpaDao
+    private CouponDiscountDao couponDiscountDao;
+
+    @Inject @JpaDao
+    private CouponDiscountProductDao couponDiscountProductDao;
+
+    @Inject @JpaDao
+    private ServiceDao serviceDao;
+
+    @Inject @JpaDao
+    private PackageDao packageDao;
+
 
     @Override
-    public CouponDiscountRequest createCouponDiscountRequest(CouponDiscountRequestCreateReq request) {
+    public CouponDiscountRequestResponse createCouponDiscountRequest(CouponDiscountRequestCreateReq request) {
 
-        if (LOG.isTraceEnabled()) {
-            LogUtil.entryTrace("createCouponDiscountRequest", LOG,
-                    "Specified user is {}, selected products are {} and specified codes are {}",
-                    request.getUserId(),
-                    BeanUtil.collect(request.getProducts(), new String[]{"count"}, true),
-                    request.getCodes());
-        }
+        validateCdrRequest(request);
 
-        int userId = request.getUserId();
+        Integer requesterId = request.getRequesterId();
+
+        Integer beneficiaryId = (request.getBeneficiaryId() == null)? requesterId : request.getBeneficiaryId();
 
         List<SelectedProduct> selectedProducts = request.getProducts();
 
         String[] codes = request.getCodes();
 
-        validateRequest(userId, codes, selectedProducts);
+        Double totalCost = request.getTotalCost();
+
+        ContextType contextType = request.getContextType();
+
+        Map<Coupon, List<String>> couponCodeMap = getCouponCodeMap(codes);
+
+        List<ProductVo> productVos =  getProductVosForSelectedProducts(selectedProducts);
+
+        String sourceName = request.getSourceName();
+
+        Integer patientBrandId = request.getPatientBrandId();
+
+        Integer areaId = request.getAreaId();
+
+        Integer referrerId = request.getReferrerId();
+
+        Boolean withinSubscription = (request.getWithinSubscription() == null) ? false : request.getWithinSubscription();
+
+        initialValidation(requesterId, beneficiaryId);
+
+        validateCDRequest(requesterId, contextType, beneficiaryId, couponCodeMap, totalCost, productVos, withinSubscription, codes, areaId, referrerId, patientBrandId);
+
         LOG.debug("Request validated");
 
-        CouponDiscountRequest couponDiscountRequest = createCouponRequest(userId, codes, selectedProducts);
+        CouponDiscountRequest couponDiscountRequest = createCouponRequest(requesterId, beneficiaryId, contextType,
+                codes, productVos, totalCost, sourceName, withinSubscription, areaId, referrerId, patientBrandId);
         LOG.debug("Coupon discount request created");
 
-        createCouponRequestAudit(couponDiscountRequest, userId, codes, selectedProducts);
+        createCouponRequestAudit(couponDiscountRequest);
         LOG.debug("Coupon discount request audit created");
 
-        LogUtil.exitTrace("createCouponDiscountRequest", LOG, "Returning created cdr");
+        ApplicableDiscountResp applicableDiscountResp = getCurrentApplicableDiscount(couponDiscountRequest.getId());
 
-        return couponDiscountRequest;
+
+        CouponDiscountRequestResponse couponDiscountRequestResponse = new CouponDiscountRequestResponse();
+
+        couponDiscountRequestResponse.setCdrId(couponDiscountRequest.getId());
+        couponDiscountRequestResponse.setDiscount(applicableDiscountResp.getDiscountAmount());
+        return couponDiscountRequestResponse;
     }
 
-    private void validateRequest(int userId, String[] codes, List<SelectedProduct> selectedProducts) {
-        validateConsumer(userId);
-        validateProducts(extractIds(selectedProducts));
+    private void validateCdrRequest(CouponDiscountRequestCreateReq request) {
+
+        checkForNullValues(request);
+
+        validateRequestValues(request);
+    }
+
+    private void validateRequestValues(CouponDiscountRequestCreateReq request) {
+        if( request.getTotalCost() < 0 ) {
+            throw new InvalidRequestException("totalCost", String.valueOf(request.getTotalCost()));
+        }
+
+        request.getProducts().forEach(product -> {
+            if (product.getPurchaseCount() < -1) {
+                throw new InvalidRequestException("products.purchaseCount", String.valueOf(product.getPurchaseCount()));
+            }
+
+            if (product.getCount() < 0) {
+                throw new InvalidRequestException("products.count", String.valueOf(product.getCount()));
+            }
+
+            if (product.getUnitCost() < 0) {
+                throw new InvalidRequestException("products.unitCost", String.valueOf(product.getUnitCost()));
+            }
+        });
+    }
+
+    private void checkForNullValues(CouponDiscountRequestCreateReq request) {
+        String nullField = request.inspectNullParameters();
+
+        if (nullField != null) {
+            throw new IncompleteRequestException(nullField);
+        }
+
+        if (request.getCodes().length == 0) {
+            throw new IncompleteRequestException("codes");
+        }
+
+        if (request.getProducts().size() == 0) {
+            throw new IncompleteRequestException("products");
+        }
+
+        for (String code : request.getCodes()) {
+            if (code == null) {
+                throw new IncompleteRequestException("code");
+            }
+        }
+
+        for (SelectedProduct selectedProduct : request.getProducts()) {
+
+            if (selectedProduct == null) {
+                throw new IncompleteRequestException("product");
+            }
+
+            nullField = selectedProduct.inspectNullParameters();
+            if (nullField != null) {
+                throw new IncompleteRequestException(nullField);
+            }
+        }
+    }
+
+    private void checkForNullValues(CouponDiscountRequestUpdateReq request) {
+        String nullField = request.inspectNullParameters();
+
+        if (nullField != null) {
+            throw new IncompleteRequestException(nullField);
+        }
+
+        if (request.getCodes().length == 0) {
+            throw new IncompleteRequestException("codes");
+        }
+
+        if (request.getProducts().size() == 0) {
+            throw new IncompleteRequestException("products");
+        }
+
+        for (String code : request.getCodes()) {
+            if (code == null) {
+                throw new IncompleteRequestException("code");
+            }
+        }
+
+        for (SelectedProduct selectedProduct : request.getProducts()) {
+
+            if (selectedProduct == null) {
+                throw new IncompleteRequestException("product");
+            }
+
+            nullField = selectedProduct.inspectNullParameters();
+            if (nullField != null) {
+                throw new IncompleteRequestException(nullField);
+            }
+        }
+    }
+
+    private void checkForNullValues(ProductUpdateReq request) {
+        String nullField = request.inspectNullParameters();
+
+        if (nullField != null) {
+            throw new IncompleteRequestException(nullField);
+        }
+
+        if (request.getProducts().size() == 0) {
+            throw new IncompleteRequestException("products");
+        }
+
+        for (SelectedProduct selectedProduct : request.getProducts()) {
+
+            if (selectedProduct == null) {
+                throw new IncompleteRequestException("product");
+            }
+
+            nullField = selectedProduct.inspectNullParameters();
+            if (nullField != null) {
+                throw new IncompleteRequestException(nullField);
+            }
+        }
+    }
+
+
+    private void initialValidation(Integer requesterId, Integer beneficiaryId) {
+
+        validateUser(requesterId);
+
+        if ( ! Objects.equals(beneficiaryId, requesterId)) {
+
+            validateUser(beneficiaryId);
+        }
+    }
+
+    private void validateCDRequest(Integer requesterId, ContextType contextType, Integer beneficiaryId,
+                                   Map<Coupon, List<String>> couponCodeMap, Double totalCost,
+                                   List<ProductVo> productVos, Boolean withinSubscription,String[] codes, Integer areaId, Integer referrerId, Integer patientBrandId) {
+
+        List<ProductAdapter> productAdapters = getProductAdapters(productVos);
+
+        validateProducts(couponCodeMap, productVos, productAdapters);
+        validateCouponProductAssociation(couponCodeMap, productAdapters);
+        validateCouponBrandAssociation(couponCodeMap, patientBrandId);
+        validateCouponAreaAssociation(couponCodeMap, areaId);
+        validateCouponReferrerAssociation(couponCodeMap, referrerId);
         validateCodes(codes);
-        validateCoupons(codes);
-        validateCouponProductAssociation(codes, selectedProducts);
+
+        validateCoupons(contextType, couponCodeMap, totalCost, requesterId);
+
+        validateCouponApplicability(couponCodeMap, productVos, beneficiaryId, withinSubscription, contextType);
     }
 
     /**
-     * A selected code is validated to check if its product association is satisfied or not.
-     * Because the validation is at coupon level if a code belongs to the same coupon that was validated before
-     * no validation is required for that code.
+     * Validates if the user id is provided also checks if the user is registered with Portea.
+     *
+     * @throws InvalidConsumerException If given user id is not registered with Portea.
      */
-    private void validateCouponProductAssociation(String[] codes, List<SelectedProduct> selectedProducts) {
-        int productCount = getProductCount(selectedProducts);
-        int totalCost = getProductsTotalCost(selectedProducts);
+    private void validateUser(Integer userId) {
 
-        Map<Integer, String> couponToCodeMap = new HashMap<>(); // Coupon ID, Coupon Code
-
-        for(String code : codes) {
-            CouponCode couponCode = couponCodeDao.getCouponCode(code);
-            Coupon coupon = couponCode.getCoupon();
-
-            if(couponToCodeMap.get(coupon.getId()) == null) {
-                couponToCodeMap.put(coupon.getId(), code);
-                validateEachCouponProdAssociation(productCount, totalCost, code, coupon, selectedProducts);
-            }
-        }
-    }
-
-    private Integer[] extractIds(List<SelectedProduct> selectedProducts) {
-        Integer[] productIds = new Integer[selectedProducts.size()];
-
-        for(int i = 0 ; i < selectedProducts.size() ; i++) {
-            productIds[i] = selectedProducts.get(i).getId();
-        }
-        return productIds;
-    }
-
-    /**
-     * Following Coupon Validations are done for the given codes
-     * <li>Whether coupon validity has expired</li>
-     * <li>Whether coupon has been deactivated</li>
-     * <li>Whether multiple exclusive coupons have been specified</li>
-     */
-    private void validateCoupons(String[] codes) {
-        String prevExclusiveCode = null;
-
-        for(String code : codes) {
-            CouponCode couponCode = couponCodeDao.getCouponCode(code);
-            Coupon coupon = couponCode.getCoupon();
-
-            Date applicableFrom = coupon.getApplicableFrom();
-            Date applicableTill = coupon.getApplicableTill();
-            Date currentDate = new Date();
-
-            boolean isOutsideApplicableRange = currentDate.before(applicableFrom) || currentDate.after(applicableTill);
-
-            if (isOutsideApplicableRange) {
-                throw new CouponValidityExpiredException(couponCode.getCode(), applicableFrom, applicableTill);
-            }
-
-            boolean isDeactivated = (coupon.getDeactivatedBy() != null);
-
-            if (isDeactivated) {
-                throw new InactiveCouponException(couponCode.getCode());
-            }
-
-            if(prevExclusiveCode != null && coupon.isInclusive() == false) {
-                throw new MultipleExclusiveCouponsException(prevExclusiveCode, couponCode.getCode());
-            }
-
-            if(coupon.isInclusive() == false) {
-                prevExclusiveCode = couponCode.getCode();
-            }
-        }
-    }
-
-    /**
-     * Every coupon has an acceptable product range and if product span is true that implies total product
-     * count should be with in acceptable product range. If product span is false that implies that each
-     * selected product should be with in acceptable product range.
-     */
-    private void validateEachCouponProdAssociation(int productCount, int totalCost, String code,
-                                                   Coupon coupon, List<SelectedProduct> products) {
-        int productMinCount = coupon.getProductMinCount();
-        int productMaxCount = coupon.getProductMaxCount();
-        if(coupon.isProductCountSpanApplicable()) {
-
-            boolean isOutSideProductApplicableRange =
-                    !(productCount >= productMinCount && productCount <= productMaxCount);
-
-            if(isOutSideProductApplicableRange) {
-                throw new ProductSpanCountOutOfRangeException(code, productMinCount, productMaxCount);
-            }
-        }else{
-
-            for(SelectedProduct selectedProduct : products) {
-                int selectedProdCount = selectedProduct.getCount();
-                boolean isOutSideSelectedProdApplicableRange =
-                        !(selectedProdCount >= productMinCount && selectedProdCount <= productMaxCount);
-
-                if(isOutSideSelectedProdApplicableRange) {
-                    throw new ProductCountOutOfRangeException(code,
-                            String.valueOf(selectedProduct.getId()), productMinCount, productMaxCount);
-                }
-            }
-        }
-
-
-        boolean isOutSideTransactionRange =
-                (totalCost < coupon.getTransactionMinValue() || totalCost > coupon.getTransactionMaxValue());
-
-        if(isOutSideTransactionRange) {
-            throw new TransactionValueOutOfRangeException(
-                    code, coupon.getTransactionMinValue(), coupon.getTransactionMaxValue());
-        }
-
-        List<Integer> couponDiscountingRuleIds = couponDiscountingRuleDao.getRuleIds(coupon.getId());
-
-        if(couponDiscountingRuleIds.size() == 0) {
-            throw new InternalServerErrorException("No existing rules found for coupon : " + coupon.getId());
-        }
-
-        boolean foundRule = false;
-
-        for(Integer couponDiscountingRuleId : couponDiscountingRuleIds) {
-            foundRule = isRuleApplicable(couponDiscountingRuleId, totalCost, productCount);
-            if(foundRule) {
-                break;
-            }
-        }
-
-        if(foundRule == false) {
-            throw new InternalServerErrorException("No applicable rules found for coupon : " + coupon.getId());
-        }
-
-        outerLoop:
-        for(SelectedProduct selectedProduct : products) {
-            Integer prodId = selectedProduct.getId();
-            Set<Integer> validProductIds = getProductAncestry(prodId);
-            validProductIds.add(prodId);
-            boolean isCategoryApplicableForCoupon = false;
-            for(Integer validProdId : validProductIds) {
-                isCategoryApplicableForCoupon = isCategoryApplicableForCoupon(coupon.getId(), validProdId);
-                if(isCategoryApplicableForCoupon) {
-                    break outerLoop;
-                }
-            }
-
-            boolean isAnyProductApplicable = couponProductMapDao.isAnyProductApplicable(coupon.getId(), validProductIds);
-            if(isAnyProductApplicable == false) {
-                throw new InapplicableCouponException(code, String.valueOf(prodId));
-            }
-        }
-    }
-
-    private int getProductsTotalCost(List<SelectedProduct> products) {
-        int totalCost = 0;
-        for(SelectedProduct selectedProduct:products) {
-            int prodId = selectedProduct.getId();
-            Product product = productDao.find(prodId);
-            totalCost += product.getUnitPrice()*selectedProduct.getCount();
-        }
-        return totalCost;
-    }
-
-    private boolean isCategoryApplicableForCoupon(int couponId, Integer prodId) {
-        Product product = productDao.find(prodId);
-        Category category = product.getCategory();
-        if(category == null) {
-            return false;
-        }
-        Set<Integer> applicableCategoryIds = getCategoryAncestry(category.getId());
-        applicableCategoryIds.add(category.getId());
-        return couponCategoryMapDao.isAnyCategoryApplicable(couponId, applicableCategoryIds);
-    }
-
-    private Set<Integer> getCategoryAncestry(int categoryId) {
-        Set<Integer> categoryAncestryIds = new HashSet<>();
-        int totalSize = categoryDao.getCountOfCategories();
-        int count = 0;
-        while(true) {
-            Integer obj = categoryDao.getParentCategoryId(categoryId);
-            if(obj == null) break;
-            categoryId = obj;
-            categoryAncestryIds.add(obj);
-            if(count > totalSize) {
-                throw new InternalServerErrorException("Possible circular hierarchy detected for category : " + categoryId);
-            }
-            count++;
-        }
-        return categoryAncestryIds;
-    }
-
-    private Set<Integer> getProductAncestry(Integer productId) {
-        Set<Integer> prodAncestryIds = new HashSet<>();
-        int totalSize = productDao.getCountOfProducts();
-
-        int count = 0;
-        while(true) {
-            productId = productDao.getParentProdId(productId);
-            if(productId == null) break;
-            prodAncestryIds.add(productId);
-            if(count > totalSize) {
-                throw new InternalServerErrorException("Possible circular hierarchy detected for product : " + productId);
-            }
-            count++;
-        }
-        return prodAncestryIds;
-    }
-
-    /**
-     * Checks for a valid interval for the given transactionValue or the productCount. If it finds then that implies that
-     * the rule has successfully found an discount interval.
-     * If it can't find any interval for the given transactionValue or the productCount a further check is made to find
-     * if any intervals are mentioned. If no intervals are mentioned it implies that default values specified in rule
-     * should be used.
-     */
-    private boolean isRuleApplicable(Integer couponDiscountingRuleId, int totalCost, int productCount) {
-        boolean isRuleApplicable = false;
-        try{
-            couponDiscountingIntervalRuleDao.getDiscount(couponDiscountingRuleId, totalCost, productCount);
-            isRuleApplicable = true;
-        }catch (NoResultException e) {
-            Integer intervalCount = couponDiscountingIntervalRuleDao.getIntervalCount(couponDiscountingRuleId);
-
-            if (intervalCount == 0) {
-                isRuleApplicable = true;
-            }
-        }
-
-        return isRuleApplicable;
-    }
-
-    /**
-     * Checks if all the listed codes are registered and active.
-     */
-    private void validateCodes(String[] codes) {
-        List<CouponCode> couponCodeList = couponCodeDao.getCouponCodes(codes);
-        Map<String, CouponCode> CouponCodeMap = new HashMap<>(); // Code, CouponCode
-
-        for(CouponCode code : couponCodeList) {
-            CouponCodeMap.put(code.getCode(), code);
-            if(code.getDeactivatedBy() != null) {
-                throw new InactiveCouponException(code.getCode());
-            }
-        }
-
-        for(String code : codes) {
-            if(CouponCodeMap.get(code) == null) {
-                throw new InvalidCouponException(code);
-            }
-
-        }
-    }
-
-    /**
-     * Checks if The given Product Ids are valid or not.
-     */
-    private void validateProducts(Integer[] productIds) {
-        List<Product> availableProducts = productDao.getProductsForIds(productIds);
-        Map<Integer, Product> prodIdToProdMap = new HashMap<>();      //productId : Product
-        for(Product product : availableProducts) {
-            prodIdToProdMap.put(product.getId(), product);
-        }
-
-        for(Integer selectedProdId : productIds) {
-           if(prodIdToProdMap.get(selectedProdId) == null) {
-               throw new InvalidProductException(String.valueOf(selectedProdId));
-           }
-        }
-    }
-
-    /**
-     * Checks if the given User Id is valid or not
-     */
-    private void validateConsumer(int userId) {
         User user = userDao.find(userId);
 
         if(user == null) {
@@ -383,66 +314,626 @@ public class CouponEngineRequestProcessorImpl implements CouponEngineRequestProc
         }
     }
 
-    private void createCouponRequestAudit(CouponDiscountRequest couponDiscountRequest,
-                                          int userId, String[] codes, List<SelectedProduct> selectedProducts) {
-        CouponDiscountRequestAudit cdrAudit = new CouponDiscountRequestAudit();
-        cdrAudit.setCouponDiscountRequest(couponDiscountRequest);
-        User user = userDao.find(userId);
-        cdrAudit.setUser(user);
-        cdrAudit.setCreatedOn(new Date());
-        cdrAudit.setUserPhone(user.getPhoneNumber());
-        couponDiscountRequestAuditDao.create(cdrAudit);
+    /**
+     * If selected products size doesn't match with product adapters, find which
+     * selected product is not registered and report it as invalid product.
+     *
+     * @throws InvalidProductException If a selected product has no product adapter.
+     */
+    private void validateProducts(List<ProductVo> selectedProducts, List<ProductAdapter> productAdapters) {
 
-        for(int index = 0 ; index < codes.length ; index++) {
-            CouponDiscountRequestCodeAudit cdrCodeAudit = new CouponDiscountRequestCodeAudit();
-            CouponCode couponCode = couponCodeDao.getCouponCode(codes[index]);
-            cdrCodeAudit.setCouponCode(couponCode);
-            cdrCodeAudit.setCouponDiscReqAudit(cdrAudit);
-            cdrCodeAudit.setStatus(CouponDiscountRequestStatus.LOCKED);
-            cdrCodeAudit.setCreatedOn(new Date());
-            couponDiscountReqCodeAuditDao.create(cdrCodeAudit);
-        }
+        if(productAdapters.size() != selectedProducts.size()) {
 
-        for(int index = 0 ; index < selectedProducts.size() ; index++) {
-            SelectedProduct selectedProduct = selectedProducts.get(index);
-            CouponDiscountReqProdAudit cdrProdAudit = new CouponDiscountReqProdAudit();
-            cdrProdAudit.setCouponDiscReqAudit(cdrAudit);
-            Product product = productDao.find(selectedProduct.getId());
-            cdrProdAudit.setProduct(product);
-            cdrProdAudit.setProductCount(selectedProduct.getCount());
-            cdrProdAudit.setProductUnitPrice(product.getUnitPrice());
-            couponDiscountReqProdAuditDao.create(cdrProdAudit);
+            selectedProducts.forEach(selectedProduct -> {
+                boolean found = false;
+                for (ProductAdapter productAdapter : productAdapters) {
+                    if(Objects.equals(selectedProduct.getId(), productAdapter.getProductId())
+                            && Objects.equals(selectedProduct.getProductType(), productAdapter.getProductType())) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if(! found) {
+                    throw new InvalidProductException(String.valueOf(selectedProduct.getId()), selectedProduct.getProductType().name());
+                }
+            });
         }
     }
 
-    private CouponDiscountRequest createCouponRequest(int userId, String[] codes, List<SelectedProduct> selectedProducts) {
+    /**
+     *
+     * Validates the given codes.
+     *
+     * @throws InactiveCouponException If the code is deactivated.
+     * @throws InvalidCouponException If the code is not registered with Portea.
+     */
+    private void validateCodes(String[] codes) {
+        List<CouponCode> couponCodeList = couponCodeDao.getCouponCodes(codes);
+
+        Map<String, Boolean> couponCodeMap = new HashMap<>();
+
+        couponCodeList.forEach(code -> {
+            if( ! code.isActive()) {
+                throw new InactiveCouponException(code.getCode());
+            }
+            couponCodeMap.put(code.getCode(), true);
+
+        });
+
+        if(codes.length != couponCodeMap.size()) {
+
+            for(String code : codes) {
+                if(couponCodeMap.get(code) == null) {
+                    throw new InvalidCouponException(code);
+                }
+
+            }
+        }
+
+    }
+
+
+    /**
+     * For global coupons, check if the selected products are registered in Portea db.
+     * For non-global coupons, check if product adapters are created for selected products.
+     */
+    private void validateProducts(Map<Coupon, List<String>> couponCodeMap, List<ProductVo> selectedProducts, List<ProductAdapter> productAdapters) {
+
+        couponCodeMap.forEach((coupon, codes) -> {
+            boolean global = coupon.getGlobal();
+            if (global) {
+                validateProducts(selectedProducts);
+            }
+            else {
+                validateProducts(selectedProducts, productAdapters);
+            }
+        });
+        validateProducts(selectedProducts);
+    }
+
+    /**
+     * Checks if the selected products are registered products in Portea.
+     *
+     * @throws InvalidProductException If a selected product is not registered with protea.
+     */
+    private void validateProducts(List<ProductVo> selectedProducts) {
+        Map<ProductType, List<Integer>> typeIdMap = getTypeIdMap(selectedProducts);
+
+        typeIdMap.forEach((type, ids) -> {
+
+            switch (type) {
+                case SERVICE:
+                    List<Service> services = serviceDao.getServices(ids);
+                    if (ids.size() != services.size()) {
+
+                        ids.stream().allMatch(selectedProdId -> {
+                            boolean anyMatch = services.stream()
+                                    .anyMatch(registeredService -> Objects.equals(registeredService.getId(), selectedProdId));
+                            if (! anyMatch) {
+                                throw new InvalidProductException(String.valueOf(selectedProdId), type.name());
+                            }
+                            return true;
+                        });
+                    }
+
+                    services.forEach(service -> {
+                        try {
+                            productAdapterDao.getProductAdapter(service.getId(), ProductType.SERVICE);
+                        } catch (NoResultException e) {
+                            productAdapterDao.create(service.getId(), ProductType.SERVICE, new Date(), service.getName());
+                        }
+                    });
+
+                    break;
+                case PACKAGE:
+                    List<Package> packages = packageDao.getPackages(ids);
+                    if (ids.size() != packages.size()) {
+
+                        ids.stream().allMatch(selectedProdId -> {
+                            boolean anyMatch = packages.stream()
+                                    .anyMatch(registeredPackage -> Objects.equals(registeredPackage.getId(), selectedProdId));
+                            if (! anyMatch) {
+                                throw new InvalidProductException(String.valueOf(selectedProdId), type.name());
+                            }
+                            return true;
+                        });
+                    }
+
+                    packages.forEach(eachPackage -> {
+                        try {
+                            productAdapterDao.getProductAdapter(eachPackage.getId(), ProductType.PACKAGE);
+                        } catch (NoResultException e) {
+                            productAdapterDao.create(eachPackage.getId(), ProductType.PACKAGE, new Date(), eachPackage.getName());
+                        }
+                    });
+                    break;
+            }
+        });
+    }
+
+    /**
+     * Following Coupon Validations are done for the given codes
+     * <li>Whether coupon validity has expired</li>
+     * <li>Whether coupon has been deactivated</li>
+     * <li>Whether multiple exclusive coupons have been specified</li>
+     * <li>Given total cost is within transaction limits</li>
+     * <li>Given coupon use count is within acceptable limit</li>
+     * <li>Given coupon actor type is staff and user type should be staff</li>
+     * <li>If a coupon context is application it is only applicable during appointment.
+     *     If a coupon context is subscription it can be applied during subscription as well as appointment.</li>
+     *
+     * @param couponCodeMap Each coupon is mapped to selected codes
+     */
+    private void validateCoupons(ContextType cdrContextType, Map<Coupon,
+            List<String>> couponCodeMap, Double totalCost, Integer requesterId) {
+        final List<String> listExclusiveCodes = new ArrayList<>();
+
+        couponCodeMap.forEach((coupon, codes) -> {
+
+            String couponCode = codes.get(0);
+
+            checkCouponValidity(coupon, couponCode);
+
+            checkIsCouponDeactivated(coupon, couponCode);
+
+            checkForMultipleCodes(codes);
+
+            checkCouponIsExclusive(listExclusiveCodes, coupon, couponCode, codes.size());
+
+            checkCouponIsInTransactionRange(coupon, couponCode, totalCost);
+
+            checkCouponActorType(coupon, requesterId);
+
+            checkCouponContextType(coupon, cdrContextType);
+
+        });
+    }
+
+    private void checkForMultipleCodes(List<String> codes) {
+        if (codes.size() > 1) {
+            throw new MultipleCodesForCouponException(codes.get(0), codes.get(1));
+        }
+    }
+
+    private void checkCouponContextType(Coupon coupon, ContextType cdrContextType) {
+
+        ContextType couponContextType = coupon.getContextType();
+        if (couponContextType.equals(ContextType.APPOINTMENT)
+                && ! cdrContextType.equals(ContextType.APPOINTMENT)) {
+            throw new ContextTypeInapplicableException(cdrContextType.name(), couponContextType.name());
+        }
+        else if (couponContextType.equals(ContextType.SUBSCRIPTION) &&
+                ! (cdrContextType.equals(ContextType.APPOINTMENT) || cdrContextType.equals(ContextType.SUBSCRIPTION))) {
+            throw new ContextTypeInapplicableException(cdrContextType.name(), couponContextType.name());
+        }
+    }
+
+    private void checkCouponActorType(Coupon coupon, Integer requesterId) {
+        User user = userDao.find(requesterId);
+        if(coupon.getActorType().equals(ActorType.STAFF) && ! user.getType().equals(ActorType.STAFF.getName())) {
+
+            throw new CouponActorTypeException(String.valueOf(requesterId));
+        }
+    }
+
+    private void checkCouponIsInApplicableCount(Integer applicableUseCount, Coupon coupon,
+                                                List<String> codes) {
+
+        if (applicableUseCount != null && applicableUseCount != -1) {
+            if (coupon.getTrackUseAcrossCodes() != null && coupon.getTrackUseAcrossCodes()) {
+
+                long totalAppliedCount = couponDiscountCodeDao.getCouponAppliedCount(coupon);
+
+                if (totalAppliedCount >= applicableUseCount) {
+                    throw new ApplicableCountExceededException(applicableUseCount, codes.get(0));
+                }
+            } else {
+
+                codes.forEach(code -> {
+                    Long appliedCount = couponDiscountCodeDao.getCodeAppliedCount(code);
+                    if (appliedCount >= applicableUseCount) {
+                        throw new ApplicableCountExceededException(applicableUseCount, code);
+                    }
+                });
+
+            }
+        }
+
+    }
+
+    private void checkCouponIsInApplicableCount(Integer applicableUseCount, Coupon coupon,
+                                                List<String> codes, User user) {
+
+        if (applicableUseCount != null && applicableUseCount != -1) {
+            if (coupon.getTrackUseAcrossCodes() != null && coupon.getTrackUseAcrossCodes()) {
+
+                long totalAppliedCount = couponDiscountCodeDao.getCouponAppliedCount(coupon, user);
+
+                if (totalAppliedCount >= applicableUseCount) {
+                    throw new ApplicableCountExceededException(applicableUseCount, codes.get(0));
+                }
+            } else {
+
+                codes.forEach(code -> {
+                    Long appliedCount = couponDiscountCodeDao.getCodeAppliedCount(code, user);
+                    if (appliedCount >= applicableUseCount) {
+                        throw new ApplicableCountExceededException(applicableUseCount, code);
+                    }
+                });
+
+            }
+        }
+
+    }
+
+    private void checkCouponIsInTransactionRange(Coupon coupon, String couponCode, Double totalCost) {
+        Integer minTransaction = coupon.getTransactionMinValue();
+        Integer maxTransaction = coupon.getTransactionMaxValue();
+
+        boolean isOutsideMinTransRange = (minTransaction != null && minTransaction != -1 && totalCost < minTransaction);
+        boolean isOutsideMaxTransRange = (maxTransaction != null && maxTransaction != -1 && totalCost > maxTransaction);
+        boolean isOutSideTransactionRange = (isOutsideMinTransRange || isOutsideMaxTransRange);
+
+        if(isOutSideTransactionRange) {
+            throw new TransactionValueOutOfRangeException(
+                    couponCode, coupon.getTransactionMinValue(), coupon.getTransactionMaxValue());
+        }
+    }
+
+    private void checkCouponIsExclusive(List<String> listExclusiveCodes, Coupon coupon, String couponCode, Integer codesCount) {
+        if(listExclusiveCodes.size() > 0 && ! coupon.getInclusive()) {
+            throw new MultipleExclusiveCouponsException(listExclusiveCodes.get(0), couponCode);
+        }
+
+        if( ! coupon.getInclusive()) {
+            if(codesCount > 1) {
+                throw new MultipleExclusiveCouponsException(couponCode, couponCode);
+            }
+            listExclusiveCodes.add(couponCode);
+        }
+    }
+
+    private void checkIsCouponDeactivated(Coupon coupon, String couponCode) {
+        boolean isDeactivated = (coupon.getDeactivatedBy() != null);
+
+        if (isDeactivated) {
+            throw new InactiveCouponException(couponCode);
+        }
+    }
+
+    private void checkCouponValidity(Coupon coupon, String couponCode) {
+
+        Date applicableFrom = coupon.getApplicableFrom();
+        Date applicableTill = coupon.getApplicableTill();
+        Date currentDate = new Date();
+
+        boolean isOutsideApplicableRange = currentDate.before(applicableFrom) || currentDate.after(applicableTill); // todo within duration.
+
+        if (isOutsideApplicableRange) {
+            throw new CouponValidityExpiredException(couponCode, applicableFrom, applicableTill);
+        }
+    }
+
+    /**
+     * Checks if the given coupon is mapped with all products or not.
+     *
+     * @throws InapplicableCouponException If coupon is not mapped with any of the
+     * product adapter from the given list.
+     */
+    private void validateCouponProductAssociation(Map<Coupon, List<String>> couponCodeMap,
+                                                  List<ProductAdapter> productAdapters) {
+
+        couponCodeMap.forEach((coupon, codes) -> {
+        Boolean isGlobal = coupon.getGlobal();
+        Boolean isAllProducts = coupon.getIsForAllProducts();
+            if((isGlobal != null && ! isGlobal) && (isAllProducts != null && !isAllProducts)) {
+
+                productAdapters.forEach(productAdapter -> {
+                    try {
+                        couponProductAdapterMappingDao.find(coupon, productAdapter);
+                    }
+                    catch (NoResultException e) {
+                        throw new InapplicableCouponException(codes.get(0),
+                                String.valueOf(productAdapter.getProductId()), productAdapter.getProductType().name());
+                    }
+
+
+                });
+            }
+        });
+    }
+
+    /**
+     * Checks if the given coupon is mapped with all brands or not.
+     *
+     * @throws CouponBrandMappingException If coupon is not mapped with any of the
+     * brands from the given list.
+     */
+    private void validateCouponBrandAssociation(Map<Coupon, List<String>> couponCodeMap,
+                                                Integer patientBrandId) {
+
+        couponCodeMap.forEach((coupon, codes) -> {
+
+            Boolean isGlobal = coupon.getGlobal();
+            Boolean isAllAreas = coupon.getIsForAllBrands();
+            if((isGlobal != null && ! isGlobal) && (isAllAreas != null && !isAllAreas)) {
+                try {
+                    couponBrandMappingDao.find(coupon, brandDao.find(patientBrandId));
+                }
+                catch (NoResultException e) {
+                    throw new CouponBrandMappingException(codes.get(0),
+                            String.valueOf(patientBrandId));
+                }
+            }
+
+        });
+    }
+
+    /**
+     * Checks if the given coupon is mapped with all areas or not.
+     *
+     * @throws CouponAreaMappingException If coupon is not mapped with any of the
+     * brands from the given list.
+     */
+    private void validateCouponAreaAssociation(Map<Coupon, List<String>> couponCodeMap,
+                                                Integer areaId) {
+
+        couponCodeMap.forEach((coupon, codes) -> {
+
+            Boolean isGlobal = coupon.getGlobal();
+            Boolean isAllAreas = coupon.getIsForAllAreas();
+            if((isGlobal != null && ! isGlobal) && (isAllAreas != null && !isAllAreas)) {
+                    try {
+                        couponAreaMappingDao.find(coupon, areaDao.find(areaId));
+                    }
+                    catch (NoResultException e) {
+                        throw new CouponAreaMappingException(codes.get(0),
+                                String.valueOf(areaId));
+                    }
+            }
+
+        });
+    }
+
+    /**
+     * Checks if the given coupon is mapped with all referrers or not.
+     *
+     * @throws CouponBrandMappingException If coupon is not mapped with any of the
+     * brands from the given list.
+     */
+    private void validateCouponReferrerAssociation(Map<Coupon, List<String>> couponCodeMap,
+                                               Integer referrerId) {
+
+        couponCodeMap.forEach((coupon, codes) -> {
+
+            Boolean global = coupon.getGlobal();
+            if(global != null && ! global) {
+                try {
+                    couponReferrerMappingDao.find(coupon, referrerDao.find(referrerId));
+                }
+                catch (NoResultException e) {
+                    throw new CouponReferrerMappingException(codes.get(0),
+                            String.valueOf(referrerId));
+                }
+            }
+
+        });
+    }
+
+    /**
+     * Every coupon has an application type and all the application types are mentioned
+     * in {@link CouponApplicationType}. Checks if the discount can be given for a coupon's
+     * application type.
+     */
+    private void validateCouponApplicability(Map<Coupon, List<String>> couponCodeMap,
+                                             List<ProductVo> productVos, Integer beneficiaryId,
+                                             Boolean withinSubscription, ContextType cdrContextType) {
+        couponCodeMap.forEach((coupon, codes) -> {
+            CouponApplicationType type = coupon.getApplicationType();
+            Integer nthTime = coupon.getNthTime();
+
+            productVos.forEach(productVo -> {
+
+                Boolean nthRecurring = coupon.getNthTimeRecurring();
+
+                switch (type) {
+                    case NTH_TIME:
+                        List<Integer> purchaseCounts = getPurchaseCounts(productVo);
+                        long noOfTimesDiscountCanBeAvailed = getNoOfTimesDiscountCanBeAvailed(purchaseCounts,
+                                nthTime, ! nthRecurring, purchaseCount -> purchaseCount % nthTime == 0);
+
+                        if(noOfTimesDiscountCanBeAvailed < codes.size()) {
+
+                            throw new CouponNthTimeApplicationException(type.name(), String.valueOf(nthTime), nthRecurring,
+                                    purchaseCounts.toArray(new Integer[purchaseCounts.size()]));
+                        }
+                        break;
+                    case ONE_TIME:
+
+                        int applicableUseCount = 1;
+                        checkCouponIsInApplicableCount(applicableUseCount, coupon, codes);
+                        break;
+                    case ONE_TIME_PER_USER:
+
+                        applicableUseCount = 1;
+                        checkCouponIsInApplicableCount(applicableUseCount, coupon, codes, userDao.find(beneficiaryId));
+                        break;
+                    case ONE_TIME_PER_USER_FIFO:
+
+                        applicableUseCount = 1;
+                        checkCouponIsInApplicableCount(coupon.getApplicableUseCount(), coupon, codes);
+                        checkCouponIsInApplicableCount(applicableUseCount, coupon, codes,userDao.find(beneficiaryId));
+                        break;
+                    case MANY_TIMES:
+                        break;
+
+                    case NTH_TIME_PER_SUBSCRIPTION:
+
+                        if ( ! cdrContextType.equals(ContextType.SUBSCRIPTION) && ! withinSubscription){
+
+                                throw new CouponNthTimeNotWithinSubscriptionException(cdrContextType.name());
+                        }
+                        purchaseCounts = getPurchaseCounts(productVo);
+                        noOfTimesDiscountCanBeAvailed = getNoOfTimesDiscountCanBeAvailed(purchaseCounts,
+                                nthTime, ! nthRecurring, purchaseCount -> purchaseCount % nthTime == 0);
+
+                        if(noOfTimesDiscountCanBeAvailed < codes.size()) {
+                            throw new CouponNthTimeApplicationException(type.name(), String.valueOf(nthTime), nthRecurring,
+                                    purchaseCounts.toArray(new Integer[purchaseCounts.size()]));
+                        }
+                        break;
+                    case NTH_TIME_AB_PER_SUBSCRIPTION:
+
+                        if ( ! cdrContextType.equals(ContextType.SUBSCRIPTION) && ! withinSubscription){
+
+                            throw new CouponNthTimeNotWithinSubscriptionException(cdrContextType.name());
+                        }
+                        purchaseCounts = getPurchaseCounts(productVo);
+                        noOfTimesDiscountCanBeAvailed = getNoOfTimesDiscountCanBeAvailed(purchaseCounts,
+                                nthTime, false, purchaseCount -> purchaseCount >= nthTime);
+
+                        if (noOfTimesDiscountCanBeAvailed < codes.size()) {
+                            throw new CouponNthTimeApplicationException(type.name(), String.valueOf(nthTime), nthRecurring,
+                                    purchaseCounts.toArray(new Integer[purchaseCounts.size()]));
+                        }
+                        break;
+                }
+            });
+
+        });
+    }
+
+    private List<Integer> getPurchaseCounts(ProductVo productVo) {
+        Integer purchasedCount = (productVo.getPurchaseCount() == null)?0:productVo.getPurchaseCount();
+        Integer currentBuyCount = (productVo.getCount() == null)?0:productVo.getCount();
+        List<Integer> purchaseCounts = new ArrayList<>();
+        IntStream.rangeClosed(purchasedCount + 1, purchasedCount + currentBuyCount).forEach(purchaseCounts::add);
+        return purchaseCounts;
+    }
+
+    /**
+     *
+     * @param purchaseCounts list of purchase counts.
+     *                       ex: In a cdr if  the same product is been purchased 3 times and so far
+     *                       it had been purchased 12 times, then this list has 13,14,15 values.
+     * @param nthTime Indicates the nth time for which the discount has to be given.
+     * @param checkOnlyNthTime If true indicates that the product can be purchased only nth time.
+     * @param canApplyDiscount Checks for each purchase count can the discount be applied.
+     */
+    private long getNoOfTimesDiscountCanBeAvailed(List<Integer> purchaseCounts,
+                                                  Integer nthTime, Boolean checkOnlyNthTime,
+                                                   Predicate<Integer> canApplyDiscount) {
+
+        long noOfTimesDiscountCanBeAvailed;
+
+        noOfTimesDiscountCanBeAvailed = purchaseCounts
+                .stream()
+                .filter(currentPurchaseCount -> {
+                    if (checkOnlyNthTime) {
+
+                        return Objects.equals(currentPurchaseCount, nthTime);
+                    } else {
+
+                        return canApplyDiscount.test(currentPurchaseCount);
+                    }
+                })
+                .count();
+        return noOfTimesDiscountCanBeAvailed;
+    }
+
+    private void createCouponRequestAudit(CouponDiscountRequest couponDiscountRequest) {
+        CouponDiscountRequestAudit cdrAudit = new CouponDiscountRequestAudit();
+        cdrAudit.setCouponDiscountRequest(couponDiscountRequest);
+
+        cdrAudit.setRequester(couponDiscountRequest.getRequester());
+        cdrAudit.setBeneficiary(couponDiscountRequest.getBeneficiary());
+        cdrAudit.setClientContextId(couponDiscountRequest.getClientContextId());
+        cdrAudit.setReferrerId(couponDiscountRequest.getReferrerId());
+        cdrAudit.setAreaId(couponDiscountRequest.getAreaId());
+        cdrAudit.setPatientBrand(couponDiscountRequest.getPatientBrand());
+
+        cdrAudit.setClientContextType(couponDiscountRequest.getClientContextType());
+        cdrAudit.setTotalCost(couponDiscountRequest.getTotalCost());
+        cdrAudit.setStatus(couponDiscountRequest.getStatus());
+
+        cdrAudit.setSourceName(couponDiscountRequest.getSourceName());
+        cdrAudit.setWithinSubscription(couponDiscountRequest.getWithinSubscription());
+        cdrAudit.setCreatedOn(new Date());
+        couponDiscountRequestAuditDao.create(cdrAudit);
+
+        List<CouponDiscountRequestCode> codes = couponDiscountRequestCodeDao.getCouponCodes(couponDiscountRequest);
+
+        codes.forEach(code -> {
+            CouponDiscountRequestCodeAudit cdrCodeAudit = new CouponDiscountRequestCodeAudit();
+            cdrCodeAudit.setCouponCode(code.getCouponCode());
+            cdrCodeAudit.setCouponDiscReqAudit(cdrAudit);
+
+            couponDiscountReqCodeAuditDao.create(cdrCodeAudit);
+        });
+
+        List<CouponDiscountRequestProduct> products = couponDiscountRequestProductDao.getProducts(couponDiscountRequest);
+
+        products.forEach(product -> {
+            CouponDiscountReqProdAudit cdrProdAudit = new CouponDiscountReqProdAudit();
+
+
+            cdrProdAudit.setCouponDiscReqAudit(cdrAudit);
+            cdrProdAudit.setProductId(product.getProductId());
+            cdrProdAudit.setProductCount(product.getProductCount());
+            cdrProdAudit.setProductUnitPrice(product.getProductUnitPrice());
+            cdrProdAudit.setRemarks(product.getRemarks());
+            cdrProdAudit.setPurchaseInstanceCount(product.getPurchaseInstanceCount());
+
+            couponDiscountReqProdAuditDao.create(cdrProdAudit);
+        });
+    }
+
+    private CouponDiscountRequest createCouponRequest(int userId, Integer beneficiaryId, ContextType cdrContextType,
+                                                      String[] codes, List<ProductVo> productVos, Double totalCost,
+                                                      String sourceName, Boolean withinSubscription, Integer areaId, Integer referrerId, Integer patientBrandId) {
 
         CouponDiscountRequest cdr = new CouponDiscountRequest();
         cdr.setCompleted(false);
         User user = userDao.find(userId);
-        cdr.setUser(user);
-        cdr.setUserPhone(user.getPhoneNumber());
+        cdr.setRequester(user);
+
+        if(beneficiaryId != null) {
+            User beneficiary = userDao.find(beneficiaryId);
+            cdr.setBeneficiary(beneficiary);
+        }
+
+        cdr.setClientContextType(cdrContextType);
+        cdr.setAreaId(areaDao.find(areaId));
+        cdr.setReferrerId(referrerDao.find(referrerId));
+        cdr.setPatientBrand(brandDao.find(patientBrandId));
+        cdr.setTotalCost(totalCost);
+        cdr.setStatus(CouponDiscountRequestStatus.REQUESTED);
         cdr.setLatestUpdatedOn(new Date());
+        cdr.setSourceName(sourceName);
+        cdr.setWithinSubscription(withinSubscription);
         couponDiscountRequestDao.create(cdr);
 
-        for(int index = 0 ; index < codes.length ; index++) {
+        for (String code : codes) {
             CouponDiscountRequestCode cdrCode = new CouponDiscountRequestCode();
-            CouponCode couponCode = couponCodeDao.getCouponCode(codes[index]);
+            CouponCode couponCode = couponCodeDao.getCouponCode(code);
             cdrCode.setCouponCode(couponCode);
             cdrCode.setCouponDiscountRequest(cdr);
-            cdrCode.setStatus(CouponDiscountRequestStatus.LOCKED);
-            cdrCode.setCreatedOn(new Date());
+
             couponDiscountRequestCodeDao.create(cdrCode);
         }
 
-        for(int index = 0 ; index < selectedProducts.size() ; index++) {
-            SelectedProduct selectedProduct = selectedProducts.get(index);
-            Product product = productDao.find(selectedProduct.getId());
+        for (ProductVo productVo : productVos) {
             CouponDiscountRequestProduct cdrProduct = new CouponDiscountRequestProduct();
             cdrProduct.setCouponDiscountRequest(cdr);
-            cdrProduct.setProduct(product);
-            cdrProduct.setProductCount(selectedProduct.getCount());
-            cdrProduct.setProductUnitPrice(product.getUnitPrice());
+            cdrProduct.setProductId(productVo.getId());
+            cdrProduct.setProductCount(productVo.getCount());
+
+            cdrProduct.setProductUnitPrice(productVo.getUnitCost());
+            cdrProduct.setPurchaseInstanceCount(productVo.getPurchaseCount());
+
+            cdrProduct.setProductType(productVo.getProductType());
+            cdrProduct.setRemarks(productVo.getRemarks());
             couponDiscountReqProdDao.create(cdrProduct);
         }
 
@@ -450,110 +941,644 @@ public class CouponEngineRequestProcessorImpl implements CouponEngineRequestProc
     }
 
     @Override
-    public void updateCouponDiscountRequest(CouponDiscountRequestUpdateReq request) {
-        // TODO Complete Implementation
+    public void updateCouponDiscountRequest(Integer cdrId, CouponDiscountRequestUpdateReq request) {
+
+        CouponDiscountRequest cdr = validateAndGetCdr(cdrId);
+
+        checkForNullValues(request);
+
+        if (cdr.getStatus().equals(CouponDiscountRequestStatus.CANCELED)) {
+
+            throw new IllegalCdrCancelStateException(String.valueOf(cdrId));
+
+        } else if(cdr.getStatus().equals(CouponDiscountRequestStatus.APPLIED)) {
+
+            throw new IllegalCdrApplyStateException(String.valueOf(cdrId));
+        }
+        cdr.setTotalCost(request.getTotalCost());
+
+        List<CouponDiscountRequestCode> existingCodes = couponDiscountRequestCodeDao.getCouponCodes(cdr);
+
+        existingCodes.forEach(couponDiscountRequestCodeDao::delete);
+
+        cdr.setStatus(CouponDiscountRequestStatus.REQUESTED);
+
+
+        List<CouponDiscountRequestProduct> requestProducts = couponDiscountReqProdDao.getProducts(cdr);
+        for(CouponDiscountRequestProduct couponDiscountRequestProduct : requestProducts){
+            couponDiscountReqProdDao.delete(couponDiscountRequestProduct);
+        }
+
+        String[] codes = request.getCodes();
+
+        validateCDRequest(cdr.getRequester().getId(), cdr.getClientContextType(),
+                cdr.getBeneficiary().getId(), getCouponCodeMap(request.getCodes()), cdr.getTotalCost(),
+                getProductVosForSelectedProducts(request.getProducts()), cdr.getWithinSubscription(), codes,
+                cdr.getAreaId().getId(), cdr.getReferrerId().getId(), cdr.getPatientBrand().getId());
+
+        for (String code : codes) {
+            try{
+                CouponDiscountRequestCode cdrCode = new CouponDiscountRequestCode();
+                CouponCode couponCode = couponCodeDao.getCouponCode(code);
+                cdrCode.setCouponCode(couponCode);
+                cdrCode.setCouponDiscountRequest(cdr);
+
+                couponDiscountRequestCodeDao.create(cdrCode);
+            }
+            catch(NoResultException e) {
+                throw new InvalidCouponException(code);
+            }
+        }
+
+        List<SelectedProduct> products = request.getProducts();
+        for(SelectedProduct selectedProduct : products) {
+            CouponDiscountRequestProduct cdrProduct = new CouponDiscountRequestProduct();
+            cdrProduct.setCouponDiscountRequest(cdr);
+            cdrProduct.setProductId(selectedProduct.getId());
+            cdrProduct.setProductType(selectedProduct.getProductType());
+            cdrProduct.setProductCount(selectedProduct.getCount());
+            cdrProduct.setProductUnitPrice(selectedProduct.getUnitCost());
+            cdrProduct.setRemarks(selectedProduct.getRemarks());
+            couponDiscountReqProdDao.create(cdrProduct);
+        }
+
+        createCouponRequestAudit(cdr);
     }
 
     @Override
-    public void deleteCouponDiscountRequest(Integer cdrId) {
-        // TODO Complete Implementation
+    public void cancelCouponDiscountRequest(Integer cdrId) {
+        CouponDiscountRequest couponDiscountRequest = validateAndGetCdr(cdrId);
+
+        if (couponDiscountRequest.getStatus().equals(CouponDiscountRequestStatus.CANCELED)) {
+
+            throw new IllegalCdrCancelStateException(String.valueOf(cdrId));
+
+        } else if(couponDiscountRequest.getStatus().equals(CouponDiscountRequestStatus.APPLIED)) {
+
+            throw new IllegalCdrApplyStateException(String.valueOf(cdrId));
+        }
+
+        couponDiscountRequest.setStatus(CouponDiscountRequestStatus.CANCELED);
+
+        createCouponRequestAudit(couponDiscountRequest);
+
     }
 
     @Override
     public ApplicableDiscountResp getCurrentApplicableDiscount(Integer cdrId) {
 
-        boolean isAnyCodeRejected = couponDiscountRequestCodeDao.isCodeRejected(cdrId);
+        CouponDiscountRequest cdr = validateAndGetCdr(cdrId);
 
-        if(isAnyCodeRejected) {
-            throw new InvalidCouponDiscountRequestException(String.valueOf(cdrId));
-        }
+        String[] codes = getCodes(cdr);
 
-        List<String> couponCodes = couponDiscountRequestCodeDao.getCouponCodes(cdrId);
-        String[] codes =   couponCodes.toArray(new String[couponCodes.size()]);
+        Map<Coupon, List<String>> couponCodeMap = getCouponCodeMap(codes);
+
+        Double discount = getTotalDiscount(couponCodeMap, cdr.getTotalCost());
+
         ApplicableDiscountResp applicableDiscountResp = new ApplicableDiscountResp();
 
-        if(codes.length == 0) {
-            return applicableDiscountResp;
-        }
+        applicableDiscountResp.setDiscountAmount(discount);
 
-        validateCoupons(codes);
-
-        List<ProductVo> productVos = couponDiscountReqProdDao.getProductVos(cdrId);
-        int totalDiscount = calculateDiscount(codes, productVos);
-        applicableDiscountResp.setDiscountAmount(totalDiscount);
         return applicableDiscountResp;
     }
 
-    /**
-     * For all the given codes discount is calculated.
-     */
-    private int calculateDiscount(String[] codes, List<ProductVo> productVos) {
-        int totalDiscount = 0;
+    private String[] getCodes(CouponDiscountRequest cdr) {
 
-        for(String code : codes) {
-            CouponCode couponCode = couponCodeDao.getCouponCode(code);
-            Coupon coupon = couponCode.getCoupon();
-            totalDiscount += getDiscountForCoupon(coupon.getId(), productVos);
-        }
+        List<CouponDiscountRequestCode> codes = couponDiscountRequestCodeDao.getCouponCodes(cdr);
 
-        return totalDiscount;
+        List<String> listCodes = new ArrayList<>();
+
+        codes.forEach(code -> listCodes.add(code.getCouponCode().getCode()));
+
+        return listCodes.toArray(new String[listCodes.size()]);
     }
 
-    /**
-     * For each Rule a check is made to see if any Interval is matching the product Count or Transaction value. If
-     * such a requirement is met then discount is calculated from the interval discount.
-     * If not intervals are specified for a rule then the rule's default discount is given.
-     */
-    private int getDiscountForCoupon(int couponId, List<ProductVo> productVos) {
-        List<Integer> couponDiscountingRuleIds = couponDiscountingRuleDao.getRuleIds(couponId);
-        int discountForCoupon = 0;
-        boolean foundDiscount = false;
-
-        int totalCost = 0;
-        int productCount = 0;
-        for (ProductVo productVo : productVos) {
-            totalCost += productVo.getUnitCost() * productVo.getCount();
-            productCount += productVo.getCount();
+    private CouponDiscountRequest validateAndGetCdr(Integer cdrId) {
+        if(cdrId == null) {
+            throw new IncompleteRequestException("cdrId");
         }
 
-        for(Integer couponDiscRuleId:couponDiscountingRuleIds) {
-            Integer discount;
-            CouponDiscountingRule couponDiscountingRule = couponDiscountingRuleDao.find(couponDiscRuleId);
-            try {
-                discount = couponDiscountingIntervalRuleDao.getDiscount(couponDiscRuleId, totalCost, productCount);
-                foundDiscount = true;
-                if(couponDiscountingRule.getCouponDiscRuleType().equals(CouponDiscountingRuleType.FLAT)) {
-                    discountForCoupon =  discount;
-                }
-                else if(couponDiscountingRule.getCouponDiscRuleType().equals(CouponDiscountingRuleType.PERCENTAGE)) {
-                    discountForCoupon = totalCost * (discount / 100);
-                }
-            }catch (NoResultException e) {
-                Integer intervalCount = couponDiscountingIntervalRuleDao.getIntervalCount(couponDiscRuleId);
-                if (intervalCount == 0) {
-                    foundDiscount = true;
-                    if(couponDiscountingRule.getCouponDiscRuleType().equals(CouponDiscountingRuleType.FLAT)) {
-                        discountForCoupon = couponDiscountingRule.getDiscountFlatAmount();
-                    }
-                    else if(couponDiscountingRule.getCouponDiscRuleType().equals(CouponDiscountingRuleType.PERCENTAGE)) {
-                        discountForCoupon =  totalCost * (couponDiscountingRule.getDiscountPercentage() / 100);
-                    }
-                }
-            }
-            if(foundDiscount) {
+        CouponDiscountRequest cdr = couponDiscountRequestDao.find(cdrId);
+
+        if(cdr == null) {
+            throw new InvalidCouponDiscountRequestException(String.valueOf(cdrId));
+        }
+        return cdr;
+    }
+
+    public void addCouponCodeToRequest(Integer cdrId, String code){
+
+        CouponDiscountRequest cdr = validateAndGetCdr(cdrId);
+
+        if (cdr.getStatus().equals(CouponDiscountRequestStatus.CANCELED)) {
+
+            throw new IllegalCdrCancelStateException(String.valueOf(cdrId));
+
+        } else if(cdr.getStatus().equals(CouponDiscountRequestStatus.APPLIED)) {
+
+            throw new IllegalCdrApplyStateException(String.valueOf(cdrId));
+        }
+
+        List<String> couponCodes = couponDiscountRequestCodeDao.getCouponCodes(cdrId);
+        couponCodes.add(code);
+        String[] codes = couponCodes.toArray(new String[couponCodes.size()]);
+
+        // validate the coupon product mappings after adding the new coupon code
+        validateCDRequest(cdr.getRequester().getId(), cdr.getClientContextType(),
+                cdr. getBeneficiary().getId(), getCouponCodeMap(codes), cdr.getTotalCost(),
+                getProductVos(couponDiscountRequestProductDao.getProducts(cdr)), cdr.getWithinSubscription(), codes,
+                cdr.getAreaId().getId(), cdr.getReferrerId().getId(), cdr.getPatientBrand().getId());
+
+        try {
+            CouponCode couponCode = couponCodeDao.getCouponCode(code);
+            CouponDiscountRequestCode couponDiscountRequestCode = new CouponDiscountRequestCode();
+            couponDiscountRequestCode.setCouponCode(couponCode);
+            couponDiscountRequestCode.setCouponDiscountRequest(cdr);
+
+            couponDiscountRequestCodeDao.create(couponDiscountRequestCode);
+        }
+        catch(NoResultException e) {
+            throw new InvalidCouponException(code);
+        }
+
+
+        createCouponRequestAudit(cdr);
+
+    }
+
+    public void deleteCouponCodeFromRequest(Integer cdrId, String code){
+        boolean codeFound = false;
+        CouponDiscountRequest couponDiscountRequest = validateAndGetCdr(cdrId);
+        if (couponDiscountRequest.getStatus().equals(CouponDiscountRequestStatus.CANCELED)) {
+
+            throw new IllegalCdrCancelStateException(String.valueOf(cdrId));
+
+        } else if(couponDiscountRequest.getStatus().equals(CouponDiscountRequestStatus.APPLIED)) {
+
+            throw new IllegalCdrApplyStateException(String.valueOf(cdrId));
+        }
+
+        List<CouponDiscountRequestCode> couponDiscountRequestCodes = couponDiscountRequestCodeDao.getCouponCodes(couponDiscountRequest);
+
+        for(CouponDiscountRequestCode couponDiscountRequestCode : couponDiscountRequestCodes) {
+            if(couponDiscountRequestCode.getCouponCode().getCode().equalsIgnoreCase(code)) {
+                codeFound = true;
+                couponDiscountRequestCodeDao.delete(couponDiscountRequestCode);
                 break;
             }
         }
-        return  discountForCoupon;
-    }
-
-    private int getProductCount(List<SelectedProduct> selectedProducts) {
-        int productCount = 0;
-
-        for(SelectedProduct product : selectedProducts) {
-            productCount += product.getCount();
+        if(!codeFound) {
+            throw new InvalidCouponException(code);
         }
 
-        return productCount;
+        createCouponRequestAudit(couponDiscountRequest);
+
     }
+
+    public void addProductToRequest(Integer cdrId, ProductUpdateReq productUpdateReq){
+
+        CouponDiscountRequest cdr = validateAndGetCdr(cdrId);
+
+        checkForNullValues(productUpdateReq);
+
+        if (cdr.getStatus().equals(CouponDiscountRequestStatus.CANCELED)) {
+
+            throw new IllegalCdrCancelStateException(String.valueOf(cdrId));
+
+        } else if(cdr.getStatus().equals(CouponDiscountRequestStatus.APPLIED)) {
+
+            throw new IllegalCdrApplyStateException(String.valueOf(cdrId));
+        }
+
+        List<SelectedProduct> selectedProducts = productUpdateReq.getProducts();
+        ProductVo productVo = new ProductVo();
+        for(SelectedProduct selectedProduct : selectedProducts) {
+            productVo.setId(selectedProduct.getId());
+            productVo.setProductType(selectedProduct.getProductType());
+            productVo.setUnitCost(selectedProduct.getUnitCost());
+            productVo.setCount(selectedProduct.getCount());
+            productVo.setPurchaseCount(selectedProduct.getPurchaseCount());
+        }
+
+        // Validate the request again
+        List<String> couponCodes = couponDiscountRequestCodeDao.getCouponCodes(cdrId);
+        String[] codes = couponCodes.toArray(new String[couponCodes.size()]);
+
+        List<ProductVo> productVos = getProductVos(couponDiscountRequestProductDao.getProducts(cdr));
+        productVos.add(productVo);
+
+        validateCDRequest(cdr.getRequester().getId(), cdr.getClientContextType(),
+                cdr.getBeneficiary().getId(), getCouponCodeMap(codes), cdr.getTotalCost(),
+                productVos, cdr.getWithinSubscription(), codes,
+                cdr.getAreaId().getId(), cdr.getReferrerId().getId(), cdr.getPatientBrand().getId());
+
+        cdr.setTotalCost(productUpdateReq.getTotalCost());
+
+        for(SelectedProduct selectedProduct : selectedProducts) {
+            CouponDiscountRequestProduct cdrProduct = new CouponDiscountRequestProduct();
+            cdrProduct.setProductId(selectedProduct.getId());
+            cdrProduct.setProductType(selectedProduct.getProductType());
+            cdrProduct.setProductUnitPrice(selectedProduct.getUnitCost());
+            cdrProduct.setProductCount(selectedProduct.getCount());
+            cdrProduct.setRemarks(selectedProduct.getRemarks());
+            cdrProduct.setPurchaseInstanceCount(selectedProduct.getPurchaseCount());
+            cdrProduct.setCouponDiscountRequest(cdr);
+
+            couponDiscountReqProdDao.create(cdrProduct);
+        }
+        // TODO :: If we plan to update an existing product here
+
+        createCouponRequestAudit(cdr);
+
+    }
+
+    public void deleteProductFromRequest(Integer cdrId, Integer productId, String productType, CostUpdateReq costUpdateReq){
+
+        CouponDiscountRequest couponDiscountRequest = validateAndGetCdr(cdrId);
+
+        if(costUpdateReq.inspectNullParameters() != null) {
+            throw new IncompleteRequestException(costUpdateReq.inspectNullParameters());
+        }
+
+        if (couponDiscountRequest.getStatus().equals(CouponDiscountRequestStatus.CANCELED)) {
+
+            throw new IllegalCdrCancelStateException(String.valueOf(cdrId));
+
+        } else if(couponDiscountRequest.getStatus().equals(CouponDiscountRequestStatus.APPLIED)) {
+
+            throw new IllegalCdrApplyStateException(String.valueOf(cdrId));
+        }
+
+        couponDiscountRequest.setTotalCost(costUpdateReq.getTotalCost());
+        try{
+            CouponDiscountRequestProduct couponDiscountRequestProduct = couponDiscountReqProdDao.getRequestProductById(cdrId, productId, (productType.equalsIgnoreCase(ProductType.PACKAGE.name()) ? ProductType.PACKAGE : ProductType.SERVICE));
+            if(couponDiscountRequestProduct != null) {
+                couponDiscountReqProdDao.delete(couponDiscountRequestProduct);
+            }
+        }
+        catch(NoResultException e){
+            throw new InvalidProductException(String.valueOf(productId), null);
+        }
+
+        createCouponRequestAudit(couponDiscountRequest);
+
+    }
+
+    public List<CouponCodeVO> getCouponCodes(Integer cdrId) {
+
+        validateAndGetCdr(cdrId);
+
+        List<CouponCodeVO> couponCodeVOs = new ArrayList<>();
+        List<String> couponCodes = couponDiscountRequestCodeDao.getCouponCodes(cdrId);
+
+        for (String code : couponCodes) {
+            CouponCode couponCode = couponCodeDao.getCouponCode(code);
+            CouponCodeVO couponCodeVO = new CouponCodeVO();
+            couponCodeVO.setCode(couponCode.getCode());
+            couponCodeVO.setChannelName(couponCode.getChannelName());
+            couponCodeVO.setCreatedBy(couponCode.getCreatedBy().getName());
+            couponCodeVO.setDeactivatedBy(getUserName(couponCode.getDeactivatedBy()));
+            couponCodeVO.setDeactivatedOn(couponCode.getDeactivatedOn());
+            couponCodeVO.setCreatedOn(couponCode.getCreatedOn());
+            couponCodeVO.setCouponId(couponCode.getCoupon().getId());
+            couponCodeVO.setId(couponCode.getId());
+            couponCodeVOs.add(couponCodeVO);
+        }
+
+        return couponCodeVOs;
+    }
+
+    private String getUserName(User user) {
+        if(user != null) {
+            return user.getName();
+        }
+        return null;
+    }
+
+    public List<ProductVo> getProducts(Integer cdrId){
+
+        CouponDiscountRequest couponDiscountRequest = validateAndGetCdr(cdrId);
+
+        List<CouponDiscountRequestProduct> productsForCDR = couponDiscountReqProdDao.getProducts(couponDiscountRequest);
+
+        return getProductVos(productsForCDR);
+    }
+
+    public int commitCDR(Integer cdrId, String clientContextId){
+
+        CouponDiscountRequest couponDiscountRequest = validateAndGetCdr(cdrId);
+
+        if(couponDiscountRequest.getStatus().equals(CouponDiscountRequestStatus.CANCELED)) {
+            throw new IllegalCdrCancelStateException((String.valueOf(cdrId)));
+        }
+
+        if(couponDiscountRequest.getStatus().equals(CouponDiscountRequestStatus.REQUESTED)) {
+            throw new IllegalCdrCommitStateException(String.valueOf(cdrId));
+        }
+
+        if((couponDiscountRequest.getStatus().equals(CouponDiscountRequestStatus.APPLIED) && couponDiscountRequest.getClientContextId() == null) && clientContextId == null) {
+            throw new ContextIdRequiredException((String.valueOf(cdrId)));
+        }
+
+        if(couponDiscountRequest.getClientContextId() == null) {
+            couponDiscountRequest.setClientContextId(clientContextId);
+            createCouponRequestAudit(couponDiscountRequest);
+        }
+        else {
+            throw new ContextIdAlreadyAppliedException(String.valueOf(cdrId));
+        }
+        return cdrId;
+
+    }
+
+    public int applyCDR(Integer cdrId, String clientContextId){
+        CouponDiscountRequest cdr = validateAndGetCdr(cdrId);
+
+        List<CouponDiscountRequestCode> codes = couponDiscountRequestCodeDao.getCouponCodes(cdr);
+
+        if (cdr.getStatus().equals(CouponDiscountRequestStatus.CANCELED)) {
+
+            throw new IllegalCdrCancelStateException(String.valueOf(cdrId));
+
+        } else if(cdr.getStatus().equals(CouponDiscountRequestStatus.APPLIED)) {
+
+            throw new IllegalCdrApplyStateException(String.valueOf(cdrId));
+        }
+
+        String[] couponCodes = getCodes(codes);
+        Map<Coupon, List<String>> couponCodeMap = getCouponCodeMap(couponCodes);
+
+        validateCDRequest(cdr.getRequester().getId(), cdr.getClientContextType(),
+                cdr.getBeneficiary().getId(), couponCodeMap, cdr.getTotalCost(),
+                getProductVos(couponDiscountRequestProductDao.getProducts(cdr)),cdr.getWithinSubscription(), couponCodes,
+                cdr.getAreaId().getId(), cdr.getReferrerId().getId(), cdr.getPatientBrand().getId());
+
+        cdr.setClientContextId(clientContextId);
+
+        cdr.setCompleted(true);
+        cdr.setStatus(CouponDiscountRequestStatus.APPLIED);
+
+        couponDiscountRequestDao.update(cdr);
+        createCouponDiscount(cdr);
+        createCouponRequestAudit(cdr);
+        return cdrId;
+    }
+
+    public String[] getCodes(List<CouponDiscountRequestCode> codes) {
+        String[] couponCodes = new String[codes.size()];
+        final Integer[] index = {0};
+
+        codes.forEach(code -> {
+            couponCodes[index[0]] = code.getCouponCode().getCode();
+            index[0]++;
+        });
+        return couponCodes;
+    }
+
+    private void createCouponDiscount(CouponDiscountRequest cdr) {
+        CouponDiscount couponDiscount = new CouponDiscount();
+        couponDiscount.setClientContextId(cdr.getClientContextId());
+        couponDiscount.setTotalCost(cdr.getTotalCost());
+        couponDiscount.setDiscountAmount(getCurrentApplicableDiscount(cdr.getId()).getDiscountAmount());
+        couponDiscount.setRequester(cdr.getRequester());
+        couponDiscount.setBeneficiary(cdr.getBeneficiary());
+        couponDiscount.setAreaId(cdr.getAreaId());
+        couponDiscount.setReferrerId(cdr.getReferrerId());
+        couponDiscount.setPatientBrand(cdr.getPatientBrand());
+        couponDiscount.setClientContextType(cdr.getClientContextType());
+        couponDiscount.setCreatedOn(new Date());
+        couponDiscount.setCouponDiscountRequest(cdr);
+
+        couponDiscountDao.create(couponDiscount);
+
+
+        List<CouponDiscountRequestCode> codes = couponDiscountRequestCodeDao.getCouponCodes(cdr);
+
+        codes.forEach(code -> {
+            CouponDiscountCode couponDiscountCode = new CouponDiscountCode();
+
+            CouponCode couponCode = code.getCouponCode();
+            couponDiscountCode.setCouponCode(couponCode);
+            couponDiscountCode.setCouponDiscount(couponDiscount);
+
+            couponDiscountCodeDao.create(couponDiscountCode);
+        });
+
+        List<CouponDiscountRequestProduct> products = couponDiscountRequestProductDao.getProducts(cdr);
+
+        products.forEach(product -> {
+
+            CouponDiscountProduct couponDiscountProduct = new CouponDiscountProduct();
+            couponDiscountProduct.setCouponDiscount(couponDiscount);
+            ProductAdapter productAdapter = productAdapterDao.
+                    getProductAdapter(product.getProductId(), product.getProductType());
+            couponDiscountProduct.setProductAdapter(productAdapter);
+            couponDiscountProduct.setProductCount(product.getProductCount());
+
+            couponDiscountProduct.setProductUnitPrice(product.getProductUnitPrice());
+            couponDiscountProduct.setPurchaseInstanceCount(product.getPurchaseInstanceCount());
+            couponDiscountProductDao.create(couponDiscountProduct);
+        });
+    }
+
+    public CouponDiscountRequestStatusResp getCDRStatus(Integer cdrId){
+
+        CouponDiscountRequestStatusResp couponDiscountRequestStatusResp = new CouponDiscountRequestStatusResp();
+
+        CouponDiscountRequest cdr = validateAndGetCdr(cdrId);
+        if(cdr != null) {
+            couponDiscountRequestStatusResp.setStatus(cdr.getStatus().name());
+        }
+        return couponDiscountRequestStatusResp;
+    }
+
+    private Map<ProductType, List<Integer>> getTypeIdMap(List<ProductVo> productVos) {
+
+        Map<ProductType, List<Integer>> typeIdMap = new HashMap<>();
+
+        productVos.forEach(productVo -> {
+
+            ProductType type = productVo.getProductType();
+            Integer id = productVo.getId();
+
+            List<Integer> productIds = typeIdMap.get(type);
+
+            if(productIds == null) {
+
+                productIds = new ArrayList<>();
+                typeIdMap.put(type , productIds);
+            }
+            productIds.add(id);
+        });
+        return typeIdMap;
+    }
+
+    /**
+     * Groups all the codes that belong to a coupon by mapping coupon to list of codes.
+     * List also includes repeated codes.
+     */
+    private Map<Coupon, List<String>> getCouponCodeMap(String[] codes) {
+
+        List<String> couponCodes = new ArrayList<>();
+        final Map<String, Integer> codeCount = new HashMap<>();
+
+        for (String code : codes) {
+            Integer currCount = (codeCount.get(code) == null)? 0 : codeCount.get(code);
+            codeCount.put(code, ++currCount);
+
+            couponCodes.add(code);
+        }
+
+        List<Object[]> objects = couponCodeDao.getCouponCodeMap(couponCodes);
+
+        Map<Coupon, List<String>> couponCodeMap = new HashMap<>();
+
+        objects.forEach(object -> {
+            Coupon coupon = (Coupon) object[0];
+            String code = (String) object[1];
+            List<String> listCodes = couponCodeMap.get(coupon);
+            if(listCodes == null){
+                couponCodeMap.put(coupon, new ArrayList<>());
+            }
+            IntStream.rangeClosed(1, codeCount.get(code))
+                     .forEach(index -> couponCodeMap.get(coupon).add(code));
+        });
+        return couponCodeMap;
+    }
+
+    /**
+     * Groups all the products based on their type which is useful in
+     * querying a bulk of similar products in a single query.
+     * Returns list of product adapters for the selected products.
+     */
+    private List<ProductAdapter> getProductAdapters(List<ProductVo> productVos) {
+        Map<ProductType, List<Integer>> typeIdMap = getTypeIdMap(productVos);
+
+        List<ProductAdapter> productAdapters = new ArrayList<>();
+        typeIdMap.forEach((type, productIds) ->
+                productAdapters.addAll(productAdapterDao.getProductAdapters(productIds, type)));
+
+        return productAdapters;
+    }
+
+    private Double getTotalDiscount(Map<Coupon, List<String>> couponCodeMap, Double totalCost) {
+
+        List<Double> discounts = new ArrayList<>();
+
+        couponCodeMap.forEach((coupon, codes) -> discounts.add(getDiscount(coupon,totalCost, codes.size())));
+
+        return discounts.stream().map((discount) -> discount).reduce((sum, discount) -> sum + discount).get();
+    }
+
+    /**
+     * Returns the discount to be given. Same discount is obtained for
+     * all the codes that belongs to a coupon. Therefore total discount
+     * for a given codeCount will be discount for one coupon * codeCount.
+     *
+     * @param coupon For which the discount is calculated.
+     * @param totalCost Used to calculate discount.
+     */
+    private Double getDiscount(Coupon coupon, Double totalCost, Integer codeCount) {
+
+        Double discount = 0.0;
+        try{
+            CouponDiscountingRule couponDiscountingRule = couponDiscountingRuleDao.getRule(coupon);
+            CouponDiscountingRuleType type = couponDiscountingRule.getCouponDiscRuleType();
+
+
+            if(type.equals(CouponDiscountingRuleType.FLAT)) {
+                discount = Double.valueOf(couponDiscountingRule.getDiscountFlatAmount());
+            }
+            else if(type.equals(CouponDiscountingRuleType.PERCENTAGE)) {
+                Integer percentAmt = couponDiscountingRule.getDiscountPercentage();
+                discount = percentAmt * totalCost / 100;
+            }
+        }
+        catch (NoResultException e) {
+            throw new InternalServerErrorException("No existing discount rules found for coupon : " + coupon.getId());
+
+        }
+        if (coupon.getDiscountAmountMax() != null && discount > coupon.getDiscountAmountMax()) {
+            discount = Double.valueOf(coupon.getDiscountAmountMax());
+        }
+        discount *= codeCount;
+        return discount;
+    }
+
+    private List<ProductVo> getProductVosForSelectedProducts(List<SelectedProduct> selectedProducts) {
+        final List<ProductVo> productVos = new ArrayList<>();
+        selectedProducts.forEach(selectedProduct -> {
+            ProductVo productVo = new ProductVo();
+
+            productVo.setId(selectedProduct.getId());
+            productVo.setCount(selectedProduct.getCount());
+
+            productVo.setProductType(selectedProduct.getProductType());
+            productVo.setPurchaseCount(selectedProduct.getPurchaseCount());
+
+            productVo.setRemarks(selectedProduct.getRemarks());
+            productVo.setUnitCost(selectedProduct.getUnitCost());
+            productVos.add(productVo);
+        });
+
+        return productVos;
+    }
+
+    private List<ProductVo> getProductVos(List<CouponDiscountRequestProduct> couponDiscountRequestProducts) {
+        final List<ProductVo> productVos = new ArrayList<>();
+        couponDiscountRequestProducts.forEach(product -> {
+            ProductVo productVo = new ProductVo();
+
+            productVo.setId(product.getProductId());
+            productVo.setCount(product.getProductCount());
+
+            productVo.setProductType(product.getProductType());
+            productVo.setPurchaseCount(product.getPurchaseInstanceCount());
+
+            productVo.setRemarks(product.getRemarks());
+            productVo.setUnitCost(product.getProductUnitPrice());
+            productVos.add(productVo);
+        });
+
+        return productVos;
+    }
+
+    public CouponInfoResponse getCoupon(String couponCode) {
+
+        CouponInfoResponse couponInfoResponse = new CouponInfoResponse();
+
+        try {
+            Coupon coupon = couponCodeDao.getCouponCode(couponCode).getCoupon();
+
+            couponInfoResponse.setCouponId(coupon.getId());
+            couponInfoResponse.setName(coupon.getName());
+
+            couponInfoResponse.setDescription(coupon.getDescription());
+            couponInfoResponse.setInclusive(coupon.getInclusive());
+
+            couponInfoResponse.setApplicableUseCount(coupon.getApplicableUseCount());
+            couponInfoResponse.setApplicationType(coupon.getApplicationType());
+
+            couponInfoResponse.setActorType(coupon.getActorType());
+            couponInfoResponse.setContextType(coupon.getContextType());
+
+            couponInfoResponse.setGlobal(coupon.getGlobal());
+            couponInfoResponse.setNthTime(coupon.getNthTime());
+
+            couponInfoResponse.setNthTimeRecurring(coupon.getNthTimeRecurring());
+
+            List<CouponProductAdapterMapping> productMappings = couponProductAdapterMappingDao.getMappings(coupon);
+            for (CouponProductAdapterMapping mapping : productMappings) {
+                ProductAdapter productAdapter = mapping.getProductAdapter();
+                couponInfoResponse.addProductMapping(productAdapter.getProductId(), productAdapter.getProductType(), productAdapter.getName());
+            }
+        }
+        catch(NoResultException e) {
+            throw new InvalidCouponException(couponCode);
+
+        }
+
+        return couponInfoResponse;
+    }
+
 }

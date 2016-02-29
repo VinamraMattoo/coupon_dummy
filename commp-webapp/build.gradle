@@ -1,5 +1,8 @@
 def cargoVersion = '1.4.15'
 def restEasyVersion = '3.0.9.Final'
+def mysqlConnectorVersion = '5.1.37'
+
+apply from: 'local-db-tasks.gradle'
 
 buildscript {
     repositories {
@@ -45,6 +48,8 @@ dependencies {
     compile project (':util')
     compile project (':commp-domain')
 
+    testCompile "mysql:mysql-connector-java:${mysqlConnectorVersion}"
+
     providedCompile 'javax:javaee-api:7.0'
 
     providedCompile "org.jboss.resteasy:resteasy-jaxrs:${restEasyVersion}"
@@ -72,11 +77,11 @@ task deployToLocalServer(
 /**
  * Will redeploy the application and then run the tests
  */
-task runMyTests(type: org.gradle.api.tasks.testing.Test,
+task runMyTests(type: Test,
         dependsOn: ['cleanTest', 'deployToLocalServer'])
 
 /**
  * Will repeat tests without redeploying the web application
  */
-task repeatTests(type: org.gradle.api.tasks.testing.Test,
+task repeatTests(type: Test,
         dependsOn: ['cleanTest'])

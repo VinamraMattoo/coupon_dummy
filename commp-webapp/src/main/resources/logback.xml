@@ -3,8 +3,24 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%gray(%-5level) %logger{36} - %msg%n</pattern>
         </encoder>
+    </appender>
+
+    <appender name="FILE_WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${JBOSS_HOME}/standalone/error-logs/error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- yyyy-MM-dd => daily rollover, yyyy-MM-dd_HH => Rollover at the top of each hour-->
+            <fileNamePattern>error.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%-4relative [%thread] %gray(%-5level) %logger{36} - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
     </appender>
 
     <logger name="com.portea" level="DEBUG"/>
@@ -14,5 +30,6 @@
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE_WARN" />
     </root>
 </configuration>

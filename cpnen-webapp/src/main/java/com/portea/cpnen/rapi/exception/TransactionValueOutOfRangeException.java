@@ -7,24 +7,24 @@ public class TransactionValueOutOfRangeException extends CouponApplicationExcept
     private static final long serialVersionUID = -8529155022321892953L;
 
     private String couponCode;
-    private int rangeStart;
-    private int rangeEnd;
+    private Integer rangeStart;
+    private Integer rangeEnd;
 
-    public TransactionValueOutOfRangeException(String couponCode, int rangeStart, int rangeEnd) {
+    public TransactionValueOutOfRangeException(String couponCode, Integer rangeStart, Integer rangeEnd) {
         super();
         this.couponCode = couponCode;
         this.rangeStart = rangeStart;
         this.rangeEnd = rangeEnd;
     }
 
-    public TransactionValueOutOfRangeException(String couponCode, int rangeStart, int rangeEnd, String message) {
+    public TransactionValueOutOfRangeException(String couponCode, Integer rangeStart, Integer rangeEnd, String message) {
         super(message);
         this.couponCode = couponCode;
         this.rangeStart = rangeStart;
         this.rangeEnd = rangeEnd;
     }
 
-    public TransactionValueOutOfRangeException(String couponCode, int rangeStart, int rangeEnd, String message, Throwable cause) {
+    public TransactionValueOutOfRangeException(String couponCode, Integer rangeStart, Integer rangeEnd, String message, Throwable cause) {
         super(message, cause);
         this.couponCode = couponCode;
         this.rangeStart = rangeStart;

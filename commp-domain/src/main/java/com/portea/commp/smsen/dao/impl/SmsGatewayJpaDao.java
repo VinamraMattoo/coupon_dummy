@@ -7,7 +7,10 @@ import com.portea.dao.impl.BaseJpaDao;
 
 import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.List;
 
 @JpaDao
 @Dependent
@@ -23,4 +26,16 @@ public class SmsGatewayJpaDao extends BaseJpaDao<Integer, SmsGateway> implements
         this.entityManager = entityManager;
     }
 
+    @Override
+    public SmsGateway find(String gatewayName) throws NoResultException{
+        Query query = entityManager.createNamedQuery("getGatewayForName", SmsGateway.class);
+        query.setParameter("name", gatewayName);
+        return (SmsGateway) query.getSingleResult();
+    }
+
+    @Override
+    public List<SmsGateway> getGateways() {
+        Query query = entityManager.createNamedQuery("getGateways", SmsGateway.class);
+        return query.getResultList();
+    }
 }

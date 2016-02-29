@@ -48,12 +48,48 @@
 
     <servlet-mapping>
         <servlet-name>rest-easy-commp-servlet</servlet-name>
-        <url-pattern>rapi/*</url-pattern>
+        <url-pattern>smsen/rapi/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>rest-easy-commp-servlet</servlet-name>
         <url-pattern>testrapi/*</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>rest-easy-web-commp-servlet</servlet-name>
+        <servlet-class>
+            org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher
+        </servlet-class>
+        <init-param>
+            <param-name>javax.ws.rs.Application</param-name>
+            <param-value>com.portea.commp.web.rapi.service.CommpWebApplication</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>rest-easy-web-commp-servlet</servlet-name>
+        <url-pattern>web/rws/*</url-pattern>
+    </servlet-mapping>
+
+<!--    <filter>
+        <filter-name>AuthFilter</filter-name>
+        <filter-class>com.portea.commp.web.filter.AuthenticationFilter</filter-class>
+    </filter>
+
+   <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>/web/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>NoCacheFilter</filter-name>
+        <filter-class>com.portea.commp.web.filter.NoCacheFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>NoCacheFilter</filter-name>
+        <url-pattern>/web/*</url-pattern>
+    </filter-mapping>-->
 
 </web-app>

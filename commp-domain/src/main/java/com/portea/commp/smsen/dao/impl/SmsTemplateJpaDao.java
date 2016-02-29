@@ -1,7 +1,6 @@
 package com.portea.commp.smsen.dao.impl;
 
 import com.portea.commp.smsen.dao.SmsTemplateDao;
-import com.portea.commp.smsen.domain.SmsGroup;
 import com.portea.commp.smsen.domain.SmsTemplate;
 import com.portea.dao.JpaDao;
 import com.portea.dao.impl.BaseJpaDao;

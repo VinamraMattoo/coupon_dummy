@@ -2,13 +2,21 @@ package com.portea.commp.smsen.domain;
 
 import javax.persistence.*;
 
+/**
+ * A read-only implementation for an existing table, as sms engine system is not expected to write to the
+ * underlying table.
+ */
 @Entity
+@Cacheable
 @Table(name = "brands")
 public class Brand {
 
     @Id
     @Column(name = "id")
     private Integer id;
+
+    @Column(name = "name", columnDefinition = "varchar(64)")
+    private String name;
 
     @Column(name = "canSendSms")
     private Boolean canSendSms;
@@ -18,6 +26,10 @@ public class Brand {
 
     public Integer getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public Boolean getCanSendSms() {
@@ -31,13 +43,12 @@ public class Brand {
 
         Brand brand = (Brand) o;
 
-        return !(getId() != null ? !getId().equals(brand.getId()) : brand.getId() != null);
+        return id.equals(brand.id);
 
     }
 
     @Override
     public int hashCode() {
-        return getId() != null ? getId().hashCode() : 0;
+        return id.hashCode();
     }
-
 }

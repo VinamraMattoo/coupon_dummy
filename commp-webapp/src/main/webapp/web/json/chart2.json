@@ -1,0 +1,96 @@
+[
+  {
+    "day": "Wed",
+    "smsTypes": [
+      {
+        "typeName": "DummySmsType1",
+        "count": 12
+      },
+      {
+        "typeName": "DummySmsType2",
+        "count": 1
+      }
+    ],
+    "date": 1455685809000
+  },
+  {
+    "day": "Sun",
+    "smsTypes": [
+      {
+        "typeName": "DummySmsType1",
+        "count": 1
+      }
+    ],
+    "date": 1456071129000
+  },
+  {
+    "day": "Wed",
+    "smsTypes": [
+      {
+        "typeName": "DummySmsType1",
+        "count": 12
+      },
+      {
+        "typeName": "DummySmsType2",
+        "count": 1
+      }
+    ],
+    "date": 1455685809000
+  },
+  {
+    "day": "Wed",
+    "smsTypes": [
+      {
+        "typeName": "DummySmsType1",
+        "count": 12
+      },
+      {
+        "typeName": "DummySmsType2",
+        "count": 1
+      }
+    ],
+    "date": 1455685809000
+  },
+  {
+    "day": "Wed",
+    "smsTypes": [
+      {
+        "typeName": "DummySmsType1",
+        "count": 12
+      },
+      {
+        "typeName": "DummySmsType2",
+        "count": 1
+      }
+    ],
+    "date": 1455685809000
+  },
+  {
+    "day": "Wed",
+    "smsTypes": [
+      {
+        "typeName": "DummySmsType1",
+        "count": 12
+      },
+      {
+        "typeName": "DummySmsType2",
+        "count": 1
+      }
+    ],
+    "date": 1455685809000
+  },
+  {
+    "day": "Wed",
+    "smsTypes": [
+      {
+        "typeName": "DummySmsType1",
+        "count": 12
+      },
+      {
+        "typeName": "DummySmsType2",
+        "count": 1
+      }
+    ],
+    "date": 1455685809000
+  }
+]

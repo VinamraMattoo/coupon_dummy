@@ -1,6 +1,9 @@
 package com.portea.commp.smsen.domain;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "patient_details")
@@ -19,6 +22,12 @@ public class PatientDetail {
     @Column(name = "sendSmsAlert")
     private Boolean sendSmsAlert;
 
+    /**
+     * This is a logical reference to id in brand table.
+     */
+    @Column(name = "brandId")
+    private Integer brandId;
+
     public PatientDetail() {
     }
 
@@ -32,6 +41,11 @@ public class PatientDetail {
 
     public Boolean getSendSmsAlert() {
         return sendSmsAlert;
+    }
+
+
+    public Integer getBrandId() {
+        return brandId;
     }
 
     @Override

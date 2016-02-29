@@ -1,0 +1,35 @@
+[
+  {
+    "source": "DUMMY_GATEWAY_1",
+    "count": 78
+  },
+  {
+    "source": "PINNACLE",
+    "count": 24
+  },
+  {
+    "source": "DUMMY_GATEWAY_1",
+    "count": 24
+  },
+  {
+    "source": "DUMMY_GATEWAY_1",
+    "count": 53
+  },
+  {
+    "source": "DUMMY_GATEWAY_1",
+    "count": 62
+  },
+  {
+    "source": "DUMMY_GATEWAY_1",
+    "count": 63
+  },
+  {
+    "source": "DUMMY_GATEWAY_1",
+    "count": 12
+  },
+  {
+    "source": "DUMMY_GATEWAY_1",
+    "count": 92
+  }
+]
+

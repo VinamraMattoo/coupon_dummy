@@ -16,11 +16,9 @@ public class CouponCodeReservation {
 	@ManyToOne
 	private User user;
 
-	/**
-	 * TODO Event Type should be an entity as new kinds of events can be defined
-	 */
-	@Column(name = "event_type", columnDefinition = "varchar(128)")
-	private String reservationType;
+    @Enumerated(EnumType.STRING)
+	@Column(name = "reservation_type", columnDefinition = "varchar(128)")
+	private EventType reservationType;
 	
 	@Column(name = "reservation_from")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -33,6 +31,9 @@ public class CouponCodeReservation {
 	@OneToOne
 	@JoinColumn(name = "code_id")
 	private CouponCode couponCode;
+
+    @Column(name = "remarks", columnDefinition = "varchar(256)")
+    private String remarks;
 	
     public CouponCodeReservation() {}
 
@@ -52,11 +53,11 @@ public class CouponCodeReservation {
         this.user = user;
     }
 
-    public String getReservationType() {
+    public EventType getReservationType() {
         return reservationType;
     }
 
-    public void setReservationType(String reservationType) {
+    public void setReservationType(EventType reservationType) {
         this.reservationType = reservationType;
     }
 
@@ -82,5 +83,29 @@ public class CouponCodeReservation {
 
     public void setCouponCode(CouponCode couponCode) {
         this.couponCode = couponCode;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CouponCodeReservation that = (CouponCodeReservation) o;
+
+        return !(id != null ? !id.equals(that.id) : that.id != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

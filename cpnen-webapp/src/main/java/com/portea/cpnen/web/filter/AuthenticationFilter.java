@@ -25,23 +25,25 @@ public class AuthenticationFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) response;
 
         String uri = req.getRequestURI();
-        LOG.debug("Requested Resource::"+uri);
+        LOG.trace("Requested Resource:: "+uri);
 
         HttpSession session = req.getSession(false);
 
-        boolean urlEndsWithAllowedResource = (uri.endsWith("html") || uri.endsWith("js") || uri.endsWith("png") ||
-                uri.endsWith("css") || uri.endsWith("login") || uri.endsWith("unauthorized.jsp"));
+        boolean allowed = (uri.endsWith("html") || uri.endsWith("js") || uri.endsWith("png") ||
+                uri.endsWith("css") || uri.endsWith("login") || uri.endsWith("unauthorized.jsp")); //  todo:: use .matches(".*(css|jpg|png|gif|js).*")
 
 
-        if(session == null && urlEndsWithAllowedResource == false){
-            LOG.debug("Unauthorized access request");
-            res.sendRedirect("/cpnen/web/login.html");
-        }else{
+        String contextPath = req.getContextPath();
+        if((session == null && ! allowed) || (session != null && session.getAttribute("userId") == null && ! allowed)) {
+
+            LOG.debug("Unauthorized access request: "+uri);
+            res.sendRedirect(contextPath+"/web/login.html");
+        } else {
             // pass the request along the filter chain
-               chain.doFilter(request, response);
+            chain.doFilter(request, response);
         }
 
-//        .matches(".*(css|jpg|png|gif|js).*")
+
     }
 
 

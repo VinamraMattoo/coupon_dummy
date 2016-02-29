@@ -5,6 +5,7 @@
       http://www.jboss.com/xml/ns/javaee
       http://www.jboss.org/j2ee/schema/jboss-web_5_1.xsd">
 
-    <context-root>/cpnen</context-root>
+    <context-root>/</context-root>
+    <virtual-host>cpnen</virtual-host>
 
 </jboss-web>

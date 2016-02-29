@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "sms_queue")
+@Table(name = "smsen_sms_queue")
 public class SmsQueue {
 
     @Id
@@ -44,11 +44,11 @@ public class SmsQueue {
     @Temporal(TemporalType.TIMESTAMP)
     private Date sendBefore;
 
-    @Column(name = "scheduledId" , columnDefinition = "varchar(32)")
-    private String scheduledId;
+    @Column(name = "scheduleId" , columnDefinition = "varchar(32)")
+    private String scheduleId;
 
-    @Column(name = "scheduledType", columnDefinition = "varchar(32)")
-    private String scheduledType;
+    @Column(name = "scheduleType", columnDefinition = "varchar(32)")
+    private String scheduleType;
 
     @Column(name = "scheduledTime")
     @Temporal(TemporalType.TIMESTAMP)
@@ -152,20 +152,20 @@ public class SmsQueue {
         this.scheduledTimeZone = scheduledTimeZone;
     }
 
-    public String getScheduledId() {
-        return scheduledId;
+    public String getScheduleId() {
+        return scheduleId;
     }
 
-    public void setScheduledId(String scheduledId) {
-        this.scheduledId = scheduledId;
+    public void setScheduleId(String scheduledId) {
+        this.scheduleId = scheduledId;
     }
 
-    public String getScheduledType() {
-        return scheduledType;
+    public String getScheduleType() {
+        return scheduleType;
     }
 
-    public void setScheduledType(String scheduledType) {
-        this.scheduledType = scheduledType;
+    public void setScheduleType(String scheduledType) {
+        this.scheduleType = scheduledType;
     }
 
     public Date getScheduledTime() {

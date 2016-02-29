@@ -3,7 +3,7 @@ package com.portea.commp.smsen.domain;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "sms_gateway")
+@Table(name = "smsen_sms_gateway")
 public class SmsGateway {
 
     @Id
@@ -17,6 +17,9 @@ public class SmsGateway {
     @Column(name = "status", columnDefinition = "varchar(30)")
     @Enumerated(value = EnumType.STRING)
     private GatewayStatus status;
+
+    @Column(name = "failure_count")
+    private Integer failureCount;
 
     public SmsGateway() {
     }
@@ -45,6 +48,14 @@ public class SmsGateway {
         this.status = status;
     }
 
+    public Integer getFailureCount() {
+        return failureCount;
+    }
+
+    public void setFailureCount(Integer failureCount) {
+        this.failureCount = failureCount;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -60,5 +71,4 @@ public class SmsGateway {
     public int hashCode() {
         return getId() != null ? getId().hashCode() : 0;
     }
-
 }

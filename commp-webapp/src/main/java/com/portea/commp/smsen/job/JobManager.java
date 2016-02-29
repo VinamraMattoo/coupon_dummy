@@ -11,6 +11,8 @@ public class JobManager {
 
     private volatile boolean schedulerJobRunning = false;
 
+    private volatile boolean statusSchedulerJobRunning = false;
+
     public JobManager() {}
 
     public boolean isLoaderJobRunning() {
@@ -27,5 +29,13 @@ public class JobManager {
 
     public void setSchedulerJobRunning(boolean schedulerJobRunning) {
         this.schedulerJobRunning = schedulerJobRunning;
+    }
+
+    public boolean isStatusSchedulerJobRunning() {
+        return statusSchedulerJobRunning;
+    }
+
+    public void setStatusSchedulerJobRunning(boolean statusSchedulerJobRunning) {
+        this.statusSchedulerJobRunning = statusSchedulerJobRunning;
     }
 }

@@ -2,9 +2,7 @@ package com.portea.cpnen.domain;
 
 public enum CouponDiscountRequestStatus {
 
-    REJECTED,
-
-    LOCKED,
+    REQUESTED,
 
     CANCELED,
 

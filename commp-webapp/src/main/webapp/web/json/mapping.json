@@ -1,0 +1,120 @@
+[{
+  "gid": 1,
+  "name": "group 1",
+  "smsGatewayVo": [{
+    "mappingId": 1,
+    "priority": 1,
+    "gateway": "pinnacle",
+    "gatewayId": 1
+  },
+    {
+      "mappingId": 2,
+      "priority": 2,
+      "gateway": "mgage",
+      "gatewayId": 2
+    },
+    {
+      "mappingId": 3,
+      "priority": 3,
+      "gateway": "SMSSender",
+      "gatewayId": 3
+    },
+    {
+      "mappingId": 4,
+      "priority": 4,
+      "gateway": "something",
+      "gatewayId": 4
+    }]
+
+
+},
+  {
+    "gid": 1,
+    "name": "group 2",
+    "smsGatewayVo": [{
+      "mappingId": 1,
+      "priority": 1,
+      "gateway": "pinnacle",
+      "gatewayId": 1
+    },
+      {
+        "mappingId": 2,
+        "priority": 2,
+        "gateway": "mgage",
+        "gatewayId": 2
+      },
+      {
+        "mappingId": 3,
+        "priority": 3,
+        "gateway": "SMSSender",
+        "gatewayId": 3
+      },
+      {
+        "mappingId": 4,
+        "priority": 4,
+        "gateway": "something",
+        "gatewayId": 4
+      }]
+
+
+  },
+  {
+    "gid": 1,
+    "name": "group 3",
+    "smsGatewayVo": [{
+      "mappingId": 1,
+      "priority": 1,
+      "gateway": "pinnacle",
+      "gatewayId": 1
+    },
+      {
+        "mappingId": 2,
+        "priority": 2,
+        "gateway": "mgage",
+        "gatewayId": 2
+      },
+      {
+        "mappingId": 3,
+        "priority": 3,
+        "gateway": "SMSSender",
+        "gatewayId": 3
+      },
+      {
+        "mappingId": 4,
+        "priority": 4,
+        "gateway": "something",
+        "gatewayId": 4
+      }]
+
+
+  },
+  {
+    "gid": 1,
+    "name": "group 4",
+    "smsGatewayVo": [{
+      "mappingId": 1,
+      "priority": 1,
+      "gateway": "pinnacle",
+      "gatewayId": 1
+    },
+      {
+        "mappingId": 2,
+        "priority": 2,
+        "gateway": "mgage",
+        "gatewayId": 2
+      },
+      {
+        "mappingId": 3,
+        "priority": 3,
+        "gateway": "SMSSender",
+        "gatewayId": 3
+      },
+      {
+        "mappingId": 4,
+        "priority": 4,
+        "gateway": "something",
+        "gatewayId": 4
+      }]
+
+
+  }]

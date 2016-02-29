@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "sms_audit")
+@Table(name = "smsen_sms_audit")
 public class SmsAudit {
 
     @Id
@@ -37,13 +37,18 @@ public class SmsAudit {
     @Column(name = "status_remarks", columnDefinition = "varchar(512)")
     private String statusRemarks;
 
-    @Column(name = "gateway_status_code", columnDefinition = "varchar(32)")
-    @Enumerated(value = EnumType.STRING)
-    private GatewayStatus gatewayStatus;
+    @Column(name = "gateway_status", columnDefinition = "varchar(32)")
+    private String gatewayStatus;
 
     @JoinColumn(name = "gateway_id")
     @ManyToOne
     private SmsGateway smsGateway;
+
+    @Column(name = "response_code", columnDefinition = "varchar(128)")
+    private String responseCode;
+
+    @Column(name = "response_message", columnDefinition = "varchar(255)")
+    private String responseMessage;
 
     public SmsAudit() {
     }
@@ -112,11 +117,11 @@ public class SmsAudit {
         this.statusRemarks = statusRemarks;
     }
 
-    public GatewayStatus getGatewayStatus() {
+    public String getGatewayStatus() {
         return gatewayStatus;
     }
 
-    public void setGatewayStatus(GatewayStatus gatewayStatus) {
+    public void setGatewayStatus(String gatewayStatus) {
         this.gatewayStatus = gatewayStatus;
     }
 
@@ -144,4 +149,19 @@ public class SmsAudit {
         return getId() != null ? getId().hashCode() : 0;
     }
 
+    public String getResponseCode() {
+        return responseCode;
+    }
+
+    public void setResponseCode(String responseCode) {
+        this.responseCode = responseCode;
+    }
+
+    public String getResponseMessage() {
+        return responseMessage;
+    }
+
+    public void setResponseMessage(String responseMessage) {
+        this.responseMessage = responseMessage;
+    }
 }

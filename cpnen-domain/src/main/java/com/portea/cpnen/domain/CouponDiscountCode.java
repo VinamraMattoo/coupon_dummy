@@ -43,4 +43,20 @@ public class CouponDiscountCode {
     public void setCouponCode(CouponCode couponCode) {
         this.couponCode = couponCode;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CouponDiscountCode that = (CouponDiscountCode) o;
+
+        return id.equals(that.id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

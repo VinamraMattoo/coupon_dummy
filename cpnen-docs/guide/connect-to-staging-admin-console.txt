@@ -1,0 +1,13 @@
+To access staging admin console do the following
+
+1. Run the following command in your terminal
+ ssh -L 9999:127.0.0.1:9990 ubuntu@54.179.189.254
+
+2. Open browser and navigate to
+ localhost:9999
+
+3. you will need to authenticate by giving username
+and password of the staging admin console.
+
+username: admin
+password: portea32!

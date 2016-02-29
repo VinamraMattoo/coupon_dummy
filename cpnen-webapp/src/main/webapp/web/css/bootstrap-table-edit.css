@@ -1,0 +1,106 @@
+body {
+    overflow-x: hidden;
+}
+
+.page-number > a {
+    padding-left: 3px !important;
+    padding-right: 3px !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
+
+.btn[name="refresh"] {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+    font-size: 12px;
+}
+
+.bs-checkbox {
+    padding-top: 3px !important;
+    padding-bottom: 0px !important;
+}
+
+.pagination-info {
+    font-size: 12px;
+}
+
+.page-list {
+    font-size: 12px;
+}
+
+.search .form-control {
+    height: 20px;
+    font-size: 12px;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+
+}
+
+.dropdown-toggle {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+    font-size: 12px;
+}
+
+.page-first > a {
+    padding-left: 3px !important;
+    padding-right: 3px !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
+
+.page-pre > a {
+    padding-left: 3px !important;
+    padding-right: 3px !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
+
+.page-next > a {
+    padding-left: 3px !important;
+    padding-right: 3px !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
+
+.page-last > a {
+    padding-left: 3px !important;
+    padding-right: 3px !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
+
+.fixed-table-container thead th .th-inner, .fixed-table-container tbody td .th-inner {
+    padding: 2px;
+    line-height: 24px;
+    vertical-align: top;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fixed-table-container .bs-checkbox .th-inner {
+    padding: 0px;
+}
+
+#couponMapping .pull-left.pagination-detail {
+    display: none;
+}
+
+#edit_couponMapping .pull-left.pagination-detail {
+    display: none;
+}
+
+#quick_couponMapping .pull-left.pagination-detail {
+    display: none;
+}
+
+#fast_couponMapping .pull-left.pagination-detail {
+    display: none;
+}

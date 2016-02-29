@@ -5,4 +5,6 @@ import com.portea.dao.Dao;
 
 public interface BrandDao extends Dao<Integer,Brand> {
 
+    Brand find(String brandName);
+
 }

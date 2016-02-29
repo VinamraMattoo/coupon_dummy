@@ -1,14 +1,17 @@
 package com.portea.commp.smsen.domain;
 
+import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.util.Objects;
 
+@Embeddable
 public class CoolingPeriod {
 
     @Enumerated(EnumType.STRING)
     private CoolingPeriodUnit unit;
 
-    private int value;
+    private Integer value;
 
     public CoolingPeriod() {
     }
@@ -21,11 +24,11 @@ public class CoolingPeriod {
         this.unit = unit;
     }
 
-    public int getValue() {
+    public Integer getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(Integer value) {
         this.value = value;
     }
 
@@ -36,8 +39,7 @@ public class CoolingPeriod {
 
         CoolingPeriod that = (CoolingPeriod) o;
 
-        if (getValue() != that.getValue()) return false;
-        return getUnit() == that.getUnit();
+        return (Objects.equals(getValue(), that.getValue())) && getUnit() == that.getUnit();
 
     }
 

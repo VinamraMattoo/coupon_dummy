@@ -30,6 +30,8 @@ public class QuartzCdiJobFactory implements JobFactory {
         final JobDetail jobDetail = bundle.getJobDetail();
         final Class<? extends Job> jobClass = jobDetail.getJobClass();
 
+        Job selectedJob = null;
+
         for (Job job : jobs) {
             if (job.getClass().isAssignableFrom(jobClass)) {
 
@@ -37,10 +39,21 @@ public class QuartzCdiJobFactory implements JobFactory {
                     LOG.debug("Returning job with class : " + job.getClass());
                 }
 
-                return job;
+                selectedJob = job;
+            }
+            else {
+                jobs.destroy(job);
             }
         }
 
+        if (selectedJob != null) {
+            return selectedJob;
+        }
+
         throw new RuntimeException("Cannot create a job of type " + jobClass);
+    }
+
+    public Instance<Job> getJobs() {
+        return jobs;
     }
 }

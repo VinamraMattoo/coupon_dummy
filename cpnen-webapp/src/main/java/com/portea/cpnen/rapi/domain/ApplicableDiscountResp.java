@@ -2,15 +2,15 @@ package com.portea.cpnen.rapi.domain;
 
 public class ApplicableDiscountResp {
 
-    int discountAmount;
+    private Double discountAmount;
 
     public ApplicableDiscountResp() {}
 
-    public int getDiscountAmount() {
+    public Double getDiscountAmount() {
         return discountAmount;
     }
 
-    public void setDiscountAmount(int discountAmount) {
+    public void setDiscountAmount(Double discountAmount) {
         this.discountAmount = discountAmount;
     }
 

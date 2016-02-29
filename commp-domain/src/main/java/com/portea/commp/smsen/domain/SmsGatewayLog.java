@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "sms_gateway_log")
+@Table(name = "smsen_sms_gateway_log")
 public class SmsGatewayLog {
 
     @Id

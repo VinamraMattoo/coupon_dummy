@@ -7,8 +7,6 @@
         </encoder>
     </appender>
 
-    <logger name="com.portea.cpnen" level="TRACE"/>
-
     <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>

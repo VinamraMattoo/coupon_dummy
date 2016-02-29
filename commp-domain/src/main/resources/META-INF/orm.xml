@@ -16,7 +16,7 @@
         <query>
             SELECT sms From SmsAssembly sms
             WHERE scheduledTime &lt;= :scheduledTime
-            AND smsPrimaryProcessingState = 'CREATED'
+            AND smsPrimaryProcessingState = :primaryState
             AND smsSecondaryProcessingState IS NULL
             ORDER BY sendBefore DESC
         </query>
@@ -27,7 +27,316 @@
             UPDATE SmsAssembly sms
             SET smsPrimaryProcessingState = :primaryStatus,
                 smsSecondaryProcessingState = :secondaryStatus
-            WHERE id = :id
+            WHERE id in :ids
+        </query>
+    </named-query>
+
+    <named-query name="updateSmsRecordStatus">
+        <query>
+            UPDATE SmsRecord sms
+            SET smsPrimaryProcessingState = :primaryStatus,
+            smsSecondaryProcessingState = :secondaryStatus
+            WHERE id in :ids
+        </query>
+    </named-query>
+
+    <named-query name="getSmsSentCoolingData">
+        <query>
+            From SmsSentCoolingData sscd WHERE (sscd.user.id = :id AND sscd.mobileNumber = :mobileNumber) AND
+            ((sscd.messageHash = :messageHash AND curtime() &lt; sscd.msgContentExpires) OR
+            (sscd.smsTypeName = :smsTypeName AND curtime() &lt; sscd.smsTypeExpires))
+        </query>
+    </named-query>
+
+    <named-query name="getConfigParam">
+        <query>
+            SELECT cp FROM ConfigParam cp INNER JOIN cp.configTargetType ctt WHERE cp.name = :name AND ctt.id = :id
+        </query>
+    </named-query>
+
+    <named-query name="getTargetConfigValueWithNoTargetId">
+        <query>
+            SELECT tcv.value FROM TargetConfigValue tcv INNER JOIN tcv.targetConfig tc
+            WHERE  tc.configParam.id = :configParamId AND tc.active = true
+            AND tc.targetId IS NULL
+        </query>
+    </named-query>
+
+    <named-query name="getTargetConfigValue">
+        <query>
+            SELECT tcv.value FROM TargetConfigValue tcv INNER JOIN tcv.targetConfig tc
+            WHERE  tc.configParam.id = :configParamId AND tc.active = true
+            AND tc.targetId = :targetId
+        </query>
+    </named-query>
+
+    <named-query name="getTargetConfig">
+        <query>
+            SELECT tcv FROM TargetConfigValue tcv INNER JOIN tcv.targetConfig tc
+            WHERE  tc.configParam.id = :configParamId AND tc.active = true
+            AND tc.targetId = :targetId
+        </query>
+    </named-query>
+
+    <named-query name="getNullTargetConfig">
+        <query>
+            SELECT tcv FROM TargetConfigValue tcv INNER JOIN tcv.targetConfig tc
+            WHERE  tc.configParam.id = :configParamId AND tc.active = true
+            AND tc.targetId IS NULL
+        </query>
+    </named-query>
+
+    <named-query name="getTargetTypeId">
+        <query>
+            SELECT ctt.id FROM ConfigTargetType ctt WHERE ctt.targetType = :targetType
+        </query>
+    </named-query>
+
+    <named-query name="getApplicableGateway">
+        <query>
+            SELECT sggm FROM SmsGroupGatewayMapping sggm INNER JOIN sggm.smsGateway sg
+            WHERE sg.status = :status AND sggm.smsGroup.id = :groupId AND sggm.id NOT IN :usedGatewayIds
+            ORDER BY sggm.priority ASC
+        </query>
+    </named-query>
+
+    <named-query name="getGatewayMappingsForGroup">
+        <query>
+            SELECT sggm FROM SmsGroupGatewayMapping sggm INNER JOIN sggm.smsGateway sg
+            WHERE sg.status = :status AND sggm.smsGroup = :group
+            ORDER BY sggm.priority ASC
+        </query>
+    </named-query>
+
+    <named-query name="getPatientDetail">
+        <query>
+            FROM PatientDetail pd WHERE pd.loginId = :loginId
+        </query>
+    </named-query>
+
+    <named-query name="getConfigParamsForTargetId">
+        <query>
+            FROM ConfigParam cp WHERE cp.configTargetType.id = :id
+        </query>
+    </named-query>
+
+    <named-query name="getConfigParamsForTargetName">
+        <query>
+            SELECT cp FROM ConfigParam cp INNER JOIN cp.configTargetType ctt WHERE ctt.targetType = :name
+        </query>
+    </named-query>
+
+    <named-query name="getNextStatusBatchFromAssembly">
+        <query>
+            FROM SmsAssembly WHERE
+            ((smsPrimaryProcessingState = :submissionCompleted AND smsSecondaryProcessingState = :successfulSubmission)
+            OR (smsPrimaryProcessingState = :statusCheckCompleted  AND smsSecondaryProcessingState = :readyForStatusCheck))
+            AND correlationId IS NOT NULL ORDER BY statusCheckTrialCount ASC
+        </query>
+    </named-query>
+
+    <named-query name="getGatewayForName">
+        <query>
+            FROM SmsGateway WHERE name = :name
+        </query>
+    </named-query>
+
+    <named-query name="getBrand">
+        <query>
+            FROM Brand WHERE name = :name
+        </query>
+    </named-query>
+
+    <named-query name="updateGatewayStatus">
+        <query>
+            UPDATE SmsRecord sr SET gateway_status = :status WHERE sr = :record
+        </query>
+    </named-query>
+
+    <named-query name="getSmsGroups">
+        <query>
+            FROM SmsGroup
+        </query>
+    </named-query>
+
+    <named-query name="getSmsGroupForName">
+        <query>
+            FROM SmsGroup WHERE name = :name
+        </query>
+    </named-query>
+
+    <named-query name="getSmsTypes">
+        <query>
+            FROM SmsType
+        </query>
+    </named-query>
+
+    <named-query name="getGroupGatewayMappings">
+        <query>
+            FROM SmsGroupGatewayMapping
+        </query>
+    </named-query>
+
+    <named-query name="getGroupGatewayMappingsForGroup">
+        <query>
+            FROM SmsGroupGatewayMapping sggm WHERE sggm.smsGroup = :group
+        </query>
+    </named-query>
+
+    <named-query name="updateGroupGwPriority">
+        <query>
+            UPDATE SmsGroupGatewayMapping sggm SET priority = priority - 1
+            WHERE sggm.smsGroup = :group AND sggm.priority &gt; :priority
+        </query>
+    </named-query>
+
+    <named-query name="getTargetConfigValues">
+        <query>
+            FROM TargetConfigValue
+        </query>
+    </named-query>
+
+    <named-query name="getUser">
+        <query>
+            FROM User u where u.login = :login
+        </query>
+    </named-query>
+
+    <named-query name="getUserPassword">
+        <query>
+            SELECT u.password FROM User u where u.login = :login
+        </query>
+    </named-query>
+
+    <named-query name="getRoles">
+        <query>
+            FROM Role WHERE id in :roleIds
+        </query>
+    </named-query>
+
+    <named-query name="getParentRoleId">
+        <query>
+            SELECT parentId FROM Role WHERE id = :id
+        </query>
+    </named-query>
+
+    <named-query name="getRoleId">
+        <query>
+            SELECT id FROM Role WHERE name = :name
+        </query>
+    </named-query>
+
+    <named-query name="getUserRoles">
+        <query>
+            SELECT roleId FROM UserRoleMapping WHERE userId = :userId
+        </query>
+    </named-query>
+
+    <named-query name="getSmsSenders">
+        <query>
+            FROM SmsSender
+        </query>
+    </named-query>
+
+    <named-query name="getSmsSender">
+        <query>
+            FROM SmsSender WHERE name = :name
+        </query>
+    </named-query>
+
+    <named-query name="getGateways">
+        <query>
+            FROM SmsGateway
+        </query>
+    </named-query>
+
+    <named-query name="getSmsGroupForNameMatch">
+        <query>
+            FROM SmsGroup WHERE name like CONCAT('%', :name, '%'))
+        </query>
+    </named-query>
+
+    <named-query name="getUserForLoginNameMatch">
+        <query>
+            FROM User WHERE login like CONCAT('%', :login, '%'))
+        </query>
+    </named-query>
+
+    <named-query name="getSubmittedSms">
+        <query>
+            SELECT count(id) FROM SmsAudit where
+            (createdOn &lt;= :tillDate and smsPrimaryProcessingState = 'SUBMISSION_UNDER_PROCESS'
+            and smsSecondaryProcessingState = 'SUBMITTED_TO_GATEWAY') and smsRecord in
+            ( SELECT smsRecord FROM SmsAudit where (createdOn &gt; :fromDate and
+            smsPrimaryProcessingState = 'SUBMISSION_UNDER_PROCESS' and smsSecondaryProcessingState = 'QUEUED_FOR_SUBMISSION') )
+        </query>
+    </named-query>
+
+    <named-query name="getSubmittedSmsStartingTime">
+        <query>
+            SELECT min(createdOn),count(id) FROM SmsAudit where
+            (createdOn &gt; :fromDate and smsPrimaryProcessingState = 'SUBMISSION_UNDER_PROCESS' and
+            smsSecondaryProcessingState = 'QUEUED_FOR_SUBMISSION')
+            and smsRecord in ( SELECT smsRecord FROM SmsAudit where
+            (createdOn &lt;= :tillDate and smsPrimaryProcessingState = 'SUBMISSION_UNDER_PROCESS'
+            and smsSecondaryProcessingState = 'SUBMITTED_TO_GATEWAY'))
+        </query>
+    </named-query>
+
+    <named-query name="getSubmittedSmsEndingTime">
+        <query>
+            SELECT max(createdOn),count(id) FROM SmsAudit where
+            (createdOn &lt;= :tillDate and smsPrimaryProcessingState = 'SUBMISSION_UNDER_PROCESS'
+            and smsSecondaryProcessingState = 'SUBMITTED_TO_GATEWAY')
+            and smsRecord in ( SELECT smsRecord FROM SmsAudit where
+            (createdOn &gt; :fromDate and smsPrimaryProcessingState = 'SUBMISSION_UNDER_PROCESS'
+            and smsSecondaryProcessingState = 'QUEUED_FOR_SUBMISSION') )
+        </query>
+    </named-query>
+
+    <named-query name="smsUserThrottlingDataFindMatchingRecord">
+        <query>
+            FROM SmsUserThrottlingData where mobileNumber = :mobileNumber and smsTypeName = :smsTypeName
+            and beginDuration &lt;= :currDate and endDuration &gt;= :currDate
+        </query>
+    </named-query>
+
+    <named-query name="getSmsSourceUsage">
+        <query>
+            Select count(id),sourceName FROM SmsRecord WHERE
+            copyOf IS NULL GROUP BY sourceName
+        </query>
+    </named-query>
+
+    <named-query name="getSmsGatewayUsage">
+        <query>
+            Select count(r.id),g.name FROM SmsRecord r INNER JOIN
+            r.smsGateway g WHERE r.copyOf IS NULL GROUP BY r.smsGateway
+        </query>
+    </named-query>
+
+    <named-query name="getSmsTypeForName">
+        <query>
+            FROM SmsType where name = :name
+        </query>
+    </named-query>
+
+    <named-query name="getMessageBatchForIds">
+        <query>
+            FROM SmsMessageBatchRecordMapping where smsMessageBatch.id in :ids
+        </query>
+    </named-query>
+
+    <named-query name="getMessageBatchForLotId">
+        <query>
+            FROM SmsMessageBatchRecordMapping where smsMessageBatch.id in
+            (SELECT smb.id FROM SmsMessageBatch smb WHERE smb.smsLot.id = :id)
+        </query>
+    </named-query>
+
+    <named-query name="getRecordsInBetweenDays">
+        <query>
+            FROM SmsRecord WHERE lastUpdatedOn BETWEEN :from and :to
         </query>
     </named-query>
 

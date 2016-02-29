@@ -1,9 +1,14 @@
 package com.portea.commp.smsen.domain;
 
 import javax.persistence.*;
+import java.util.Date;
 
+/**
+ * SMS groups have been modeled from the existing table 'sms_gateway_select'. With sms groups
+ * as independent entity, they can be mapped with gateways
+ */
 @Entity
-@Table(name = "sms_group")
+@Table(name = "smsen_sms_group")
 public class SmsGroup {
 
     @Id
@@ -26,6 +31,14 @@ public class SmsGroup {
 
     @Column(name = "is_bulk")
     private Boolean isBulk;
+
+    @Column(name = "last_updated_on")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdatedOn;
+
+    @JoinColumn(name = "last_updated_by")
+    @ManyToOne
+    private User lastUpdatedBy;
 
     @Embedded
     @AttributeOverrides({
@@ -104,6 +117,26 @@ public class SmsGroup {
 
     public void setTypeMatchCoolingPeriod(CoolingPeriod typeMatchCoolingPeriod) {
         this.typeMatchCoolingPeriod = typeMatchCoolingPeriod;
+    }
+
+    public Boolean getIsBulk() {
+        return isBulk;
+    }
+
+    public User getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    public void setLastUpdatedBy(User lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
+    }
+
+    public Date getLastUpdatedOn() {
+        return lastUpdatedOn;
+    }
+
+    public void setLastUpdatedOn(Date lastUpdatedOn) {
+        this.lastUpdatedOn = lastUpdatedOn;
     }
 
     @Override

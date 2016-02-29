@@ -12,7 +12,8 @@ project.ext {
         it.name == 'domain-cmn' ||
 
         it.name == 'cpnen-webapp' ||
-        it.name == 'cpnen-domain'
+        it.name == 'cpnen-domain' ||
+        it.name == 'commp-webapp'
     }
 }
 

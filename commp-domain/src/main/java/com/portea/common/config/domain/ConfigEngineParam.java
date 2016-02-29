@@ -1,0 +1,64 @@
+package com.portea.common.config.domain;
+
+public enum ConfigEngineParam implements ConfigTargetParam{
+
+    RETRY_SAME_GATEWAY("false"),
+
+    NEW_SMS_LOAD_WINDOW("15000"),
+    
+    NEW_SMS_LOAD_LIMIT("2000"),
+
+    NEW_SMS_COOLING_PERIOD_CHECK("true"),
+
+    NEW_SMS_PHONE_NUMBER_VALIDATION("true"),
+
+    NEW_SMS_USER_DND_VALIDATION("true"),
+
+    NEW_SMS_MESSAGE_FORMAT_VALIDATION("true"),
+
+    NEXT_SMS_BATCH_LOAD_WINDOW("15000"),
+
+    MAX_SUBMISSION_COUNT_LOADED_TO_QUEUES("8000"),
+
+    SMS_SUBMISSION_WORKER_BATCH_MAX_SIZE("50"),
+
+    GATEWAY_FINDING_FAILURE_RETRY_THRESHOLD("3"),
+
+    CORRELATION_ID_CHECK_MIN_WAIT_TIME("2000"),
+
+    CORRELATION_ID_CHECK_MAX_COUNT("20"),
+
+    SMS_SUBMISSION_WORKER_BATCH_SLEEP_TIME("250"),
+
+    SMS_SUBMISSION_GATEWAY_FAILURE_COUNT_THRESHOLD("3"),
+
+    GATEWAY_USAGE_POLICY("CYCLE_AVAILABLE"),
+
+    MAX_STATUS_CHECK_COUNT_LOADED_TO_QUEUES("8000"),
+
+    UNSENT_SMS_RETRIAL_POLICY("NO_RETRY"),
+
+    STATUS_CHECK_MAX_COUNT("30"),
+
+    STATUS_CHECK_MIN_WAIT_TIME("2000"),
+
+    SMS_STATUS_WORKER_BATCH_SLEEP_TIME("750"),
+
+    SMS_STATUS_CHECK_TIME_OUT_DURATION("86400000"),
+
+    RETRY_COUNT("2"),
+
+    SMS_RECEIVED_UPPER_LIMIT_PER_LOT("2000"),
+
+    MESSAGE_MAX_LENGTH("800");
+    
+    private final String defaultValue;
+
+    ConfigEngineParam(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
+    public String getDefaultValue() {
+        return this.defaultValue;
+    }
+}

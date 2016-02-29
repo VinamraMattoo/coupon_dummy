@@ -3,7 +3,9 @@ package com.portea.common.config.domain;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "cmn_target_config")
+@Table(name = "cmn_target_config",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"config_param_id", "target_id"})})
+@Cacheable
 public class TargetConfig {
 
     @Id
@@ -11,12 +13,8 @@ public class TargetConfig {
     @Column(name = "id")
     private Integer id;
 
-    @JoinColumn(name = "config_target_type_id")
-    @ManyToOne
-    private ConfigTargetType configTargetType;
-
-    @Column(name = "target_id", columnDefinition = "varchar(128)")
-    private String targetId;
+    @Column(name = "target_id")
+    private Integer targetId;
 
     @JoinColumn(name = "config_param_id")
     @ManyToOne
@@ -36,19 +34,11 @@ public class TargetConfig {
         this.id = id;
     }
 
-    public ConfigTargetType getConfigTargetType() {
-        return configTargetType;
-    }
-
-    public void setConfigTargetType(ConfigTargetType configTargetType) {
-        this.configTargetType = configTargetType;
-    }
-
-    public String getTargetId() {
+    public Integer getTargetId() {
         return targetId;
     }
 
-    public void setTargetId(String targetId) {
+    public void setTargetId(Integer targetId) {
         this.targetId = targetId;
     }
 

@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "sms_record")
+@Table(name = "smsen_sms_record")
 public class SmsRecord {
 
     @Id
@@ -88,9 +88,37 @@ public class SmsRecord {
     @ManyToOne
     private SmsGateway smsGateway;
 
-    @Column(name = "gateway_status_code", columnDefinition = "varchar(30)")
+    /**
+     * Denotes the status response sent by a gateway, Combination of gatewayId and
+     * gatewayStatus can be used to find the implementation of GatewaySmsStatus.
+     */
+    @Column(name = "gateway_status", columnDefinition = "varchar(32)")
+    private String gatewayStatus;
+
+    @Column(name = "sms_requested_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date smsRequestedAt;
+
+    @Column(name = "correlation_id_check_count")
+    private Integer correlationIdCheckTrialCount;
+
+    @Column(name = "gateway_finding_failure_count")
+    private Integer gatewayFindingFailureCount;
+
+    @Column(name = "received_correlation_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date receivedCorrelationIdAt;
+
+    @JoinColumn(name = "copy_of")
+    @ManyToOne
+    private SmsRecord copyOf;
+
+    @Column(name ="status_check_trial_count")
+    private Integer statusCheckTrialCount;
+
+    @Column(name = "source_name", columnDefinition = "varchar(64)")
     @Enumerated(value = EnumType.STRING)
-    private GatewayStatus gatewayStatus;
+    private SmsSource sourceName;
 
     public SmsRecord() {
     }
@@ -255,11 +283,11 @@ public class SmsRecord {
         this.smsGateway = smsGateway;
     }
 
-    public GatewayStatus getGatewayStatus() {
+    public String getGatewayStatus() {
         return gatewayStatus;
     }
 
-    public void setGatewayStatus(GatewayStatus gatewayStatus) {
+    public void setGatewayStatus(String gatewayStatus) {
         this.gatewayStatus = gatewayStatus;
     }
 
@@ -287,6 +315,14 @@ public class SmsRecord {
         this.scheduledTimeZone = scheduledTimeZone;
     }
 
+    public Date getSmsRequestedAt() {
+        return smsRequestedAt;
+    }
+
+    public void setSmsRequestedAt(Date smsRequestedAt) {
+        this.smsRequestedAt = smsRequestedAt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -303,4 +339,51 @@ public class SmsRecord {
         return getId() != null ? getId().hashCode() : 0;
     }
 
+    public void setCorrelationIdCheckTrialCount(Integer submissionCheckTrialCount) {
+        this.correlationIdCheckTrialCount = submissionCheckTrialCount;
+    }
+
+    public Integer getCorrelationIdCheckTrialCount() {
+        return correlationIdCheckTrialCount;
+    }
+
+    public void setGatewayFindingFailureCount(Integer gatewayFindingFailureCount) {
+        this.gatewayFindingFailureCount = gatewayFindingFailureCount;
+    }
+
+    public Integer getGatewayFindingFailureCount() {
+        return gatewayFindingFailureCount;
+    }
+
+    public Date getReceivedCorrelationIdAt() {
+        return receivedCorrelationIdAt;
+    }
+
+    public void setReceivedCorrelationIdAt(Date receivedCorrelationIdAt) {
+        this.receivedCorrelationIdAt = receivedCorrelationIdAt;
+    }
+
+    public void setCopyOf(SmsRecord copyOf) {
+        this.copyOf = copyOf;
+    }
+
+    public SmsRecord getCopyOf() {
+        return copyOf;
+    }
+
+    public Integer getStatusCheckTrialCount() {
+        return statusCheckTrialCount;
+    }
+
+    public void setStatusCheckTrialCount(Integer statusCheckTrialCount) {
+        this.statusCheckTrialCount = statusCheckTrialCount;
+    }
+
+    public SmsSource getSourceName() {
+        return sourceName;
+    }
+
+    public void setSourceName(SmsSource sourceName) {
+        this.sourceName = sourceName;
+    }
 }

@@ -10,6 +10,8 @@ import java.util.List;
  */
 public interface Dao<ID, E> {
 
+    Class<E> getEntityClass();
+
     E create(E entity);
 
     void delete(E entity);

@@ -1,0 +1,11 @@
+
+1) Add a shell script named jboss(Already exists in this directory /scripts/jboss) in the following path /etc/init.d
+2) As we know, it is strictly not recommended to run any application server with root user.
+    This avoids many problems. For this we will create the user to run the jboss server.
+
+    useradd jboss
+
+3) Use the same user while starting/stopping the server
+4) Should give execute permissions to the script:
+
+       chmod +x /etc/init.d/jboss

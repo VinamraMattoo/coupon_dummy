@@ -2,12 +2,16 @@ package com.portea.cpnen.dao.impl;
 
 import com.portea.cpnen.dao.CouponCodeReservationDao;
 import com.portea.cpnen.domain.CouponCodeReservation;
+import com.portea.dao.JpaDao;
 import com.portea.dao.impl.BaseJpaDao;
 
+import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 
+@JpaDao
+@Dependent
 public class CouponCodeReservationJpaDao extends BaseJpaDao<Integer, CouponCodeReservation> implements CouponCodeReservationDao {
 
     public CouponCodeReservationJpaDao() {
